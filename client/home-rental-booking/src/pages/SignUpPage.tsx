@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import imagehome2 from '../assets/imagehome2.jpg';
+import 'url-polyfill';
 
 const SignUpPage = () => {
+  const [fromData, SetFromData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    profileImage: null,
+  })
+
+  const HandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target
+    SetFromData((prev) => ({
+      ...prev,
+      [name]: name === "profileImage" ? files![0] : value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("submited data", fromData)
+  }
+
   return (
     <div className="w-screen h-screen flex">
       {/* Left Section */}
@@ -17,13 +40,13 @@ const SignUpPage = () => {
       <div className="absolute inset-0 flex items-center justify-center z-20">
         <div className="bg-white p-3 rounded-xl shadow-lg w-3/5 h-[700px] flex">
           {/* Left Part of the form (Transparent) */}
-          <div className="w-1/2 relative bg-gray-100">
+          <div className="w-1/2 relative bg-gray-100 overflow-hidden">
             <img
               src={imagehome2} // Your background image
               alt="Background"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transform scale-[140%] hover:scale-130 transition-transform translate-x-[-60px] translate-y-[0px]"
             />
-            <div className="absolute inset-0 bg-white opacity-50 mix-blend-multiply z-10"></div> {/* Apply blend mode */}
+            <div className="absolute inset-0 bg-white opacity-50 mix-blend-multiply z-10"></div>
           </div>
 
           {/* Right Part of the form (Form Content) */}
@@ -32,32 +55,46 @@ const SignUpPage = () => {
               SignUp Page
             </h1>
             <p className="text-gray-600 mb-6 text-center">
-            Find your perfect home, where comfort meets convenience. Sign up to explore endless possibilities
+              Find your perfect home, where comfort meets convenience. Sign up to explore endless possibilities
             </p>
-            <form className="space-y-4">
+            <form  onSubmit = {handleSubmit} className="space-y-4">
               <input
+                onChange={HandleChange}
+                value={fromData.firstname}
                 placeholder="First Name"
                 name="firstname"
                 required
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+                onChange={HandleChange}
+                value={fromData.lastname}
                 placeholder="Last Name"
                 name="lastname"
                 required
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+                onChange={HandleChange}
                 type="email"
+                name="email"
+                required
+                value={fromData.email}
                 placeholder="Email address"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+                onChange={HandleChange}
                 type="password"
+                name="password"
+                required
+                value={fromData.password}
                 placeholder="Set password"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+                onChange={HandleChange}
+                value={fromData.confirmPassword}
                 placeholder="Confirm Password"
                 name="confirmPassword"
                 required
@@ -65,18 +102,26 @@ const SignUpPage = () => {
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+                onChange={HandleChange}
                 id="profile-image"
                 name="profileImage"
                 accept="image/*"
                 style={{ display: "none" }}
                 type="file"
-                required
+                // required
                 className="hidden"
               />
               <label htmlFor="profile-image" className="flex items-center justify-center cursor-pointer text-center mt-4 bg-purple-300 p-2 rounded-md hover:bg-purple-400">
                 <img src="/assets/addImage.png" alt="" className="mr-2 w-6" />
                 <p className="text-gray-700">Upload Your Photo</p>
               </label>
+
+              {fromData.profileImage && (
+                <img src={fromData.profileImage ? URL.createObjectURL(fromData.profileImage) : ""} 
+                style={{maxWidth: "80px", display: "flex", alignItems: "center", margin: "8px auto -5px"}}
+                alt="" />
+              )}
+
               <button
                 type="submit"
                 className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 mt-6"

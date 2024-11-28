@@ -1,0 +1,6 @@
+{
+    "exec": "npx ts-node src/index.ts",
+    "ext": "ts,tsx,json",
+    "ignore": ["node_modules/*"]
+  }
+  
