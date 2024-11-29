@@ -43,7 +43,7 @@ const SignUpPage = () => {
         }
       }
 
-      const response = await fetch("http://localhost:3333/auth/register", {
+      const response = await fetch("http://localhost:3333/auth/signup", {
         method: "POST",
         body: signup_form
       })
