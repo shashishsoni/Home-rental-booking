@@ -1,6 +1,5 @@
 import { timeStamp } from "console"
-
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema(
     {
@@ -46,7 +45,8 @@ const userSchema = new mongoose.Schema(
             default: [],
         },
     },
-    {timeStamp: true}
+    
+    { timestamps: true }
 )
 
 const User = mongoose.model("User", userSchema)

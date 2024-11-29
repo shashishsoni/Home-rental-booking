@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import imagehome2 from '../assets/imagehome2.jpg';
+import { FormDataState } from '../types/types'
 import 'url-polyfill';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
-  const [fromData, SetFromData] = useState({
+  const [formData, SetFromData] = useState<FormDataState>({
     firstname: "",
     lastname: "",
     email: "",
@@ -20,9 +22,42 @@ const SignUpPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("submited data", fromData)
+  const [passwordMatch, setPasswordMatch] = useState(true)
+
+  useEffect(() => {
+    setPasswordMatch(formData.password === formData.confirmPassword || formData.confirmPassword === "")
+  }, [formData.password, formData.confirmPassword])
+
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const signup_form = new FormData()
+
+      for (const key in formData) {
+        const value = formData[key as keyof FormDataState]
+        if (value !== null) {
+          signup_form.append(key, value instanceof File ? value : value.toString());
+        }
+      }
+
+      const response = await fetch("http://localhost:3333/auth/register", {
+        method: "POST",
+        body: signup_form
+      })
+
+      if (response.ok) {
+        navigate("/login")
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Registration failed:", err.message);
+      } else {
+        console.error("An unexpected error occurred");
+      }
+    }
   }
 
   return (
@@ -57,10 +92,10 @@ const SignUpPage = () => {
             <p className="text-gray-600 mb-6 text-center">
               Find your perfect home, where comfort meets convenience. Sign up to explore endless possibilities
             </p>
-            <form  onSubmit = {handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 onChange={HandleChange}
-                value={fromData.firstname}
+                value={formData.firstname}
                 placeholder="First Name"
                 name="firstname"
                 required
@@ -68,7 +103,7 @@ const SignUpPage = () => {
               />
               <input
                 onChange={HandleChange}
-                value={fromData.lastname}
+                value={formData.lastname}
                 placeholder="Last Name"
                 name="lastname"
                 required
@@ -79,7 +114,7 @@ const SignUpPage = () => {
                 type="email"
                 name="email"
                 required
-                value={fromData.email}
+                value={formData.email}
                 placeholder="Email address"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
@@ -88,13 +123,13 @@ const SignUpPage = () => {
                 type="password"
                 name="password"
                 required
-                value={fromData.password}
+                value={formData.password}
                 placeholder="Set password"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={HandleChange}
-                value={fromData.confirmPassword}
+                value={formData.confirmPassword}
                 placeholder="Confirm Password"
                 name="confirmPassword"
                 required
@@ -116,10 +151,10 @@ const SignUpPage = () => {
                 <p className="text-gray-700">Upload Your Photo</p>
               </label>
 
-              {fromData.profileImage && (
-                <img src={fromData.profileImage ? URL.createObjectURL(fromData.profileImage) : ""} 
-                style={{maxWidth: "80px", display: "flex", alignItems: "center", margin: "8px auto -5px"}}
-                alt="" />
+              {formData.profileImage && (
+                <img src={formData.profileImage ? URL.createObjectURL(formData.profileImage) : ""}
+                  style={{ maxWidth: "80px", display: "flex", alignItems: "center", margin: "8px auto -5px" }}
+                  alt="" />
               )}
 
               <button
@@ -160,3 +195,5 @@ const SignUpPage = () => {
 };
 
 export default SignUpPage;
+
+
