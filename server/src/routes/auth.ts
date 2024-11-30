@@ -4,7 +4,7 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import multer from "multer";
 import jwt from "jsonwebtoken";
-import { User }from "../models/user"
+import { User } from "../models/user"
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -18,8 +18,8 @@ const __dirname = dirname(__filename);
 
 // Upload directory setup
 const uploadDir = path.join(__dirname, '../public/uploads');
-if(!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, {recursive: true})
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true })
 }
 
 // Configuration for multer file upload
@@ -65,12 +65,32 @@ router.post(
      
       const { firstname, lastname, email, password, confirmPassword } = req.body;
      
-      if (!firstname || !lastname || !email || !password || !confirmPassword) {
+      // Check for null or undefined email explicitly
+      if (!email || email.trim() === '') {
+        res.status(400).json({
+          message: "Email is required",
+          missing: { email: true }
+        });
+        return;
+      }
+
+      if (!firstname || !lastname || !password || !confirmPassword) {
         res.status(400).json({
           message: "Please fill all the required fields",
-          missing: { firstname: !firstname, lastname: !lastname, email: !email,
-                    password: !password, confirmPassword: !confirmPassword }
+          missing: { 
+            firstname: !firstname, 
+            lastname: !lastname,
+            password: !password, 
+            confirmPassword: !confirmPassword 
+          }
         });
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ message: "Invalid email format" });
         return;
       }
 
@@ -86,9 +106,16 @@ router.post(
         return;
       }
 
-      // Check if user already exists
-      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      // Check if user already exists - use trimmed, lowercase email
+      const normalizedEmail = email.trim().toLowerCase();
+      const existingUser = await User.findOne({ email: normalizedEmail });
       if (existingUser) {
+        // If file was uploaded, clean it up since we won't be using it
+        if (req.file) {
+          fs.unlink(req.file.path, (err) => {
+            if (err) console.error('Error deleting uploaded file:', err);
+          });
+        }
         res.status(409).json({ message: "User already exists" });
         return;
       }
@@ -101,7 +128,7 @@ router.post(
       const newUser = new User({
         firstname,
         lastname,
-        email: email.toLowerCase(),
+        email: normalizedEmail, // Use normalized email
         password: hashedPassword,
         profileImagePath: req.file.path.replace(/\\/g, '/')
       });
@@ -110,11 +137,29 @@ router.post(
       await newUser.save();
       res.status(201).json({ message: "User signed up successfully", user: newUser });
     } catch (err: any) {
+      // Clean up uploaded file if there's an error
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error('Error deleting uploaded file:', err);
+        });
+      }
+
       console.error("Sign Up Error:", err);
-      res.status(500).json({
-        message: "Server error during signup",
-        error: err.message
-      });
+      
+      // Check if we haven't sent a response yet
+      if (!res.headersSent) {
+        if (err.code === 11000) {
+          res.status(409).json({
+            message: "Email already exists",
+            error: "Duplicate email address"
+          });
+        } else {
+          res.status(500).json({
+            message: "Server error during signup",
+            error: err.message
+          });
+        }
+      }
     }
   }
 );

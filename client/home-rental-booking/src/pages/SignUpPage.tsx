@@ -22,7 +22,7 @@ const SignUpPage = () => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'profileImage' ? files![0] : value,
+      [name]: name === 'profileImage' ? (files ? files[0] : null) : value,
     }));
   };
 
@@ -147,14 +147,14 @@ const SignUpPage = () => {
                 value={formData.firstname}
                 placeholder="First Name"
                 name="firstname"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
                 value={formData.lastname}
                 placeholder="Last Name"
                 name="lastname"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -162,7 +162,7 @@ const SignUpPage = () => {
                 name="email"
                 value={formData.email}
                 placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -170,7 +170,7 @@ const SignUpPage = () => {
                 name="password"
                 value={formData.password}
                 placeholder="Set password"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -178,7 +178,7 @@ const SignUpPage = () => {
                 placeholder="Confirm Password"
                 name="confirmPassword"
                 type="password"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               {!passwordMatch && <p style={{ color: 'red' }}>Passwords do not match!</p>}
               <input
@@ -208,10 +208,33 @@ const SignUpPage = () => {
                 Sign up free
               </button>
             </form>
+            <p className="text-sm text-gray-400 mt-4 text-center">
+              By signing up I agree to the{" "}
+              <a href="#" className="text-purple-600 underline">
+                terms & conditions
+              </a>{" "}
+              and{" "}
+              <a href="#" className="text-purple-600 underline">
+                privacy policy
+              </a>
+            </p>
+            <p className="mt-6 text-gray-500 text-center">
+              Already a user?{" "}
+              <a href="/login" className="text-purple-600 underline">
+                Log in
+              </a>
+            </p>
           </div>
         </div>
       </div>
+      {/* Right Section */}
+      <div className="w-2/5 relative bg-[#62371B]">
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Right content goes here if needed */}
+        </div>
+      </div>
     </div>
+    
   );
 };
 
