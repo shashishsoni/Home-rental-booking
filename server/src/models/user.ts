@@ -4,23 +4,22 @@ const userSchema = new mongoose.Schema(
   {
     firstname: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     lastname: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
-    Email: {
+    email: {
       type: String,
       required: true,
       unique: true,
-      match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Email format validation
+      trim: true,
+      lowercase: true
     },
     password: {
-      type: String,
-      required: true
-    },
-    confirmpassword: {
       type: String,
       required: true
     },
@@ -48,10 +47,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Adding instance method to compare password and confirmpassword
-userSchema.methods.isPasswordValid = function () {
-  return this.password === this.confirmpassword;
-};
 
 export const User = mongoose.model('User', userSchema);
 export default User;

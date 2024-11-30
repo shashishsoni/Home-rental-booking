@@ -1,53 +1,45 @@
-import express from "express"
-import mongoose from "mongoose"
-import cors from "cors"
-import dotenv from "dotenv"
-import authroutes from "./routes/auth"
-import errorHandler from "./middleware/errorHandler"
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth';
+import errorHandler  from './middleware/errorHandler';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 
-const  app = express()
-dotenv.config()
+dotenv.config();
 
-app.use(cors())
-app.use(express.json())
-app.use(express.static('public'))
+const app = express();
 
-//cors()
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(cors({
-    origin: 'http://localhost:5174',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'], 
-}))
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-//routes
+// Serve static files from public/uploads
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-app.use("/auth", authroutes)
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/home-rental')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
 
-//middleware
+// Routes
+app.use('/auth', authRoutes);
 
+//error handling middleware
 app.use(errorHandler)
 
-// Database setup
+const PORT = process.env.PORT || 3001;
 
-const PORT = 3333;
-const mongoUri = process.env.MONGO_DB;
-
-app.listen(3333, () => {
-    console.log("server is rurring on port 3333")
-})
-
-if (!mongoUri) {
-  throw new Error('MONGO_DB environment variable is not defined');
-}
-
-mongoose.connect(mongoUri)
-    .then(() => {
-        console.log("connected to Database succesfully")
-    })
-    .catch((err) => {
-        console.log("Failes to connect the Database:", err)
-    });
-
-
-// Database setup
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
