@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import multer from "multer";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user"
-import path from 'path';
+import path, { normalize } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
@@ -163,5 +163,40 @@ router.post(
     }
   }
 );
+
+
+router.post("/login", async(req:Request, res: Response) => {
+  try {
+    //take information from body page
+    const {Email, password}: {Email: string; password: string} = req.body
+
+    //check the user exit or not 
+    const user = await User.findOne({Email})
+    if(!user) {
+      res.status(409).json({message: "user does't exist"})
+      return;
+    }
+
+    //than compare the password that is hased
+    const ismatchpassword = await bcrypt.compare(password, user.password)
+    if(!ismatchpassword) {
+      res.status(400).json({message: "Invalid Credentials"})
+    }
+
+    //generate jwt token after login
+    const token: string = jwt.sign({id: user._id}, process.env.JWT_SERCET as string, {expiresIn: "1h"}) 
+    
+    const {password: _, ...userWithoutpassword} = user.toObject();
+
+    res.status(200).json({
+      message: "login sucessfull",
+      token,
+      user: userWithoutpassword
+    });
+  } catch (err) {
+    console.error("Error during login", err)
+    res.status(500).json({message: "internal server error"})
+  }
+})
 
 export default router
