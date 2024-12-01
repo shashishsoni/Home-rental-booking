@@ -36,7 +36,7 @@ function LoginPage() {
             <form className="space-y-4">
               
               <input
-                type="email"
+                type="Email"
                 placeholder="Email address"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />

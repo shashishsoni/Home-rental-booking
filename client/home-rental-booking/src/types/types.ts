@@ -1,7 +1,7 @@
 export interface FormDataState {
   firstname: string;
   lastname: string;
-  email: string;
+  Email: string;
   password: string;
   confirmPassword: string;
   profileImage: null | File;

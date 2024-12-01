@@ -63,13 +63,13 @@ router.post(
       console.log('Request Body:', req.body);
       console.log('Uploaded File:', req.file);
      
-      const { firstname, lastname, email, password, confirmPassword } = req.body;
+      const { firstname, lastname, Email, password, confirmPassword } = req.body;
      
-      // Check for null or undefined email explicitly
-      if (!email || email.trim() === '') {
+      // Check for null or undefined Email explicitly
+      if (!Email || Email.trim() === '') {
         res.status(400).json({
           message: "Email is required",
-          missing: { email: true }
+          missing: { Email: true }
         });
         return;
       }
@@ -87,10 +87,10 @@ router.post(
         return;
       }
 
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        res.status(400).json({ message: "Invalid email format" });
+      // Validate Email format
+      const EmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!EmailRegex.test(Email)) {
+        res.status(400).json({ message: "Invalid Email format" });
         return;
       }
 
@@ -106,9 +106,9 @@ router.post(
         return;
       }
 
-      // Check if user already exists - use trimmed, lowercase email
-      const normalizedEmail = email.trim().toLowerCase();
-      const existingUser = await User.findOne({ email: normalizedEmail });
+      // Check if user already exists - use trimmed, lowercase Email
+      const normalizedEmail = Email.trim().toLowerCase();
+      const existingUser = await User.findOne({ Email: normalizedEmail });
       if (existingUser) {
         // If file was uploaded, clean it up since we won't be using it
         if (req.file) {
@@ -128,7 +128,7 @@ router.post(
       const newUser = new User({
         firstname,
         lastname,
-        email: normalizedEmail, // Use normalized email
+        Email: normalizedEmail, // Use normalized Email
         password: hashedPassword,
         profileImagePath: req.file.path.replace(/\\/g, '/')
       });
@@ -151,7 +151,7 @@ router.post(
         if (err.code === 11000) {
           res.status(409).json({
             message: "Email already exists",
-            error: "Duplicate email address"
+            error: "Duplicate Email address"
           });
         } else {
           res.status(500).json({

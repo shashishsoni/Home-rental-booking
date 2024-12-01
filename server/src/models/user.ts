@@ -1,45 +1,63 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
+import { IUser } from '../types/typess';
 
-const userSchema = new mongoose.Schema({
-  firstname: { 
-    type: String, 
-    required: true 
+interface IUserDocument extends IUser, Document { }
+
+const userSchema = new Schema<IUserDocument>({
+  firstname: {
+    type: String,
+    required: true
   },
-  lastname: { 
-    type: String, 
-    required: true 
+  lastname: {
+    type: String,
+    required: true
   },
-  email: { 
-    type: String, 
-    required: true, 
+  Email: {
+    type: String,
+    required: true,
     unique: true,
     trim: true,
     lowercase: true,
     validate: {
-      validator: function(v: string) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      validator: (value: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       },
-      message: (props: any) => `${props.value} is not a valid email!`
+      message: 'Invalid email format'
     }
   },
-  password: { 
-    type: String, 
-    required: true 
+  password: {
+    type: String,
+    required: true
   },
-  profileImagePath: { 
-    type: String, 
-    required: true 
-  }
+  profileImagePath: {
+    type: String,
+    required: false
+  },
+  tripList: {
+    type: Schema.Types.Mixed,
+    default: [],
+  },
+  WishList: {
+    type:  Schema.Types.Mixed,
+    default: [],
+  },
+  PropertyList: {
+    type:  Schema.Types.Mixed,
+    default: [],
+  },
+  ReservationList: {
+    type:  Schema.Types.Mixed,
+    default: [],
+  },
+
 }, {
   // Add this to ensure Mongoose uses the schema fields exactly as defined
   strict: true
 });
 
-// Add this before creating the model to ensure indexes are created properly
-userSchema.set('collection', 'users');
+userSchema.index({ Email: 1 }, { unique: true });
 
-// Create the model
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model<IUserDocument>('User', userSchema);
 
 // Explicitly create the index
 User.createIndexes().then(() => {

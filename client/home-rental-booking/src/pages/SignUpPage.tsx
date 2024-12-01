@@ -8,7 +8,7 @@ const SignUpPage = () => {
   const [formData, setFormData] = useState<FormDataState>({
     firstname: '',
     lastname: '',
-    email: '',
+    Email: '',
     password: '',
     confirmPassword: '',
     profileImage: null,
@@ -39,7 +39,7 @@ const SignUpPage = () => {
       setError('Last name is required');
       return false;
     }
-    if (!formData.email.trim()) {
+    if (!formData.Email.trim()) {
       setError('Email is required');
       return false;
     }
@@ -74,7 +74,7 @@ const SignUpPage = () => {
       const signupForm = new FormData();
       signupForm.append('firstname', formData.firstname.trim());
       signupForm.append('lastname', formData.lastname.trim());
-      signupForm.append('email', formData.email.trim().toLowerCase());
+      signupForm.append('Email', formData.Email.trim().toLowerCase());
       signupForm.append('password', formData.password);
       signupForm.append('confirmPassword', formData.confirmPassword);
       if (formData.profileImage) {
@@ -100,7 +100,7 @@ const SignUpPage = () => {
       setFormData({
         firstname: '',
         lastname: '',
-        email: '',
+        Email: '',
         password: '',
         confirmPassword: '',
         profileImage: null,
@@ -158,9 +158,9 @@ const SignUpPage = () => {
               />
               <input
                 onChange={handleChange}
-                type="email"
-                name="email"
-                value={formData.email}
+                type="Email"
+                name="Email"
+                value={formData.Email}
                 placeholder="Email address"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />

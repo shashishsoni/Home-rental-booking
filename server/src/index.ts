@@ -3,13 +3,12 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
-import errorHandler  from './middleware/errorHandler';
+import errorHandler from './middleware/errorHandler';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
 
 dotenv.config();
-
 const app = express();
 
 // Middleware
@@ -25,7 +24,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/home-rental')
-  .then(() => {
+  .then(async () => {
+    try {
+      // Drop the problematic index
+      await mongoose.connection.collection('users').dropIndex("email_1");
+      console.log("Successfully dropped the email index");
+    } catch (err) {
+      console.log("No email index to drop, moving on...");
+    }
     console.log('Connected to MongoDB');
   })
   .catch((error) => {
@@ -36,10 +42,9 @@ mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/home-rental'
 app.use('/auth', authRoutes);
 
 //error handling middleware
-app.use(errorHandler)
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
