@@ -3,22 +3,22 @@ import home3 from "../assets/home3.jpg"
 
 function LoginPage() {
 
-  const [Email, setEmial] = useState("")
-  const [password, setpassword] = useState("")
+  // const [Email, setEmial] = useState("")
+  // const [password, setpassword] = useState("")
 
-  const hansdleSubmit = async (e) => {
-    e.preventDefault()
+  // const hansdleSubmit = async (e) => {
+  //   e.preventDefault()
 
-    try {
-      const response = await fetch("http//localhost:3001/auth/login", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        },
-        body: JSON.stringify({Email, password})
-      })
-    } catch (err) {}
-  }
+  //   try {
+  //     const response = await fetch("http//localhost:3001/auth/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "content-type": "application/json"
+  //       },
+  //       body: JSON.stringify({Email, password})
+  //     })
+  //   } catch (err) {}
+  // }
 
   return (
     <div className="w-screen h-screen flex">
