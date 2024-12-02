@@ -1,24 +1,46 @@
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 import home3 from "../assets/home3.jpg"
+import { setLogin } from "@/redux/cache"
+import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
+
 
 function LoginPage() {
 
-  // const [Email, setEmial] = useState("")
-  // const [password, setpassword] = useState("")
+  const [Email, setEmail] = useState("")
+  const [password, setpassword] = useState("")
 
-  // const hansdleSubmit = async (e) => {
-  //   e.preventDefault()
+  const navigate = useNavigate()
 
-  //   try {
-  //     const response = await fetch("http//localhost:3001/auth/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "content-type": "application/json"
-  //       },
-  //       body: JSON.stringify({Email, password})
-  //     })
-  //   } catch (err) {}
-  // }
+  const dispatch = useDispatch()
+
+  const hansdleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({Email, password})
+      })
+
+      // fetch the data to login 
+      const loggIn = await response.json()
+      if(loggIn) {
+        dispatch (
+          setLogin({
+            user: loggIn.user,
+            token: loggIn.token
+          })
+        )
+        navigate("/")
+      }
+    } catch (err: any) {
+      console.log("Login failed", err.message)
+    }
+  }
 
   return (
     <div className="w-screen h-screen flex">
@@ -52,14 +74,18 @@ function LoginPage() {
             <p className="text-gray-600 mb-6 text-center">
             Welcome Home: Your journey to the perfect rental begins here.
             </p>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={hansdleSubmit}>
               
               <input
-                type="Email"
+              value={Email}
+              onChange={(e) => setEmail(e.target.value)}
+                type="email"
                 placeholder="Email address"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
+              value={password}
+              onChange={(e) => setpassword(e.target.value)}
                 type="password"
                 placeholder="password"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
