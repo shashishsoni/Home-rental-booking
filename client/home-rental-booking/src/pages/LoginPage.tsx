@@ -5,42 +5,72 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
 
+
 function LoginPage() {
+  const [Email, setEmail] = useState("");
+  const [password, setpassword] = useState("");
+  const [error, seterror] = useState<string | null>(null);
+  const [Logging, setLogging] = useState(false);
 
-  const [Email, setEmail] = useState("")
-  const [password, setpassword] = useState("")
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate()
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const dispatch = useDispatch()
+    // Validation for empty fields
+    if (!Email.trim() && !password.trim()) {
+      seterror("Email and password are required");
+      return;
+    }
 
-  const hansdleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    if (!Email.trim()) {
+      seterror("Email is required");
+      return;
+    }
+
+    if (!password.trim()) {
+      seterror("Password is required");
+      return;
+    }
+
+    setLogging(true);
+    seterror(null); // Clear previous errors
 
     try {
+      // Make the API request
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
-          "content-type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({Email, password})
-      })
+        body: JSON.stringify({ Email: Email.trim(), password: password.trim() }), // Trim inputs before sending
+      });
 
-      // fetch the data to login 
-      const loggIn = await response.json()
-      if(loggIn) {
-        dispatch (
-          setLogin({
-            user: loggIn.user,
-            token: loggIn.token
-          })
-        )
-        navigate("/")
+      // Check for successful response
+      if (!response.ok) {
+        const data = await response.json();
+        seterror(data.message || "Invalid email or password");
+        return;
+      }
+
+      // Successful login
+      const data = await response.json();
+
+      if (data.token && data.user) {
+        console.log("Dispatching setLogin with data:", { user: data.user, token: data.token });
+        dispatch(setLogin({ user: data.user, token: data.token }));
+        navigate("/"); // Redirect to the home page after successful login
+      } else {
+        seterror("Invalid email or password");
       }
     } catch (err: any) {
-      console.log("Login failed", err.message)
+      console.log("Login failed", err.message);
+      seterror("An error occurred. Please try again.");
+    } finally {
+      setLogging(false); // Reset loading state
     }
-  }
+  };
 
   return (
     <div className="w-screen h-screen flex">
@@ -74,7 +104,7 @@ function LoginPage() {
             <p className="text-gray-600 mb-6 text-center">
             Welcome Home: Your journey to the perfect rental begins here.
             </p>
-            <form className="space-y-4" onSubmit={hansdleSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit}>
               
               <input
               value={Email}
@@ -90,11 +120,16 @@ function LoginPage() {
                 placeholder="password"
                 className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
+              {error && (
+                <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
+                  {error}
+                </p>
+              )}
               <button
                 type="submit"
                 className="w-full bg-[#A7CDE0] text-white py-2 rounded-md hover:bg-[#3E6BA6] mt-6"
               >
-                Log In
+                {Logging ? "Logging in..." : "Login"}
               </button>
             </form>
             <p className="text-sm text-gray-400 mt-4 text-center">

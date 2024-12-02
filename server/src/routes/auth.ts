@@ -170,8 +170,14 @@ router.post("/login", async(req:Request, res: Response) => {
     //take information from body page
     const {Email, password}: {Email: string; password: string} = req.body
 
+    if(!Email || !password) {
+      res.status(400).json({message: "Email and password are required"})
+    }
+
+    const normalizedEmail = Email.toLowerCase().trim()
+
     //check the user exit or not 
-    const user = await User.findOne({Email})
+    const user = await User.findOne({Email: normalizedEmail})
     if(!user) {
       res.status(409).json({message: "user does't exist"})
       return;

@@ -10,6 +10,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { combineReducers } from "redux";
 import cache from "../redux/cache"; // Import your root reducer
 
 // Persist configuration
@@ -17,10 +18,15 @@ const persistConfig = {
   key: "root", // The key under which the persisted state is stored in localStorage
   version: 1, // Allows versioning to handle migrations
   storage, // Use localStorage as the default storage
+  whitelist: ['user'],
 };
 
+const rootReducer = combineReducers({
+  user: cache,  // Here, combine your reducers if you add more in future
+});
+
 // Create a persisted reducer by combining the persist config and root reducer
-const persistedReducer = persistReducer(persistConfig, cache);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure and create the Redux store
 export const store = configureStore({
