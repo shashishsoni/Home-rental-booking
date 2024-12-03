@@ -130,7 +130,7 @@ router.post(
         lastname,
         Email: normalizedEmail, // Use normalized Email
         password: hashedPassword,
-        profileImagePath: req.file.path.replace(/\\/g, '/')
+        profileImagePath: req.file.filename
       });
 
       // Save the new user

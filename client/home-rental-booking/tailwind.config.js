@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "light-blue": colors.lightBlue,
+        "light-blue": colors.sky,
         cyan: colors.cyan,
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -51,10 +51,10 @@ module.exports = {
         },
       },
       width: {
-        120: "120%",
+        120: "110%",
       },
       height: {
-        120: "120%",
+        120: "100%",
       },
       inset: {
         "-10": "-10%",

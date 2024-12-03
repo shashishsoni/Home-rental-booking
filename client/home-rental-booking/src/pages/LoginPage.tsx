@@ -17,50 +17,39 @@ function LoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Validation for empty fields
     if (!Email.trim() && !password.trim()) {
       seterror("Email and password are required");
       return;
     }
-
     if (!Email.trim()) {
       seterror("Email is required");
       return;
     }
-
     if (!password.trim()) {
       seterror("Password is required");
       return;
     }
-
     setLogging(true);
-    seterror(null); // Clear previous errors
-
+    seterror(null);
     try {
-      // Make the API request
       const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ Email: Email.trim(), password: password.trim() }), // Trim inputs before sending
+        body: JSON.stringify({ Email: Email.trim(), password: password.trim() }),
       });
-
-      // Check for successful response
       if (!response.ok) {
         const data = await response.json();
         seterror(data.message || "Invalid email or password");
         return;
       }
-
-      // Successful login
       const data = await response.json();
-
       if (data.token && data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user)); // Add this line
         console.log("Dispatching setLogin with data:", { user: data.user, token: data.token });
         dispatch(setLogin({ user: data.user, token: data.token }));
-        navigate("/"); // Redirect to the home page after successful login
+        navigate("/");
       } else {
         seterror("Invalid email or password");
       }
@@ -68,9 +57,9 @@ function LoginPage() {
       console.log("Login failed", err.message);
       seterror("An error occurred. Please try again.");
     } finally {
-      setLogging(false); // Reset loading state
+      setLogging(false);
     }
-  };
+};
 
   return (
     <div className="w-screen h-screen flex">
