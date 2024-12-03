@@ -172,6 +172,7 @@ router.post("/login", async(req:Request, res: Response) => {
 
     if(!Email || !password) {
       res.status(400).json({message: "Email and password are required"})
+      return;
     }
 
     const normalizedEmail = Email.toLowerCase().trim()
@@ -187,6 +188,7 @@ router.post("/login", async(req:Request, res: Response) => {
     const ismatchpassword = await bcrypt.compare(password, user.password)
     if(!ismatchpassword) {
       res.status(400).json({message: "Invalid Credentials"})
+      return;
     }
 
     //generate jwt token after login

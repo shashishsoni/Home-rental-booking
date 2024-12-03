@@ -21,6 +21,7 @@ export const userSlice = createSlice({
             state.token = action.payload.token
         },
         setLogout: (state) => {
+            console.log("Logging out...")
             state.user = null;
             state.token = null
         }

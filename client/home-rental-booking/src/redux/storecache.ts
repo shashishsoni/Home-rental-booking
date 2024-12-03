@@ -42,3 +42,12 @@ export const store = configureStore({
 
 // Create a persistor to persist and rehydrate the store
 export const persistor = persistStore(store);
+
+//listen to store change and purge the change with it
+persistor.subscribe(() => {
+  const state = store.getState();
+  if(state.user.user) {
+    //if user get logout or there is no user, purge the persist state
+    persistor.purge()
+  }
+})
