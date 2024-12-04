@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import home from "../assets/home.png";
 import { Person, Menu } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch,useSelector  } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLogout } from "@/redux/cache";
 import { persistor } from "@/redux/storecache";
+import { RootState } from "@/redux/storecache";
 
 const Navbar: React.FC = () => {
   const [Dropdown, setDropdownMenu] = useState(false);
   //acess user data from reudux store
-  const user = useSelector((state: any) => state.user?.user);
+  const user = useSelector((state: RootState) => state.user?.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,10 +20,22 @@ const Navbar: React.FC = () => {
     : 'http://localhost:3001/public/uploads/default-profile.png';
 
   const handleLogout = async () => {
-    dispatch(setLogout());
-    await persistor.purge();
-    persistor.flush();
-    navigate("/");
+    try {
+      // Dispatch logout action
+      dispatch(setLogout());
+
+      // Purge the persisted data and handle potential errors
+      if (persistor) {
+        await persistor.purge();
+      } else {
+        console.error("Persistor is not initialized.");
+      }
+
+      // Redirect to home after logout
+      navigate("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (
@@ -58,8 +71,8 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-          {/* Right: Dropdown Menu */}
-          <div className="relative">
+      {/* Right: Dropdown Menu */}
+      <div className="relative">
         <div className="flex items-center space-x-4">
           {user ? (
             <a href="/create-listing" className="text-blue-500 hover:text-blue-700">
@@ -89,7 +102,7 @@ const Navbar: React.FC = () => {
 
           {/* Dropdown Items */}
           {Dropdown && (
-            <div className="absolute right-0 mt-80 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+            <div className={`absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg ${user ? 'mt-80' : 'mt-36'}`}>
               <ul className="py-1">
                 {!user ? (
                   <>
@@ -117,13 +130,8 @@ const Navbar: React.FC = () => {
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                       <Link to="/create-listing">Become A Host</Link>
                     </li>
-                    <li
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      <Link 
-                      to="/"
-                      onClick={handleLogout}
-                      >Log Out</Link>
+                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      <Link to="/" onClick={handleLogout}>Log Out</Link>
                     </li>
                   </>
                 )}

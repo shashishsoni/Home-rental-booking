@@ -15,17 +15,17 @@ const App = () => {
     <LoadingWrapper>
       <BrowserRouter>
         <Routes>
-          {/* Redirect to Login if no user is logged in */}
+          {/* Always show HomePage */}
           <Route 
             path="/" 
-            element={userState?.user ? <HomePage /> : <Navigate to="/Login" />} 
+            element={<HomePage />} 
           />
           
           {/* Route for Login */}
-          <Route path="/Login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           
           {/* Route for SignUp */}
-          <Route path="/SignUp" element={<SignUpPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>
@@ -33,3 +33,4 @@ const App = () => {
 };
 
 export default App;
+

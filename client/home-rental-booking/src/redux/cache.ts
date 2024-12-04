@@ -1,8 +1,7 @@
 // cache.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserState } from '../types/types';  // Import UserState from types.ts
+import { UserState } from "../types/types";  // Import UserState from types.ts
 
-// Define initial state
 const initialState: UserState = {
   user: null,
   token: null,
@@ -16,9 +15,19 @@ export const userSlice = createSlice({
     // Action to handle login
     setLogin: (
       state: UserState,
-      action: PayloadAction<{ user: string; token: string; profileImagePath?: string }>
+      action: PayloadAction<{
+        user: {
+          _id: string;
+          firstname: string;
+          lastname: string;
+          Email: string;
+          profileImagePath: string;
+        };
+        token: string;
+        profileImagePath?: string;
+      }>
     ) => {
-      console.log('Logging in with', action.payload);
+      console.log("Logging in with", action.payload);
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.profileImagePath = action.payload.profileImagePath || null;

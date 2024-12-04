@@ -1,5 +1,7 @@
+// storecache.ts
 import { configureStore } from "@reduxjs/toolkit";
-import { UserState } from '../types/types';
+import { UserState } from "../types/types";
+import userReducer from "./cache";
 import {
   persistStore,
   persistReducer,
@@ -15,7 +17,6 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import cache from "../redux/cache";
 
 // Define the root state type
 interface RootState {
@@ -24,8 +25,8 @@ interface RootState {
 
 // Define our custom state structure
 interface CustomState {
-  user?: {
-    user: string | null;
+  user: {
+    user: UserState["user"];
     token: string | null;
     profileImagePath: string | null;
   };
@@ -34,7 +35,7 @@ interface CustomState {
 
 // Combine reducers
 const rootReducer = combineReducers({
-  user: cache,
+  user: userReducer,
 });
 
 // Type-safe migration functions
@@ -74,14 +75,14 @@ const persistConfig: PersistConfig<RootState> = {
     if (!state) {
       return migrations[0](state);
     }
-    
+
     const version = (state as CustomState)?._persist?.version || 0;
     const migrate = migrations[version];
-    
+
     if (migrate) {
       return await migrate(state);
     }
-    
+
     return migrations[0](state);
   },
 };

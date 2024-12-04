@@ -9,7 +9,13 @@ export interface FormDataState {
 }
 
 export interface UserState {
-  user: string | null;
+  user: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    Email: string;
+    profileImagePath: string;
+  } | null;
   token: string | null;
   profileImagePath: string | null;
 }
