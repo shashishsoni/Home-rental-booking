@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { UserState } from '../types/types';
 import {
   persistStore,
   persistReducer,
@@ -8,46 +9,96 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
+  PersistedState,
+  PersistConfig,
+  PersistState
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import cache from "../redux/cache"; // Import your root reducer
+import cache from "../redux/cache";
 
-// Persist configuration
-const persistConfig = {
-  key: "root", // The key under which the persisted state is stored in localStorage
-  version: 1, // Allows versioning to handle migrations
-  storage, // Use localStorage as the default storage
-  whitelist: ['user'],
-};
+// Define the root state type
+interface RootState {
+  user: UserState;
+}
 
+// Define our custom state structure
+interface CustomState {
+  user?: {
+    user: string | null;
+    token: string | null;
+    profileImagePath: string | null;
+  };
+  _persist: PersistState;
+}
+
+// Combine reducers
 const rootReducer = combineReducers({
-  user: cache,  // Here, combine your reducers if you add more in future
+  user: cache,
 });
 
-// Create a persisted reducer by combining the persist config and root reducer
+// Type-safe migration functions
+type MigrationFunction = (state: PersistedState) => Promise<PersistedState>;
+
+const migrations: Record<number, MigrationFunction> = {
+  0: async (_: PersistedState): Promise<PersistedState> => {
+    return {
+      user: {
+        user: null,
+        token: null,
+        profileImagePath: null,
+      },
+      _persist: { version: 0, rehydrated: true }
+    } as PersistedState;
+  },
+  1: async (state: PersistedState): Promise<PersistedState> => {
+    const currentState = state as CustomState;
+    return {
+      user: {
+        user: currentState?.user?.user || null,
+        token: currentState?.user?.token || null,
+        profileImagePath: currentState?.user?.profileImagePath || null,
+      },
+      _persist: { version: 1, rehydrated: true }
+    } as PersistedState;
+  }
+};
+
+// Persist configuration
+const persistConfig: PersistConfig<RootState> = {
+  key: "root",
+  version: 1,
+  storage,
+  whitelist: ["user"],
+  migrate: async (state: PersistedState): Promise<PersistedState> => {
+    if (!state) {
+      return migrations[0](state);
+    }
+    
+    const version = (state as CustomState)?._persist?.version || 0;
+    const migrate = migrations[version];
+    
+    if (migrate) {
+      return await migrate(state);
+    }
+    
+    return migrations[0](state);
+  },
+};
+
+// Create persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Configure and create the Redux store
+// Create Redux store
 export const store = configureStore({
-  reducer: persistedReducer, // Use the persisted reducer
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore actions that redux-persist uses, which are not serializable
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });
 
-// Create a persistor to persist and rehydrate the store
 export const persistor = persistStore(store);
-
-//listen to store change and purge the change with it
-persistor.subscribe(() => {
-  const state = store.getState();
-  if(state.user.user) {
-    //if user get logout or there is no user, purge the persist state
-    persistor.purge()
-  }
-})
+export type { RootState };

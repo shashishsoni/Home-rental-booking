@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import errorHandler from './middleware/errorHandler';
+import compression from 'compression';
+import helmet from 'helmet';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
@@ -21,7 +23,7 @@ const app = express();
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? process.env.FRONTEND_URL 
-    : ['http://localhost:5173'],
+    : 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -32,6 +34,22 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(compression());
+app.use(helmet());
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  next();
+});
+app.use(helmet({
+  contentSecurityPolicy: false,  // Temporarily disable CSP for debugging
+  crossOriginEmbedderPolicy: false  // Disable CORP-related headers temporarily
+}));
+app.use('/public/uploads', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); 
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 // Get the __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);

@@ -1,48 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import home from "../assets/home.png";
 import { Person, Menu } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch,useSelector  } from "react-redux";
 import { setLogout } from "@/redux/cache";
-import { useDispatch } from "react-redux";
 import { persistor } from "@/redux/storecache";
-
-// Define the type for the user state
-interface User {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  Email: string;
-  profileImagePath: string;
-}
 
 const Navbar: React.FC = () => {
   const [Dropdown, setDropdownMenu] = useState(false);
+  //acess user data from reudux store
+  const user = useSelector((state: any) => state.user?.user);
 
-  // Define the user state with the correct type
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    const UserData = localStorage.getItem('user');
-    if (UserData) {
-      setUser(JSON.parse(UserData));
-    }
-  }, []);
-
-  // Construct the profile image URL with a fallback if the image path is not provided
   const profileImageUrl = user?.profileImagePath
     ? `http://localhost:3001/public/uploads/${user.profileImagePath.split('/').pop()}`
-    : 'http://localhost:3001/public/uploads/default-profile.png'; // Fallback image
+    : 'http://localhost:3001/public/uploads/default-profile.png';
 
-  console.log('User:', user);  // Check the user data
-  console.log('Profile Image URL:', profileImageUrl);
-
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(setLogout());
-    persistor.purge();
-    window.location.href = "/";
-  }
+    await persistor.purge();
+    persistor.flush();
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[#f6ecea]">
