@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import home from "../assets/home.png";
+import home from "../assets/home-transformed.png";
 import { Person, Menu } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,27 +39,27 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[#f6ecea]">
+    <nav className="fixed top-0 left-1/2 transform -translate-x-1/2 w-[95%] h-[8%] shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-full mt-4">
       {/* Left: Logo/Image */}
       <div className="flex items-center">
         <img
-          src={home}
+          src={home}// Replace with actual logo path
           alt="Logo"
           className="h-[75px] w-[130px] rounded-full"
         />
       </div>
 
       {/* Center: Glowing Search Bar */}
-      <div className="flex-0 mx-4">
-        <div className="relative w-full">
+      <div className="flex-0 ">
+        <div className="relative w-[130%]">
           <div className="overflow-hidden z-0 rounded-full relative p-2">
-            <form role="form" className="relative flex z-50 bg-white rounded-full">
+            <form role="form" className="relative flex z-50 bg-white rounded-full bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg">
               <input
                 type="text"
-                placeholder="Enter your search here"
-                className="flex-1 h-12 px-4 text-gray-700 placeholder-gray-400 bg-white rounded-l-full focus:outline-none"
+                placeholder="search..."
+                className="flex-1 h-12 px-4 text-gray-950 placeholder-gray-950 bg-white rounded-l-full focus:outline-none bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg "
               />
-              <button className="h-12 px-8 font-semibold text-white bg-indigo-400 rounded-r-full hover:bg-indigo-900 focus:bg-indigo-600 focus:outline-none">
+              <button className="h-12 px-8 font-semibold text-white bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-r-full hover:bg-indigo-300 focus:bg-indigo-300 focus:outline-none">
                 Search
               </button>
             </form>
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
 
           <button
             onClick={() => setDropdownMenu(!Dropdown)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg"
           >
             <Menu />
             {!user ? (
@@ -102,7 +102,7 @@ const Navbar: React.FC = () => {
 
           {/* Dropdown Items */}
           {Dropdown && (
-            <div className={`absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg ${user ? 'mt-80' : 'mt-36'}`}>
+            <div className={`absolute right-0 w-48 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg border border-gray-200 rounded-lg shadow-lg ${user ? 'mt-80' : 'mt-36'}`}>
               <ul className="py-1">
                 {!user ? (
                   <>
