@@ -6,6 +6,22 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
+      animation: {
+        'slide': 'slide 20s linear infinite',
+      },
+      keyframes: {
+        slide: {
+          '0%': {
+            backgroundPosition: '0 0',
+          },
+          '50%': {
+            backgroundPosition: '100% 0',
+          },
+          '100%': {
+            backgroundPosition: '0 0',
+          },
+        },
+      },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
       },

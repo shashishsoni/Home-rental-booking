@@ -107,10 +107,10 @@ const Navbar: React.FC = () => {
                 {!user ? (
                   <>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/signup">Sign Up</Link>
+                      <Link to="/signup" onClick={() => navigate("/signup")}>Sign Up</Link>
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/login">Log In</Link>
+                      <Link to="/login" onClick={() => navigate("/login")}>Log In</Link>
                     </li>
                   </>
                 ) : (
@@ -130,8 +130,8 @@ const Navbar: React.FC = () => {
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                       <Link to="/create-listing">Become A Host</Link>
                     </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/" onClick={handleLogout}>Log Out</Link>
+                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                      <Link to="/">Log Out</Link>
                     </li>
                   </>
                 )}
