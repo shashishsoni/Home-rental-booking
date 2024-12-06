@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
                 placeholder="search..."
                 className="flex-1 h-12 px-4 text-gray-950 placeholder-gray-950 bg-white rounded-l-full focus:outline-none bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg "
               />
-              <button className="h-12 px-8 font-semibold text-white bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-r-full hover:bg-indigo-300 focus:bg-indigo-300 focus:outline-none">
+              <button className="h-12 px-8 font-semibold text-zinc-800 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-r-full hover:bg-indigo-300 focus:bg-indigo-300 focus:outline-none">
                 Search
               </button>
             </form>
