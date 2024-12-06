@@ -45,12 +45,12 @@ const Categories = () => {
       ))}
 
       <div className="relative z-10">
-        <h2 className="text-6xl font-bold text-center mb-6 text-white">
+        <h2 className="text-6xl font-bold text-center mb-6 text-white underline">
           Explore the top categories
         </h2>
         <p className="text-xl mb-8 text-white w-[70%] text-center m-auto">
           A home rental application showcasing "Explore Top Categories" provides users with diverse property options tailored to their preferences. This feature enhances user engagement by categorizing properties into appealing and visually distinct types.
-          <br /><br/>
+          <br /><br />
           For example, "Beachfront" properties offer coastal getaways, while "Countryside" listings promise serene, natural escapes. Adventurous users can opt for "Ski-in/out" or "Caves", while those seeking luxury can explore "Luxury" or "Iconic Cities". Each category includes a high-quality image and a unique description, such as "This property is near a lake!" for "Lakefront", ensuring clarity and engagement.
         </p>
 
@@ -62,16 +62,18 @@ const Categories = () => {
                 const category = categories[categoryIndex + 1];
                 return (
                   <div key={colIndex} className="flex flex-col items-center">
-                    <div className={`${getSizeClass(item.size)} rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-lg hover:shadow-xl transition-shadow`}>
+                    <div className={`relative ${getSizeClass(item.size)} rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-lg hover:shadow-xl cursor-pointer`}>
                       <img
                         src={category.img}
                         alt={category.label}
                         className="w-full h-full object-cover"
                       />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full scale-100 hover:scale-90 transition-all duration-300 ease-in-out">
+                        <p className="text-white text-center text-lg font-medium">
+                          {category.label}
+                        </p>
+                      </div>
                     </div>
-                    <p className="mt-2 text-sm font-medium text-white">
-                      {category.label}
-                    </p>
                   </div>
                 );
               }

@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import LoadingWrapper from "./components/common/LoadingWrapper";
+import CreateListing from "./pages/CreateListing";
 import './App.css';
 
 const App = () => {
@@ -26,6 +27,8 @@ const App = () => {
           
           {/* Route for SignUp */}
           <Route path="/signup" element={<SignUpPage />} />
+
+          <Route path="/create-Listing" element={<CreateListing />} />
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>
