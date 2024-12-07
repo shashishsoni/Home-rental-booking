@@ -8,5 +8,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dnd": "^16.0.1"
+  },
+  "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.8"
+  }
 }
