@@ -238,7 +238,7 @@ const CreateListing = () => {
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className={`flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-[200px] ${photos.length ? "overflow-x-auto space-x-4" : "flex-col space-y-4"
+                        className={`flex items-center shadow-lg justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-[300px] ${photos.length ? "overflow-x-auto space-x-4" : "flex-col space-y-4"
                           }`}
                       >
                         {photos.length < 1 ? (
@@ -269,7 +269,7 @@ const CreateListing = () => {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className="relative flex-shrink-0 w-32 h-32 rounded-lg border border-gray-300 overflow-hidden shadow-sm"
+                                  className="relative flex-shrink-0 w-48 h-48 rounded-lg border border-gray-300 overflow-hidden shadow-sm"
                                 >
                                   <img
                                     src={URL.createObjectURL(photo)}
@@ -295,11 +295,22 @@ const CreateListing = () => {
 
                 {/* Conditionally render upload button */}
                 {photos.length > 0 && (
-                  <div className="mt-4 flex justify-center">
+                  <div className="mt-6 flex justify-center">
                     <label
                       htmlFor="image"
-                      className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                      className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full shadow-lg hover:scale-105 transform transition-all duration-300"
                     >
+                      {/* SVG Icon */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={0}
+                        stroke="none"
+                        className="w-5 h-5"
+                      >
+                        <path d="M12 2a5 5 0 015 5v4h1.586a2 2 0 011.414 3.414l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 015.414 11H7V7a5 5 0 015-5zm3 6V7a3 3 0 10-6 0v1h6z" />
+                      </svg>
                       Upload More Photos
                     </label>
                     <input
@@ -312,6 +323,8 @@ const CreateListing = () => {
                     />
                   </div>
                 )}
+
+
               </div>
 
               {/* Address Inputs */}
