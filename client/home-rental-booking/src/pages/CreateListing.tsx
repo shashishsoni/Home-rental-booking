@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { categories, types, facilities } from '@/data';
 import { RemoveCircleOutline, AddCircleOutline } from '@mui/icons-material';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { IoIosImages } from "react-icons/io"
+
 
 const CreateListing = () => {
+  // ADD UPLOAD , DRAG AND REMOVE PHOTOS
+
+  const [photos, setPhotos] = useState<File[]>([]);
+
+  // Handle file uploads
+  const handleUploadsPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPhotos = Array.from(e.target.files || []); // Convert FileList to an array
+    setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]); // Append new photos to the state
+  };
+
+  // Handle drag and drop reordering
+  const handleDragAndDrop = (result: any) => {
+    if (!result.destination) return; // If dropped outside a valid droppable, do nothing
+    const items = Array.from(photos); // Clone the photos array
+    const [reorderedItem] = items.splice(result.source.index, 1); // Remove dragged item
+    items.splice(result.destination.index, 0, reorderedItem); // Insert it at the new position
+    setPhotos(items); // Update state
+  };
+
+  // Remove a photo
+  const removePhoto = (indexToRemove: number) => {
+    setPhotos((prevPhotos) =>
+      prevPhotos.filter((_, index) => index !== indexToRemove)
+    );
+  };
   return (
     <>
       <Navbar />
@@ -205,20 +232,86 @@ const CreateListing = () => {
                 <h3 className="text-lg font-semibold text-gray-700 mb-4">
                   Add Some Photos of Your Place
                 </h3>
-                <div className="space-y-6">
-                  {types.map((item, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 shadow-lg rounded-lg p-6 flex justify-between items-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105"
-                    >
-                      <div>
-                        <h4 className="text-base md:text-lg font-semibold text-gray-800">{item.name}</h4>
-                        <p className="text-sm text-gray-600">{item.description}</p>
+                <DragDropContext onDragEnd={handleDragAndDrop}>
+                  <Droppable droppableId="photo" direction="horizontal">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className={`flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-[200px] ${photos.length ? "overflow-x-auto space-x-4" : "flex-col space-y-4"
+                          }`}
+                      >
+                        {photos.length < 1 ? (
+                          <>
+                            <input
+                              id="image"
+                              type="file"
+                              style={{ display: "none" }}
+                              accept="image/*"
+                              onChange={handleUploadsPhoto}
+                              multiple
+                            />
+                            <label
+                              htmlFor="image"
+                              className="flex flex-col items-center cursor-pointer text-gray-500 hover:text-gray-700"
+                            >
+                              <div className="text-6xl text-gray-400">
+                                <IoIosImages />
+                              </div>
+                              <p className="mt-2 text-sm">Upload From Your Device</p>
+                            </label>
+                          </>
+                        ) : (
+                          photos.map((photo, index) => (
+                            <Draggable key={index} draggableId={String(index)} index={index}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="relative flex-shrink-0 w-32 h-32 rounded-lg border border-gray-300 overflow-hidden shadow-sm"
+                                >
+                                  <img
+                                    src={URL.createObjectURL(photo)}
+                                    alt={`Uploaded ${index}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <button
+                                    onClick={() => removePhoto(index)}
+                                    className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full p-1 hover:bg-red-600"
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
                       </div>
-                      <div className="text-3xl">{item.icon}</div>
-                    </div>
-                  ))}
-                </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+
+                {/* Conditionally render upload button */}
+                {photos.length > 0 && (
+                  <div className="mt-4 flex justify-center">
+                    <label
+                      htmlFor="image"
+                      className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    >
+                      Upload More Photos
+                    </label>
+                    <input
+                      id="image"
+                      type="file"
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      onChange={handleUploadsPhoto}
+                      multiple
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Address Inputs */}

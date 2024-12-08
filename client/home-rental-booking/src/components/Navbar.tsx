@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-1/2 transform -translate-x-1/2 w-[95%] h-[8%] shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-full mt-4">
+    <nav className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[95%] h-[8%] shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-full mt-4">
       {/* Left: Logo/Image */}
       <div className="flex items-center">
         <img
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
 
           <button
             onClick={() => setDropdownMenu(!Dropdown)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg"
+            className="flex items-center space-x-2 px-4 py-2 border-blue-400 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg"
           >
             <Menu />
             {!user ? (
