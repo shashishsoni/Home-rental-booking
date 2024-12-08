@@ -36,7 +36,7 @@ const CreateListing = () => {
     <>
       <Navbar />
       <div className="w-screen h-full flex flex-col">
-        <div className="bg- w-[80%] flex flex-col p-6 md:px-10 mt-28 m-auto rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px]">
+        <div className="w-[80%] flex flex-col p-6 md:px-10 mt-28 mb-8 rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px] m-auto">
           <h1 className="text-2xl md:text-4xl font-bold text-center text-black py-8 pt-0">
             Publish Your Place
           </h1>
@@ -323,114 +323,68 @@ const CreateListing = () => {
                     />
                   </div>
                 )}
-
-
               </div>
 
-              {/* Address Inputs */}
+              {/* extra information */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Where's Your Place Located?</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">What Make Your Place Attractive And Exciting</h3>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Street Address</label>
+                    <label className="block text-gray-700 font-medium mb-2">Title</label>
                     <input
                       type="text"
-                      placeholder="Street Address"
-                      name="streetaddress"
+                      placeholder="Title"
+                      name="Title"
                       required
                       className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-300 duration-200"
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Apartment, Suite, etc. (If Applicable)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Apartment, Suite, etc."
-                        name="apartment"
-                        className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-300 duration-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">City</label>
-                      <input
-                        type="text"
-                        placeholder="City"
-                        name="city"
-                        required
-                        className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-300 duration-200"
-                      />
-                    </div>
+
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      required
+                      placeholder="Description"
+                      name="Description"
+                      className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-300 duration-200"
+                    />
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">Province</label>
+                      <label className="block text-gray-700 font-medium mb-2 ">HighLight</label>
                       <input
                         type="text"
-                        placeholder="Province"
-                        name="province"
+                        placeholder="HighLight"
+                        name="HighLight"
                         required
-                        className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md  p-3 focus:ring-2 focus:ring-blue-300 duration-200"
+                        className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-300 duration-200"
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-700 font-medium mb-2">Country</label>
-                      <input
-                        type="text"
-                        placeholder="Country"
-                        name="country"
+                      <label className="block text-gray-700 font-medium mb-2">HighLight Details</label>
+                      <textarea
+                        placeholder="HighLight Details"
+                        name="HighLightDetails"
                         required
-                        className="w-full border bg-white border-gray-300 rounded-md shadow-sm p-3 focus:ring-2 focus:ring-blue-300 transition duration-200"
+                        className="shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md h-12  p-3 focus:ring-2 focus:ring-blue-300 duration-200"
                       />
                     </div>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-4 ">Share Some Basics About Your Place</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-40 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">Guest</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">BedRooms</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">Beds</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">BathRooms</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
+                <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-4 ">Now Set Your ₹PRICE</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">₹</span>
+                    <input
+                      name='price'
+                      required
+                      type="text"
+                      placeholder="Enter price"
+                      className="pl-10 shadow-lg hover:shadow-xl transition-shadow w-full border bg-white border-gray-300 rounded-md h-[50px] p-3 focus:ring-2 focus:ring-blue-300 duration-200"
+                    />
                   </div>
                 </div>
               </div>
