@@ -10,7 +10,16 @@ const CreateListing = () => {
   //Create all the Function
   const [category, setCategory] = useState<string>('');
   const [type, setType] = useState<string>('');
-  const [amenities, setAmenities] = useState<string[]>([]);
+  const [amenities, setAmenities] = useState<string[]>([]); // array multiple selection
+
+
+  const handlemenitiesfun = (facility: string) => {
+    if(amenities.includes(facility)) {
+      setAmenities(amenities.filter((Option) => Option !== facility));
+    } else {
+      setAmenities([...amenities, facility]);
+    }
+  }
 
   const [AddressForm, setAddressForm] = useState({
     streetaddress: '',
@@ -80,6 +89,23 @@ const CreateListing = () => {
       prevPhotos.filter((_, index) => index !== indexToRemove)
     );
   };
+
+  // decription and title
+  const [FromDescription, setFromDescription] = useState({
+    Title: '',
+    Description: '',
+    HighLight: '',
+    HighLightDetails: '',
+    price: 0,
+  })
+
+  const handlechangedesp = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFromDescription({
+      ...FromDescription,
+      [name]: value,
+    });
+  }
   return (
     <>
       <Navbar />
@@ -262,7 +288,8 @@ const CreateListing = () => {
                   {facilities.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 shadow-lg rounded-lg p-6 flex flex-col items-center text-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105"
+                      className={`bg-gray-50 shadow-lg rounded-lg p-6 flex flex-col items-center text-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105 ${amenities.includes(item.name) ? "border-4 border-green-500" : ""}`}
+                      onClick={() => handlemenitiesfun(item.name)}
                     >
                       <div className="text-3xl mb-2">{item.icon}</div>
                       <p className="text-gray-700 text-sm">{item.name}</p>
