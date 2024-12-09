@@ -30,6 +30,31 @@ const CreateListing = () => {
     });
   }
 
+  //Increase and deacrease the number of guest,bedroom,bed,bathroom
+    const [items, setItems] = useState([
+      { label: "Guest", value: 1 },
+      { label: "Bedrooms", value: 1 },
+      { label: "Beds", value: 1 },
+      { label: "Bathrooms", value: 1 },
+    ]);
+  
+    const handleIncrease = (index: number) => {
+      setItems((prevItems) =>
+        prevItems.map((item, i) =>
+          i === index ? { ...item, value: item.value + 1 } : item
+        )
+      );
+    };
+  
+    const handleDecrease = (index: number) => {
+      setItems((prevItems) =>
+        prevItems.map((item, i) =>
+          i === index && item.value > 1 ? { ...item, value: item.value - 1 } : item
+        )
+      );
+    };
+
+
   // ADD UPLOAD , DRAG AND REMOVE PHOTOS
 
   const [photos, setPhotos] = useState<File[]>([]);
@@ -194,19 +219,21 @@ const CreateListing = () => {
                   Share Some Basics About Your Place
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[
-                    { label: "Guest", value: 1 },
-                    { label: "Bedrooms", value: 1 },
-                    { label: "Beds", value: 1 },
-                    { label: "Bathrooms", value: 1 },
-                  ].map((item, index) => (
+                  {items.map((item, index) => (
                     <div key={index} className="flex flex-col">
                       <div className="flex items-center border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <p className="text-lg font-medium mb-0 flex-grow">{item.label}</p>
                         <div className="flex items-center space-x-4 flex-grow justify-end">
-                          <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
+                          <RemoveCircleOutline
+                            onClick={() => handleDecrease(index)}
+                            className={`text-gray-600 cursor-pointer hover:text-red-700 ${item.value === 0 && "cursor-not-allowed text-gray-300"
+                              }`}
+                          />
                           <p className="mx-2 text-base font-semibold">{item.value}</p>
-                          <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
+                          <AddCircleOutline
+                            onClick={() => handleIncrease(index)}
+                            className="text-gray-600 cursor-pointer hover:text-green-500"
+                          />
                         </div>
                       </div>
                     </div>
