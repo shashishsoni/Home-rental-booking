@@ -12,6 +12,24 @@ const CreateListing = () => {
   const [type, setType] = useState<string>('');
   const [amenities, setAmenities] = useState<string[]>([]);
 
+  const [AddressForm, setAddressForm] = useState({
+    streetaddress: '',
+    apartment: '',
+    city: '',
+    province: '',
+    country: '',
+  });
+
+  console.log(AddressForm);
+
+  const handlechangedAddr = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAddressForm({
+      ...AddressForm,
+      [name]: value,
+    });
+  }
+
   // ADD UPLOAD , DRAG AND REMOVE PHOTOS
 
   const [photos, setPhotos] = useState<File[]>([]);
@@ -86,10 +104,14 @@ const CreateListing = () => {
                   {types.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 shadow-lg rounded-lg p-6 flex justify-between items-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105"
+                      className={`bg-gray-50 shadow-lg rounded-lg p-6 flex justify-between items-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105 ${type === item.name ? "border-4 border-green-500" : ""
+                        }`}
+                      onClick={() => setType(item.name)}
                     >
                       <div>
-                        <h4 className="text-base md:text-lg font-semibold text-gray-800">{item.name}</h4>
+                        <h4 className="text-base md:text-lg font-semibold text-gray-800">
+                          {item.name}
+                        </h4>
                         <p className="text-sm text-gray-600">{item.description}</p>
                       </div>
                       <div className="text-3xl">{item.icon}</div>
@@ -105,6 +127,8 @@ const CreateListing = () => {
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Street Address</label>
                     <input
+                      value={AddressForm.streetaddress}
+                      onChange={handlechangedAddr}
                       type="text"
                       placeholder="Street Address"
                       name="streetaddress"
@@ -118,6 +142,8 @@ const CreateListing = () => {
                         Apartment, Suite, etc. (If Applicable)
                       </label>
                       <input
+                        value={AddressForm.apartment}
+                        onChange={handlechangedAddr}
                         type="text"
                         placeholder="Apartment, Suite, etc."
                         name="apartment"
@@ -127,6 +153,8 @@ const CreateListing = () => {
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">City</label>
                       <input
+                        value={AddressForm.city}
+                        onChange={handlechangedAddr}
                         type="text"
                         placeholder="City"
                         name="city"
@@ -139,6 +167,8 @@ const CreateListing = () => {
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Province</label>
                       <input
+                        value={AddressForm.province}
+                        onChange={handlechangedAddr}
                         type="text"
                         placeholder="Province"
                         name="province"
@@ -149,6 +179,8 @@ const CreateListing = () => {
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Country</label>
                       <input
+                        value={AddressForm.country}
+                        onChange={handlechangedAddr}
                         type="text"
                         placeholder="Country"
                         name="country"
@@ -158,51 +190,27 @@ const CreateListing = () => {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-4 ">Share Some Basics About Your Place</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-40 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">Guest</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
+                <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-4">
+                  Share Some Basics About Your Place
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[
+                    { label: "Guest", value: 1 },
+                    { label: "Bedrooms", value: 1 },
+                    { label: "Beds", value: 1 },
+                    { label: "Bathrooms", value: 1 },
+                  ].map((item, index) => (
+                    <div key={index} className="flex flex-col">
+                      <div className="flex items-center border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <p className="text-lg font-medium mb-0 flex-grow">{item.label}</p>
+                        <div className="flex items-center space-x-4 flex-grow justify-end">
+                          <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
+                          <p className="mx-2 text-base font-semibold">{item.value}</p>
+                          <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">BedRooms</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">Beds</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div className="flex items-center space-x-36 border bg-white border-gray-300 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <p className="text-lg font-medium mb-0 w-1/3">BathRooms</p>
-                      <div className="flex items-center space-x-2 w-1/3 justify-center">
-                        <RemoveCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                        <p className="mx-2">1</p>
-                        <AddCircleOutline className="text-gray-600 cursor-pointer hover:text-gray-800" />
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </form>
