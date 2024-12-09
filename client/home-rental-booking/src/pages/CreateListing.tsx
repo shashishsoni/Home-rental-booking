@@ -7,6 +7,11 @@ import { IoIosImages } from "react-icons/io"
 
 
 const CreateListing = () => {
+  //Create all the Function
+  const [category, setCategory] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [amenities, setAmenities] = useState<string[]>([]);
+
   // ADD UPLOAD , DRAG AND REMOVE PHOTOS
 
   const [photos, setPhotos] = useState<File[]>([]);
@@ -59,9 +64,13 @@ const CreateListing = () => {
                   {categories.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 shadow-lg rounded-lg p-6 flex flex-col items-center text-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105"
+                      className={`bg-gray-50 shadow-lg rounded-lg p-6 flex flex-col items-center text-center cursor-pointer transform transition duration-200 hover:bg-gray-200 hover:scale-105 ${category === item.label ? "border-4 border-green-500" : ""
+                        }`}
+                      onClick={() => setCategory(item.label)}
                     >
-                      <div className="text-3xl mb-2">{typeof item.icon === 'function' ? item.icon() : item.icon}</div>
+                      <div className="text-3xl mb-2">
+                        {typeof item.icon === "function" ? item.icon() : item.icon}
+                      </div>
                       <p className="text-gray-700 text-sm">{item.label}</p>
                     </div>
                   ))}
