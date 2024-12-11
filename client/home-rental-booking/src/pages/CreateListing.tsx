@@ -14,7 +14,7 @@ const CreateListing = () => {
 
 
   const handlemenitiesfun = (facility: string) => {
-    if(amenities.includes(facility)) {
+    if (amenities.includes(facility)) {
       setAmenities(amenities.filter((Option) => Option !== facility));
     } else {
       setAmenities([...amenities, facility]);
@@ -40,28 +40,28 @@ const CreateListing = () => {
   }
 
   //Increase and deacrease the number of guest,bedroom,bed,bathroom
-    const [items, setItems] = useState([
-      { label: "Guest", value: 1 },
-      { label: "Bedrooms", value: 1 },
-      { label: "Beds", value: 1 },
-      { label: "Bathrooms", value: 1 },
-    ]);
-  
-    const handleIncrease = (index: number) => {
-      setItems((prevItems) =>
-        prevItems.map((item, i) =>
-          i === index ? { ...item, value: item.value + 1 } : item
-        )
-      );
-    };
-  
-    const handleDecrease = (index: number) => {
-      setItems((prevItems) =>
-        prevItems.map((item, i) =>
-          i === index && item.value > 1 ? { ...item, value: item.value - 1 } : item
-        )
-      );
-    };
+  const [items, setItems] = useState([
+    { label: "Guest", value: 1 },
+    { label: "Bedrooms", value: 1 },
+    { label: "Beds", value: 1 },
+    { label: "Bathrooms", value: 1 },
+  ]);
+
+  const handleIncrease = (index: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item, i) =>
+        i === index ? { ...item, value: item.value + 1 } : item
+      )
+    );
+  };
+
+  const handleDecrease = (index: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item, i) =>
+        i === index && item.value > 1 ? { ...item, value: item.value - 1 } : item
+      )
+    );
+  };
 
 
   // ADD UPLOAD , DRAG AND REMOVE PHOTOS
@@ -99,13 +99,15 @@ const CreateListing = () => {
     price: 0,
   })
 
-  const handlechangedesp = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlechangedesp = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFromDescription({
       ...FromDescription,
       [name]: value,
     });
   }
+
+  console.log(FromDescription);
   return (
     <>
       <Navbar />
@@ -403,6 +405,8 @@ const CreateListing = () => {
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Title</label>
                     <input
+                      value={FromDescription.Title}
+                      onChange={handlechangedesp}
                       type="text"
                       placeholder="Title"
                       name="Title"
@@ -416,6 +420,8 @@ const CreateListing = () => {
                       Description
                     </label>
                     <textarea
+                      value={FromDescription.Description}
+                      onChange={handlechangedesp}
                       required
                       placeholder="Description"
                       name="Description"
@@ -427,6 +433,8 @@ const CreateListing = () => {
                     <div>
                       <label className="block text-gray-700 font-medium mb-2 ">HighLight</label>
                       <input
+                        value={FromDescription.HighLight}
+                        onChange={handlechangedesp}
                         type="text"
                         placeholder="HighLight"
                         name="HighLight"
@@ -437,6 +445,8 @@ const CreateListing = () => {
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">HighLight Details</label>
                       <textarea
+                        value={FromDescription.HighLightDetails}
+                        onChange={handlechangedesp}
                         placeholder="HighLight Details"
                         name="HighLightDetails"
                         required
@@ -450,6 +460,8 @@ const CreateListing = () => {
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">₹</span>
                     <input
+                      value={FromDescription.price}
+                      onChange={handlechangedesp}
                       name='price'
                       required
                       type="text"
