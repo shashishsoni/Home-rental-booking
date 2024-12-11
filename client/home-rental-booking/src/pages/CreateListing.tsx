@@ -4,6 +4,7 @@ import { categories, types, facilities } from '@/data';
 import { RemoveCircleOutline, AddCircleOutline } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { IoIosImages } from "react-icons/io"
+import { useSelector } from 'react-redux';
 
 
 const CreateListing = () => {
@@ -107,7 +108,8 @@ const CreateListing = () => {
     });
   }
 
-  console.log(FromDescription);
+  const  CreatorID  = useSelector((state: any) => state.auth.user._id);
+  const handle
   return (
     <>
       <Navbar />
@@ -473,6 +475,7 @@ const CreateListing = () => {
               </div>
             </form>
           </div>
+          <button className=''>Create Your Listing</button>
         </div>
       </div>
     </>
