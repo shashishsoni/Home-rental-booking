@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import listingRoutes from './routes/listingapi';
 import errorHandler from './middleware/errorHandler';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -80,7 +81,7 @@ app.options('*', cors(corsOptions));
 
 // Routes
 app.use('/auth', authRoutes);
-
+app.use('/listing', listingRoutes);
 // CORS Error Handler
 const corsErrorHandler: ErrorRequestHandler = (err: CustomError, req: Request, res: Response, next: NextFunction): void => {
   if (err.name === 'CORSError') {

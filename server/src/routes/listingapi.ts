@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import e, { Router, Request, Response } from 'express';
 import multer from 'multer';
 import { Listing } from '../models/Listing';
 import { User } from '../models/user';
@@ -81,5 +81,26 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
         res.status(201).json({ message: 'Listing created successfully' });
     } catch (err) {
         res.status(500).json({ message: 'Listing not created', error: (err as Error).message });
+        console.log(err);
     }
 });
+
+// get listing on frontend through api
+router.get("/", async (req: Request, res: Response): Promise<void> => {
+    const qCategory = req.query.category;
+    try {
+        let listings;
+        if(qCategory){
+            listings = await Listing.find({category: qCategory}).populate('Creator');
+        } else {
+            listings = await Listing.find();
+        }
+
+        res.status(200).json({ listings });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch Listing', error: (err as Error).message });
+        console.log(err);
+    }
+});
+
+export default router;
