@@ -46,6 +46,7 @@ import { AiFillCar } from "react-icons/ai";
 
 export const categories = [
   {
+    img: "src/assets/all.jpg",
     label: "All",
     icon: <BiWorld />,
   },
@@ -62,19 +63,19 @@ export const categories = [
     description: "This property is has windmills!",
   },
   {
-    img: "assets/modern_cat.webp",
+    img: "src/assets/iconcity.jpg",
     label: "Iconic cities",
     icon: () => <MdOutlineVilla />,
     description: "This property is modern!",
   },
   {
-    img: "assets/countryside_cat.webp",
+    img: "src/assets/countryside.webp",
     label: "Countryside",
     icon: () => <TbMountain />,
     description: "This property is in the countryside!",
   },
   {
-    img: "assets/pool_cat.jpg",
+    img: "src/assets/pool.jpg",
     label: "Amazing Pools",
     icon: () => <TbPool />,
     description: "This is property has a beautiful pool!",
@@ -122,19 +123,19 @@ export const categories = [
     description: "This property is in arctic environment!",
   },
   {
-    img: "assets/desert_cat.webp",
+    img: "src/assets/derset.avif",
     label: "Desert",
     icon: () => <GiCactus />,
     description: "This property is in the desert!",
   },
   {
-    img: "assets/barn_cat.jpg",
+    img: "src/assets/barn.webp",
     label: "Barns",
     icon: () => <GiBarn />,
     description: "This property is in a barn!",
   },
   {
-    img: "assets/lux_cat.jpg",
+    img: "src/assets/luxury.webp",
     label: "Luxury",
     icon: () => <IoDiamond />,
     description: "This property is brand new and luxurious!",

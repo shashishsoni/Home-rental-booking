@@ -18,4 +18,13 @@ export interface UserState {
   } | null;
   token: string | null;
   profileImagePath: string | null;
+  listings: Listing[];
+}
+
+export interface Listing {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  images: string[];
 }

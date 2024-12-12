@@ -129,25 +129,25 @@ const CreateListing = () => {
       formData.append("city", AddressForm.city);
       formData.append("province", AddressForm.province);
       formData.append("country", AddressForm.country);
-      
+
       // Convert numeric values from items array
       formData.append("guest", String(items[0].value));  // Guest
       formData.append("bedroom", String(items[1].value)); // Bedrooms
       formData.append("bathroom", String(items[3].value)); // Bathrooms
-      
+
       // Add amenities as an array
       amenities.forEach((facility) => formData.append("amenities", facility));
-      
+
       // Add photos with the correct field name
       photos.forEach((photo) => formData.append("listingImages", photo));
-      
+
       // Add description and other fields
       formData.append("title", FromDescription.Title);
       formData.append("description", FromDescription.Description);
       formData.append("Highlights", FromDescription.HighLight);
       formData.append("Highlightdescription", FromDescription.HighLightDetails);
       formData.append("price", String(FromDescription.price));
-  
+
       // Debug: log the FormData entries
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
@@ -522,8 +522,19 @@ const CreateListing = () => {
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">₹</span>
                     <input
                       value={FromDescription.price}
-                      onChange={handlechangedesp}
-                      name='price'
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Allow only numbers and handle leading zero logic
+                        if (/^\d*$/.test(value)) {
+                          setFromDescription((prev) => ({
+                            ...prev,
+                            price: value.startsWith('0') && value.length > 1
+                              ? parseInt(value.slice(1), 10)
+                              : parseInt(value, 10) || 0, // Convert string to number
+                          }));
+                        }
+                      }}
+                      name="price"
                       required
                       type="text"
                       placeholder="Enter price"
