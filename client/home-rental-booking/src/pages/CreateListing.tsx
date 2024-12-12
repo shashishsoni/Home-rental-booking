@@ -5,10 +5,12 @@ import { RemoveCircleOutline, AddCircleOutline } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { IoIosImages } from "react-icons/io"
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 const CreateListing = () => {
   //Create all the Function
+  const navigate = useNavigate();
   const [category, setCategory] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [amenities, setAmenities] = useState<string[]>([]); // array multiple selection
@@ -108,8 +110,65 @@ const CreateListing = () => {
     });
   }
 
-  const  CreatorID  = useSelector((state: any) => state.auth.user._id);
-  const handle
+  const creatorId = useSelector((state: any) => state.user?.user?._id || null);
+  if (!creatorId) {
+    console.error("Creator ID is missing");
+  }
+  const handlepost = async (e: any) => {
+    e.preventDefault(); // Fixed typo here
+
+    try {
+      const formData = new FormData();
+
+      // Append form data
+      formData.append("Creator", creatorId);
+      formData.append("category", category);
+      formData.append("type", type);
+      formData.append("streetaddress", AddressForm.streetaddress);
+      formData.append("apartment", AddressForm.apartment);
+      formData.append("city", AddressForm.city);
+      formData.append("province", AddressForm.province);
+      formData.append("country", AddressForm.country);
+      
+      // Convert numeric values from items array
+      formData.append("guest", String(items[0].value));  // Guest
+      formData.append("bedroom", String(items[1].value)); // Bedrooms
+      formData.append("bathroom", String(items[3].value)); // Bathrooms
+      
+      // Add amenities as an array
+      amenities.forEach((facility) => formData.append("amenities", facility));
+      
+      // Add photos with the correct field name
+      photos.forEach((photo) => formData.append("listingImages", photo));
+      
+      // Add description and other fields
+      formData.append("title", FromDescription.Title);
+      formData.append("description", FromDescription.Description);
+      formData.append("Highlights", FromDescription.HighLight);
+      formData.append("Highlightdescription", FromDescription.HighLightDetails);
+      formData.append("price", String(FromDescription.price));
+  
+      // Debug: log the FormData entries
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      // Send the post request to the server
+      const response = await fetch("http://localhost:3001/listing/create", {
+        method: "POST",
+        body: formData,
+      });
+
+      // Check response and navigate
+      if (response.ok) {
+        navigate("/"); // Assuming `navigate` is defined properly
+      } else {
+        console.error("Failed to publish listing:", response.statusText);
+      }
+    } catch (err) {
+      console.error("Error while publishing the listing:", (err as any).message);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -119,7 +178,7 @@ const CreateListing = () => {
             Publish Your Place
           </h1>
           <div className="flex-grow">
-            <form className="flex flex-col bg-[#F6ECEA] shadow-2xl rounded-lg p-6 md:p-8 lg:p-10 space-y-8 max-w-6xl mx-auto border-white border-[3px]">
+            <form className="flex flex-col bg-[#F6ECEA] shadow-2xl rounded-lg p-6 md:p-8 lg:p-10 space-y-8 max-w-6xl mx-auto border-white border-[3px]" onSubmit={handlepost}>
               {/* Step 1 */}
               <div>
                 <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
@@ -274,7 +333,7 @@ const CreateListing = () => {
           </div>
 
           <div className="flex-grow">
-            <form className="flex flex-col bg-[#F6ECEA] shadow-2xl rounded-lg p-6 md:p-8 lg:p-10 space-y-8 max-w-6xl mx-auto border-white border-[3px] mt-7">
+            <form className="flex flex-col bg-[#F6ECEA] shadow-2xl rounded-lg p-6 md:p-8 lg:p-10 space-y-8 max-w-6xl mx-auto border-white border-[3px] mt-7" onSubmit={handlepost}>
               {/* Step 2 */}
               <div>
                 <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
@@ -475,7 +534,12 @@ const CreateListing = () => {
               </div>
             </form>
           </div>
-          <button className=''>Create Your Listing</button>
+          <button
+            className="m-auto mt-6 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            onClick={handlepost}
+          >
+            Create Your Listing
+          </button>
         </div>
       </div>
     </>

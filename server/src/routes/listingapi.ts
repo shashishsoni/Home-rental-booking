@@ -2,19 +2,49 @@ import e, { Router, Request, Response } from 'express';
 import multer from 'multer';
 import { Listing } from '../models/Listing';
 import { User } from '../models/user';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+
 
 // Configure multer
 const router = Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create public/uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer to store in public/uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        // Add timestamp to prevent filename conflicts
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `listing-${uniqueSuffix}${path.extname(file.originalname)}`);
+    }
+});
+
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only .png, .jpg and .gif formats are allowed!'));
+        }
     },
 });
 
-const upload = multer({ storage });
 
 // Creating listing
 router.post('/create', upload.array('listingImages'), async (req: Request, res: Response): Promise<void> => {
@@ -45,7 +75,10 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             return;
         }
 
-        const listingimagepath = listingImages.map((file) => file.path);
+        const listingimagepath = listingImages.map(file => 
+            `/public/uploads/${path.basename(file.path)}`
+        );
+
 
         // Retrieve user details to get `firstname`
         const user = await User.findById(Creator);
@@ -56,7 +89,7 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
 
         const newlisting = new Listing({
             Creator,
-            firstname: user.firstname, 
+            firstname: user.firstname,
             category,
             type,
             streetaddress,
@@ -90,8 +123,8 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
     const qCategory = req.query.category;
     try {
         let listings;
-        if(qCategory){
-            listings = await Listing.find({category: qCategory}).populate('Creator');
+        if (qCategory) {
+            listings = await Listing.find({ category: qCategory }).populate('Creator');
         } else {
             listings = await Listing.find();
         }

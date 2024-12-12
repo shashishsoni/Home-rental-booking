@@ -43,7 +43,7 @@ const listingSchema = new mongoose.Schema({
         required: true
     },
     listingImages: {
-        type: String,
+        type: [String],
         required: true
     },
     title: {
