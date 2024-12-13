@@ -1,8 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { categories } from "../data";
+import listingcard from "./listingcard";
+import loader from "./loader";
+import { useDispatch, useSelector } from "react-redux";
+import { setListings } from "@/redux/cache";
+import { RootState } from "../redux/storecache";
 
 const Listings = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+
+  const [slectedCategory, setSelectedCategory] = useState("All");
+
+  const listings = useSelector((state: RootState) => state.user.listings);
+console.log("Listings from Redux store:", listings);
+
   const [searchTerm, setSearchTerm] = useState("");
+
+  const getFeedlisting = async () => {
+    try {
+      const response = await fetch(
+        slectedCategory !== "All"
+          ? `http://localhost:3001/listing?category=${slectedCategory}`
+          : "http://localhost:3001/listing",
+        {
+          method: "GET",
+          credentials: 'include',
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json(); 
+      dispatch(setListings(data.listings));
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch listings:", error);
+      // Optionally handle errors in the UI
+    }
+  };
+
+  useEffect(() => {
+    getFeedlisting();
+  }, [slectedCategory]);
 
   const filteredCategories = categories.filter((category) =>
     category.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -35,6 +77,7 @@ const Listings = () => {
             <div
               key={index}
               className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-6 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+              onClick={() => setSelectedCategory(Category.label)}  
             >
               {Category.img ? (
                 <img
@@ -65,4 +108,3 @@ const Listings = () => {
 };
 
 export default Listings;
-
