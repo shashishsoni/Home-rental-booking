@@ -110,6 +110,16 @@ const CreateListing = () => {
     });
   }
 
+  const handleCategorySelect = (selectedCategory: string) => {
+    setCategory(selectedCategory);
+    console.log('Selected Category:', selectedCategory);
+  };
+  
+  const handleTypeSelect = (selectedType: string) => {
+    setType(selectedType);
+    console.log('Selected Type:', selectedType);
+  };
+
   const creatorId = useSelector((state: any) => state.user?.user?._id || null);
   if (!creatorId) {
     console.error("Creator ID is missing");
@@ -198,7 +208,7 @@ const CreateListing = () => {
                       key={index}
                       className={`bg-gray-50 shadow-lg rounded-lg p-6 flex flex-col items-center text-center cursor-pointer transform transition duration-200 hover:bg-gray-200 hover:scale-105 ${category === item.label ? "border-4 border-green-500" : ""
                         }`}
-                      onClick={() => setCategory(item.label)}
+                        onClick={() => handleCategorySelect(item.label)}
                     >
                       <div className="text-3xl mb-2">
                         {typeof item.icon === "function" ? item.icon() : item.icon}
@@ -220,7 +230,7 @@ const CreateListing = () => {
                       key={index}
                       className={`bg-gray-50 shadow-lg rounded-lg p-6 flex justify-between items-center hover:bg-gray-200 transition duration-200 cursor-pointer transform hover:scale-105 ${type === item.name ? "border-4 border-green-500" : ""
                         }`}
-                      onClick={() => setType(item.name)}
+                        onClick={() => handleTypeSelect(item.name)}
                     >
                       <div>
                         <h4 className="text-base md:text-lg font-semibold text-gray-800">

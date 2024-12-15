@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListingCardProps } from '../types/types';
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -12,23 +12,27 @@ const ListingCard: React.FC<ListingCardProps> = ({
   type,
   price,
 }) => {
-  console.log("Props in ListingCard:", {
-    listingId,
-    creator,
-    ListingPhotoPaths,
-    city,
-    province,
-    country,
-    category,
-    type,
-    price,
-  });
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto-slide functionality
+  useEffect(() => {
+    if (ListingPhotoPaths.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % ListingPhotoPaths.length);
+      }, 3000); // Change slide every 3 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [ListingPhotoPaths]);
 
   return (
-    <div className="relative bg-white shadow-lg rounded-lg overflow-hidden max-w-sm mx-auto">
+    <div className="relative bg-white shadow-lg rounded-lg overflow-hidden max-w-sm mx-auto mt-6">
       {/* Slider */}
       <div className="relative h-48 overflow-hidden">
-        <div className="slider flex transition-transform duration-500 ease-in-out">
+        <div
+          className="slider flex transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
           {ListingPhotoPaths.length > 0 ? (
             ListingPhotoPaths.map((photo, index) => (
               <div
@@ -55,7 +59,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
             ListingPhotoPaths.map((_, index) => (
               <button
                 key={index}
-                className="w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-500 transition-all duration-300"
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'bg-gray-800' : 'bg-gray-300'
+                }`}
+                onClick={() => setCurrentIndex(index)}
               ></button>
             ))}
         </div>
@@ -63,7 +70,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
       {/* Content */}
       <div className="p-4">
-        {/* Display category with a fallback */}
         <h3 className="text-xl font-semibold text-gray-800 bg-yellow-200">
           {category || "Miscellaneous"}
         </h3>

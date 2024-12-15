@@ -69,6 +69,11 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             price,
         } = req.body;
 
+        console.log('Received listing data:', {
+            category,
+            type,
+            // other fields
+        });
         const listingImages = req.files as Express.Multer.File[];
         if (!listingImages) {
             res.status(404).json({ message: 'File not uploaded' });

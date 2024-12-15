@@ -6,6 +6,14 @@ const listingSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
+    category: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: String,
+        required: true
+    },
     streetaddress: {
         type: String,
         required: true
