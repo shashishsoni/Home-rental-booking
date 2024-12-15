@@ -39,7 +39,6 @@ export const userSlice = createSlice({
       state.user = null;
       state.token = null;
       state.profileImagePath = null;
-      state.listings = [];
     },
     setListings: (state, action: PayloadAction<Listing[]>) => {
       state.listings = action.payload;  // Directly assign the listings array

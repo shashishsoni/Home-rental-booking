@@ -10,13 +10,10 @@ import { Listing } from "@/types/types";
 const Listings = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-
   const [slectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const listings = useSelector((state: RootState) => state.user.listings);
-  console.log("Listings from Redux store:", listings);
-
-  const [searchTerm, setSearchTerm] = useState("");
 
   const getFeedlisting = async () => {
     try {
@@ -26,7 +23,7 @@ const Listings = () => {
           : "http://localhost:3001/listing",
         {
           method: "GET",
-          credentials: "include",
+          credentials: "include", // Keep this for potential session management
         }
       );
 
@@ -35,14 +32,13 @@ const Listings = () => {
       }
 
       const data = await response.json();
-      console.log("API Response:", data);
 
       // Sanitize data before updating Redux store
       const sanitizedListings = data.listings.map((listing: any) => ({
         _id: listing._id,
         creator: listing.Creator
           ? `${listing.Creator.firstname} ${listing.Creator.lastname}`
-          : "Unknown", // Build creator name or use fallback
+          : "Unknown",
         title: listing.title || "Untitled",
         description: listing.description || "No description provided.",
         price: listing.price || 0,
@@ -53,12 +49,12 @@ const Listings = () => {
         category: listing.category || "Miscellaneous",
         type: listing.type || "N/A",
       }));
-  
+
       dispatch(setListings(sanitizedListings));
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch listings:", error);
-      // Optionally handle errors in the UI
+      setLoading(false);
     }
   };
 
@@ -77,11 +73,13 @@ const Listings = () => {
         <div className="absolute w-96 h-96 bg-blue-500 rounded-full opacity-30 blur-3xl animate-pulse top-10 left-20"></div>
         <div className="absolute w-80 h-80 bg-pink-500 rounded-full opacity-30 blur-3xl animate-pulse animation-delay-2000 bottom-10 right-20"></div>
       </div>
+      
       {/* Content */}
       <div className="relative z-10 p-6 w-full max-w-6xl flex flex-col items-center m-10">
         <h3 className="text-white font-serif text-2xl m-4 underline decoration-blue-500 decoration-2">
           Filter Your Choice
         </h3>
+        
         {/* Search Bar */}
         <div className="mb-6 w-full max-w-3xl">
           <input
@@ -134,10 +132,11 @@ const Listings = () => {
         )}
 
         {/* Listings */}
+        <h1 className="text-2xl text-white font-bold my-6">Listings</h1>
         {loading ? (
           <Loader />
         ) : (
-          <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {listings && listings.length > 0 ? (
               listings.map((listing: Listing) => (
                 <ListingCard
@@ -147,7 +146,7 @@ const Listings = () => {
                 />
               ))
             ) : (
-              <p className="text-gray-400 mt-10">No listings found.</p>
+              <p className="text-white">No listings available.</p>
             )}
           </div>
         )}
