@@ -108,7 +108,7 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             Highlightdescription,
             price,
         });
-
+    
         await newlisting.save();
 
         res.status(201).json({ message: 'Listing created successfully' });
@@ -126,7 +126,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         if (qCategory) {
             listings = await Listing.find({ category: qCategory }).populate('Creator');
         } else {
-            listings = await Listing.find();
+            listings = await Listing.find().populate('Creator');
         }
 
         res.status(200).json({ listings });

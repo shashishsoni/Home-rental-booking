@@ -31,3 +31,18 @@ export interface IUser {
     Highlightdescription: string;
     price: number;
   }
+
+  export interface Listing {
+    _id: string;
+    creator: string;
+    title: string;
+    description: string;
+    price: number;
+    images: string[];         
+    ListingPhotoPaths: string[]; 
+    city: string;               
+    province: string;           
+    country: string;            
+    category: string;           
+    type: string; 
+  }

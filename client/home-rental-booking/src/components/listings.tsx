@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { categories } from "../data";
-import listingcard from "./listingcard";
-import loader from "./loader";
+import ListingCard from "./listingcard";
+import Loader from "./loader";
 import { useDispatch, useSelector } from "react-redux";
 import { setListings } from "@/redux/cache";
 import { RootState } from "../redux/storecache";
+import { Listing } from "@/types/types";
 
 const Listings = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Listings = () => {
   const [slectedCategory, setSelectedCategory] = useState("All");
 
   const listings = useSelector((state: RootState) => state.user.listings);
-console.log("Listings from Redux store:", listings);
+  console.log("Listings from Redux store:", listings);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -25,16 +26,35 @@ console.log("Listings from Redux store:", listings);
           : "http://localhost:3001/listing",
         {
           method: "GET",
-          credentials: 'include',
+          credentials: "include",
         }
       );
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      // Sanitize data before updating Redux store
+      const sanitizedListings = data.listings.map((listing: any) => ({
+        _id: listing._id,
+        creator: listing.Creator
+          ? `${listing.Creator.firstname} ${listing.Creator.lastname}`
+          : "Unknown", // Build creator name or use fallback
+        title: listing.title || "Untitled",
+        description: listing.description || "No description provided.",
+        price: listing.price || 0,
+        ListingPhotoPaths: listing.listingImages || [],
+        city: listing.city || "Unknown city",
+        province: listing.province || "Unknown province",
+        country: listing.country || "Unknown country",
+        category: listing.category || "Miscellaneous",
+        type: listing.type || "N/A",
+      }));
   
-      const data = await response.json(); 
-      dispatch(setListings(data.listings));
+      dispatch(setListings(sanitizedListings));
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch listings:", error);
@@ -59,7 +79,9 @@ console.log("Listings from Redux store:", listings);
       </div>
       {/* Content */}
       <div className="relative z-10 p-6 w-full max-w-6xl flex flex-col items-center m-10">
-      <h3 className="text-white font-serif text-2xl m-4 underline decoration-blue-500 decoration-2">Filter Your Choice</h3>
+        <h3 className="text-white font-serif text-2xl m-4 underline decoration-blue-500 decoration-2">
+          Filter Your Choice
+        </h3>
         {/* Search Bar */}
         <div className="mb-6 w-full max-w-3xl">
           <input
@@ -77,7 +99,7 @@ console.log("Listings from Redux store:", listings);
             <div
               key={index}
               className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-6 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
-              onClick={() => setSelectedCategory(Category.label)}  
+              onClick={() => setSelectedCategory(Category.label)}
             >
               {Category.img ? (
                 <img
@@ -87,12 +109,20 @@ console.log("Listings from Redux store:", listings);
                 />
               ) : (
                 <div className="text-5xl text-blue-500 mb-4">
-                  {typeof Category.icon === "function" ? <Category.icon /> : Category.icon}
+                  {typeof Category.icon === "function" ? (
+                    <Category.icon />
+                  ) : (
+                    Category.icon
+                  )}
                 </div>
               )}
-              <p className="text-gray-700 font-semibold text-lg">{Category.label}</p>
+              <p className="text-gray-700 font-semibold text-lg">
+                {Category.label}
+              </p>
               {Category.description && (
-                <p className="text-gray-500 text-sm mt-2">{Category.description}</p>
+                <p className="text-gray-500 text-sm mt-2">
+                  {Category.description}
+                </p>
               )}
             </div>
           ))}
@@ -101,6 +131,25 @@ console.log("Listings from Redux store:", listings);
         {/* No Results Found */}
         {filteredCategories.length === 0 && (
           <p className="text-gray-400 mt-10">No categories found.</p>
+        )}
+
+        {/* Listings */}
+        {loading ? (
+          <Loader />
+        ) : (
+          <div>
+            {listings && listings.length > 0 ? (
+              listings.map((listing: Listing) => (
+                <ListingCard
+                  key={listing._id}
+                  listingId={listing._id}
+                  {...listing}
+                />
+              ))
+            ) : (
+              <p className="text-gray-400 mt-10">No listings found.</p>
+            )}
+          </div>
         )}
       </div>
     </div>

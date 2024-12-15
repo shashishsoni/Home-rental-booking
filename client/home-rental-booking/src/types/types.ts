@@ -22,9 +22,28 @@ export interface UserState {
 }
 
 export interface Listing {
-  id: string;
+  _id: string;
+  creator: string;
   title: string;
   description: string;
   price: number;
-  images: string[];
+  images: string[];         
+  ListingPhotoPaths: string[]; 
+  city: string;               
+  province: string;           
+  country: string;            
+  category: string;           
+  type: string; 
+}
+
+export interface ListingCardProps {
+  listingId: string;
+  creator: string;
+  ListingPhotoPaths: string[];
+  city: string;
+  province?: string; 
+  country: string;
+  category: string;
+  type: string;
+  price: number;
 }

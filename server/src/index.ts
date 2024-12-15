@@ -46,18 +46,18 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false  // Disable CORP-related headers temporarily
 }));
 app.use('/public/uploads', (req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Allow cross-origin access
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // Ensure resources are only used by cross-origin embeds
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow any origin, or specify the frontend origin
   next();
 });
 
+
 // Get the __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Static file serving
-app.use('/public/uploads', express.static(path.join(__dirname, '/public/uploads')));
+app.use('/public/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 console.log('Static files served from:', path.join(__dirname, 'uploads'));
 
 
