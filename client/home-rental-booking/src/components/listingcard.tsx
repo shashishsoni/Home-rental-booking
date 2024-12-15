@@ -26,11 +26,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
   }, [ListingPhotoPaths]);
 
   return (
-    <div className="relative bg-white shadow-lg rounded-lg overflow-hidden max-w-sm mx-auto mt-6">
+    <div className="relative bg-white shadow-lg rounded-lg rounded-t-full overflow-hidden max-w-sm mx-auto mt-28">
       {/* Slider */}
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-96 w-80 overflow-hidden">
         <div
-          className="slider flex transition-transform duration-500 ease-in-out"
+          className="slider flex transition-transform duration-500 ease-in-out "
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {ListingPhotoPaths.length > 0 ? (
@@ -42,7 +42,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   backgroundImage: `url(http://localhost:3001${photo})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  height: '200px',
+                  height: '500px',
                 }}
               ></div>
             ))
