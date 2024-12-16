@@ -1,5 +1,6 @@
 import mongoose, { model, Schema } from "mongoose";
 
+// Listing schema definition
 const listingSchema = new mongoose.Schema(
   {
     Creator: {
@@ -72,7 +73,7 @@ const listingSchema = new mongoose.Schema(
       required: true,
     },
     price: {
-      type: Schema.Types.Decimal128,
+      type: Number,
       required: true,
     },
   },

@@ -27,7 +27,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   }, [ListingPhotoPaths]);
 
   return (
-    <div className="relative w-[400px] mt-6 bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-200">
+    <div className="flex flex-col mt-8 w-[400px] h-full bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-200">
       {/* Image Slider with Overlay */}
       <div className="relative h-[300px] group">
         {ListingPhotoPaths.length > 0 ? (
@@ -82,7 +82,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-5 space-y-4">
+      <div className="p-5 space-y-4 flex-grow">
         <div className="flex justify-between items-start">
           <div className="space-y-2">
             <div className="flex items-center space-x-2">

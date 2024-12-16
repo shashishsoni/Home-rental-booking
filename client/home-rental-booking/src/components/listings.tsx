@@ -73,13 +73,13 @@ const Listings = () => {
         <div className="absolute w-96 h-96 bg-blue-500 rounded-full opacity-30 blur-3xl animate-pulse top-10 left-20"></div>
         <div className="absolute w-80 h-80 bg-pink-500 rounded-full opacity-30 blur-3xl animate-pulse animation-delay-2000 bottom-10 right-20"></div>
       </div>
-      
+
       {/* Content */}
       <div className="relative z-10 p-6 w-full max-w-6xl flex flex-col items-center m-10">
         <h3 className="text-white font-serif text-2xl m-4 underline decoration-blue-500 decoration-2">
           Filter Your Choice
         </h3>
-        
+
         {/* Search Bar */}
         <div className="mb-6 w-full max-w-3xl">
           <input
@@ -136,17 +136,20 @@ const Listings = () => {
         {loading ? (
           <Loader />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: "repeat(4, 1fr)",
+            }}
+          >
             {listings && listings.length > 0 ? (
               listings.map((listing: Listing) => (
-                <ListingCard
-                  key={listing._id}
-                  listingId={listing._id}
-                  {...listing}
-                />
+                <div key={listing._id}>
+                  <ListingCard listingId={listing._id} {...listing} />
+                </div>
               ))
             ) : (
-              <p className="text-white">No listings available.</p>
+              <p className="text-white col-span-4">No listings available.</p>
             )}
           </div>
         )}
