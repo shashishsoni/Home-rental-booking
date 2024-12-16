@@ -132,7 +132,7 @@ const Listings = () => {
         )}
 
         {/* Listings */}
-        <h1 className="text-2xl text-white font-bold my-6">Listings</h1>
+        <h1 className="text-2xl text-white font-bold mt-28">Listings</h1>
         {loading ? (
           <Loader />
         ) : (

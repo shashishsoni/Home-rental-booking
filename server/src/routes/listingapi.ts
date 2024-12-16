@@ -1,54 +1,54 @@
-import e, { Router, Request, Response } from 'express';
+// Import required modules
+import express, { Router, Request, Response } from 'express';
 import multer from 'multer';
-import { Listing } from '../models/Listing';
-import { User } from '../models/user';
+import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { Listing } from '../models/Listing';
+import { User } from '../models/user';
 
-
-
-
-// Configure multer
+// Create router
 const router = Router();
 
+// Setup paths
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Create public/uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+
+// Ensure uploads directory exists
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer to store in public/uploads
+// Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
-        // Add timestamp to prevent filename conflicts
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, `listing-${uniqueSuffix}${path.extname(file.originalname)}`);
-    }
+    },
 });
 
 const upload = multer({
     storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Only .png, .jpg and .gif formats are allowed!'));
+            cb(new Error('Only .png, .jpg, and .gif formats are allowed!'));
         }
     },
 });
 
-
-// Creating listing
+// Create Listing Endpoint
 router.post('/create', upload.array('listingImages'), async (req: Request, res: Response): Promise<void> => {
     try {
+        // Extract data from request body
         const {
             Creator,
             type,
@@ -69,30 +69,42 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             price,
         } = req.body;
 
-        console.log('Received listing data:', {
-            category,
-            type,
-            // other fields
-        });
-        const listingImages = req.files as Express.Multer.File[];
-        if (!listingImages) {
-            res.status(404).json({ message: 'File not uploaded' });
+        // Validate required fields
+        if (!Creator || !type || !category || !title || !price) {
+            res.status(400).json({ message: 'Missing required fields' });
             return;
         }
 
+        // Validate price
+        if (isNaN(Number(price))) {
+            res.status(400).json({ message: 'Price must be a valid number' });
+            return;
+        }
+
+        // Debug request data
+        console.log('Request body:', req.body);
+
+        // Validate uploaded files
+        const listingImages = req.files as Express.Multer.File[];
+        if (!listingImages || listingImages.length === 0) {
+            res.status(400).json({ message: 'No listing images uploaded' });
+            return;
+        }
+
+        // Map image file paths
         const listingimagepath = listingImages.map(file => 
             `/public/uploads/${path.basename(file.path)}`
         );
 
-
-        // Retrieve user details to get `firstname`
+        // Fetch user details to retrieve firstname
         const user = await User.findById(Creator);
         if (!user) {
-            res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: 'Creator user not found' });
             return;
         }
 
-        const newlisting = new Listing({
+        // Create new listing
+        const newListing = new Listing({
             Creator,
             firstname: user.firstname,
             category,
@@ -105,7 +117,7 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             guest,
             bedroom,
             bathroom,
-            amenities,
+            amenities: amenities ? amenities.split(',') : [],
             listingImages: listingimagepath,
             title,
             description,
@@ -113,18 +125,19 @@ router.post('/create', upload.array('listingImages'), async (req: Request, res: 
             Highlightdescription,
             price,
         });
-    
-        await newlisting.save();
 
-        res.status(201).json({ message: 'Listing created successfully' });
+        // Save listing to database
+        await newListing.save();
+
+        res.status(201).json({ message: 'Listing created successfully', listing: newListing });
     } catch (err) {
-        res.status(500).json({ message: 'Listing not created', error: (err as Error).message });
-        console.log(err);
+        console.error('Error creating listing:', err);
+        res.status(500).json({ message: 'Internal server error', error: (err as Error).message });
     }
 });
 
-// get listing on frontend through api
-router.get("/", async (req: Request, res: Response): Promise<void> => {
+// Get Listings Endpoint
+router.get('/', async (req: Request, res: Response): Promise<void> => {
     const qCategory = req.query.category;
     try {
         let listings;
@@ -136,8 +149,8 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({ listings });
     } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch Listing', error: (err as Error).message });
-        console.log(err);
+        console.error('Error fetching listings:', err);
+        res.status(500).json({ message: 'Failed to fetch listings', error: (err as Error).message });
     }
 });
 
