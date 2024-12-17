@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/storecache"; // Adjust import if RootState is defined elsewhere
 import HomePage from "./pages/HomePage";

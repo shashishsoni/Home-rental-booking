@@ -48,6 +48,10 @@ const listingSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    bed: {
+      type: Number,
+      required: true,
+    },
     amenities: {
       type: [String],
       required: true,
