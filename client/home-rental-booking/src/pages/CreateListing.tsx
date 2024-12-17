@@ -30,7 +30,6 @@ const CreateListing = () => {
     country: "",
   });
 
-  console.log(AddressForm);
 
   const handlechangedAddr = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,7 +46,7 @@ const CreateListing = () => {
     { label: "Beds", value: 1 },
     { label: "Bathrooms", value: 1 },
   ]);
-
+  console.log(items);
   const handleIncrease = (index: number) => {
     setItems((prevItems) =>
       prevItems.map((item, i) =>
@@ -140,6 +139,7 @@ const CreateListing = () => {
       formData.append("guest", String(items[0].value)); // Guest
       formData.append("bedroom", String(items[1].value)); // Bedrooms
       formData.append("bathroom", String(items[3].value)); // Bathrooms
+      formData.append("bed", String(items[2].value)); // Beds
 
       // Add amenities as an array
       formData.append("amenities", JSON.stringify(amenities));
@@ -153,12 +153,11 @@ const CreateListing = () => {
       formData.append("Highlights", FromDescription.HighLight);
       formData.append("Highlightdescription", FromDescription.HighLightDetails);
       formData.append("price", String(FromDescription.price));
-
+      console.log("Form data:", formData);
       // Debug: log the FormData entries
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
-
       // Send the post request to the server
       const response = await fetch("http://localhost:3001/listing/create", {
         method: "POST",

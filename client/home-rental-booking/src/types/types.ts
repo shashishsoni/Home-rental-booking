@@ -34,6 +34,13 @@ export interface Listing {
   country: string;            
   category: string;           
   type: string; 
+  guestCount: number;
+  bedroomCount: number;
+  bedCount: number;
+  bathroomCount: number;
+  amenities: string[];
+  highlight: string;
+  highlightDescription: string;
 }
 
 export interface ListingCardProps {

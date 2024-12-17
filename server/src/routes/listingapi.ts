@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Listing } from '../models/Listing';
 import { User } from '../models/user';
+import { Listing } from '../models/Listing';
 
 // Create router
 const router = Router();
@@ -149,5 +149,15 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ message: 'Failed to fetch listings', error: (err as Error).message });
     }
 });
+
+router.get('/:listingId', async (req: Request, res: Response) => {
+        try {
+            const {listingId} = req.params;
+            const listing = await Listing.findById(listingId)
+            res.status(200).json({listing})
+        } catch (err) {
+            res.status(500).json({message: 'Failed to fetch listing', error: (err as Error).message})
+        }
+})
 
 export default router;

@@ -48,6 +48,14 @@ const Listings = () => {
         country: listing.country || "Unknown country",
         category: listing.category || "Miscellaneous",
         type: listing.type || "N/A",
+        guestCount: listing.guest || 0,
+        bedroomCount: listing.bedroom || 0,
+        bedCount: listing.bed || 0,
+        bathroomCount: listing.bathroom || 0,
+        amenities: listing.amenities || [],
+        highlight: listing.Highlights || "No highlights provided.",
+        highlightDescription:
+          listing.Highlightdescription || "No highlight description provided.",
       }));
 
       dispatch(setListings(sanitizedListings));

@@ -7,6 +7,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoadingWrapper from "./components/common/LoadingWrapper";
 import CreateListing from "./pages/CreateListing";
 import './App.css';
+import ListingDetail from "./pages/ListingDetail";
 
 const App = () => {
   // Accessing user state from Redux
@@ -29,6 +30,8 @@ const App = () => {
           <Route path="/signup" element={<SignUpPage />} />
 
           <Route path="/create-Listing" element={<CreateListing />} />
+
+          <Route path="/Listing/:listingId" element={<ListingDetail/>}></Route>
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>
