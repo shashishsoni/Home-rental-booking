@@ -11,24 +11,17 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
 
-// Custom error interface
-interface CustomError extends Error {
-  status?: number;
-}
-
 dotenv.config();
 
 const app = express();
 
 // CORS Options
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : 'http://localhost:5173',
+  origin: 'http://localhost:5173', // Allow the front-end URL for development (change for production)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  maxAge: 86400
+  credentials: true, // Enable cookies and credentials
+  maxAge: 86400,      // Cache preflight response for 24 hours
 };
 
 // Middleware
@@ -37,29 +30,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(helmet());
-app.use((req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
-  next();
-});
-app.use(helmet({
-  contentSecurityPolicy: false,  // Temporarily disable CSP for debugging
-  crossOriginEmbedderPolicy: false  // Disable CORP-related headers temporarily
-}));
-app.use('/public/uploads', (req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Allow cross-origin access
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // Ensure resources are only used by cross-origin embeds
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow any origin, or specify the frontend origin
-  next();
-});
 
-
-// Get the __dirname equivalent for ES modules
+// Serve Static Files with CORP headers
 const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use('/public/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
+  setHeaders: (res, path, stat) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');  // Allow cross-origin resource sharing
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');  // Ensure proper embedder policy
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');  // Allow the front-end URL
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');  // Allow only GET and OPTIONS methods
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');  // Allow necessary headers
+  }
+}));
 
-// Static file serving
-app.use('/public/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
-console.log('Static files served from:', path.join(__dirname, 'uploads'));
-
+console.log('Static files served from:', path.join(__dirname, 'public', 'uploads'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/home-rental')
@@ -82,12 +66,17 @@ app.options('*', cors(corsOptions));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/listing', listingRoutes);
+
 // CORS Error Handler
+interface CustomError extends Error {
+  name: string;
+}
+
 const corsErrorHandler: ErrorRequestHandler = (err: CustomError, req: Request, res: Response, next: NextFunction): void => {
   if (err.name === 'CORSError') {
-      res.status(403).json({
+    res.status(403).json({
       error: 'CORS error',
-      message: 'Cross-origin request blocked'
+      message: 'Cross-origin request blocked',
     });
     return;
   }
