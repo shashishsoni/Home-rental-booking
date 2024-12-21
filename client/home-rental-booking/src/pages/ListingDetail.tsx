@@ -1,10 +1,12 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { DateRange, RangeKeyDict } from "react-date-range";
-import { facilities } from "../data";
-import Loader from "../components/loader";
 import Navbar from "../components/Navbar";
+import Loader from "../components/loader";
+import { facilities } from "../data";
+import { FaUsers, FaBed, FaBath, FaMapPin } from "react-icons/fa";
+import { FaStar as Star } from "react-icons/fa";
 
 interface APIListing {
   _id: string;
@@ -16,7 +18,6 @@ interface APIListing {
   country: string;
   guest: number;
   bedroom: number;
-  apartment: string;
   bathroom: number;
   description: string;
   Highlights: string;
@@ -32,27 +33,24 @@ interface APIListing {
 }
 
 interface Listing {
-  highlightDescription: ReactNode;
   title: string;
-  listingPhotoPaths: string[];
   type: string;
   city: string;
   province: string;
   country: string;
   guestCount: number;
   bedroomCount: number;
-  bedCount: number;
   bathroomCount: number;
   description: string;
   highlight: string;
-  highlightDesc: string;
+  highlightDescription: string;
   amenities: string[];
   price: number;
+  images: string[];
   creator: {
     profileImagePath?: string;
     firstName?: string;
     lastName?: string;
-    _id: string;
   };
 }
 
@@ -63,13 +61,13 @@ interface CustomDateRange {
 }
 
 const ListingDetails: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [listing, setListing] = useState<Listing | null>(null);
   const { listingId } = useParams<{ listingId: string }>();
   const navigate = useNavigate();
-  const customerId = useSelector((state: any) => state?.user?._id);
+  const customerId = useSelector((state: any) => state.user?._id);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [listing, setListing] = useState<Listing | null>(null);
   const [dateRange, setDateRange] = useState<CustomDateRange[]>([
     {
       startDate: new Date(),
@@ -78,6 +76,7 @@ const ListingDetails: React.FC = () => {
     },
   ]);
 
+  // Calculate total days and price
   const dayCount = Math.max(
     1,
     Math.round(
@@ -85,81 +84,58 @@ const ListingDetails: React.FC = () => {
         (1000 * 60 * 60 * 24)
     )
   );
-
   const totalPrice = listing ? listing.price * dayCount : 0;
 
-  const parseAmenities = (amenities: string[]): string[] => {
-    return amenities.map((amenity) => amenity.trim()).filter(Boolean);
-  };
-
-  const transformApiResponse = (data: { listing: APIListing }): Listing => {
-    const cleanedAmenities = parseAmenities(data.listing.amenities);
-    return {
-      highlightDescription: data.listing.Highlightdescription,
-      title: data.listing.title,
-      listingPhotoPaths: data.listing.listingImages,
-      type: data.listing.type,
-      city: data.listing.city,
-      province: data.listing.province,
-      country: data.listing.country,
-      guestCount: data.listing.guest,
-      bedroomCount: data.listing.bedroom,
-      bedCount: 1,
-      bathroomCount: data.listing.bathroom,
-      description: data.listing.description,
-      highlight: data.listing.Highlights || "",
-      highlightDesc: data.listing.Highlightdescription,
-      amenities: cleanedAmenities,
-      price: data.listing.price,
-      creator: {
-        profileImagePath: data.listing.creator?.profileImagePath || "",
-        firstName: data.listing.creator?.firstName || "N/A",
-        lastName: data.listing.creator?.lastName || "N/A",
-        _id: data.listing.Creator || "",
-      },
-    };
-  };
-
+  // Fetch listing details
   useEffect(() => {
-    const getListingDetails = async (): Promise<void> => {
-      if (!listingId) {
-        setError("No listing ID provided");
-        setLoading(false);
-        return;
-      }
-    
+    const fetchListingDetails = async () => {
       try {
-        console.log("Fetching listing details...");
+        if (!listingId) throw new Error("Listing ID is missing");
+
         const response = await fetch(`http://localhost:3001/listing/${listingId}`);
-        console.log(`Response status: ${response.status}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error("Failed to fetch listing");
+
         const data = await response.json();
-        console.log("API response:", data);
         const transformedListing = transformApiResponse(data);
         setListing(transformedListing);
         setLoading(false);
       } catch (err: any) {
-        console.error("Error fetching listing:", err.message);
-        setError("Failed to load listing");
+        setError(err.message || "An error occurred");
         setLoading(false);
       }
     };
 
-    getListingDetails();
+    fetchListingDetails();
   }, [listingId]);
 
+  // Transform API response to match Listing interface
+  const transformApiResponse = (data: { listing: APIListing }): Listing => ({
+    title: data.listing.title,
+    type: data.listing.type,
+    city: data.listing.city,
+    province: data.listing.province,
+    country: data.listing.country,
+    guestCount: data.listing.guest,
+    bedroomCount: data.listing.bedroom,
+    bathroomCount: data.listing.bathroom,
+    description: data.listing.description,
+    highlight: data.listing.Highlights || "",
+    highlightDescription: data.listing.Highlightdescription || "",
+    amenities: data.listing.amenities.map((amenity) => amenity.trim()).filter(Boolean),
+    price: data.listing.price,
+    images: data.listing.listingImages,
+    creator: {
+      profileImagePath: data.listing.creator?.profileImagePath || "",
+      firstName: data.listing.creator?.firstName || "N/A",
+      lastName: data.listing.creator?.lastName || "N/A",
+    },
+  });
+
+  // Handle date range selection
   const handleSelect = (rangesByKey: RangeKeyDict) => {
-    const selection = rangesByKey.selection;
-    if (selection.startDate && selection.endDate) {
-      setDateRange([
-        {
-          startDate: selection.startDate,
-          endDate: selection.endDate,
-          key: "selection",
-        },
-      ]);
+    const { startDate, endDate } = rangesByKey.selection;
+    if (startDate && endDate) {
+      setDateRange([{ startDate, endDate, key: "selection" }]);
     }
   };
 
@@ -179,9 +155,7 @@ const ListingDetails: React.FC = () => {
       <>
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-screen">
-          <h2 className="text-xl font-bold text-red-600">
-            {error || "Listing not found"}
-          </h2>
+          <h2 className="text-xl font-bold text-red-600">{error || "Listing not found"}</h2>
           <button
             onClick={() => navigate(-1)}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -194,108 +168,97 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen ">
       <Navbar />
-      <div className="mt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Title Section */}
-        <div className="mb-10">
-          <h1 className="text-5xl font-bold text-gray-900 mb-5">
-            {listing.title}
-          </h1>
-          <div className="flex items-center text-gray-600 space-x-4">
-            <span className="inline-flex items-center px-4 py-2 rounded-full bg-gray-200 text-sm font-medium">
-              {listing.type}
-            </span>
-            <span>•</span>
-            <span className="text-lg">
-              {listing.city}, {listing.province}, {listing.country}
-            </span>
+      
+      {/* Hero Section */}
+      <div className=" bg-white mt-16 px-4 sm:px-6 lg:px-8 max-w-8xl mx-auto">
+        <div className="pt-8 pb-12">
+          <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+            <FaMapPin className="w-4 h-4" />
+            <span>{`${listing.city}, ${listing.province}, ${listing.country}`}</span>
+          </div>
+          
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">{listing.title}</h1>
+          
+          {/* Host Info */}
+          <div className="flex items-center space-x-4">
+            <img
+              src={`http://localhost:3001${listing.creator?.profileImagePath}`}
+              alt={`${listing.creator?.firstName} ${listing.creator?.lastName}`}
+              className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
+            />
+            <div>
+              <p className="font-medium text-gray-900">
+                {listing.creator?.firstName} {listing.creator?.lastName}
+              </p>
+              <p className="text-sm text-gray-500">Superhost</p>
+            </div>
           </div>
         </div>
 
         {/* Image Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {listing.listingPhotoPaths.map((path, index) => (
-            <img
-              key={index}
-              src={`http://localhost:3001${path}`}
-              alt={`Listing photo ${index + 1}`}
-              className="w-full h-[15rem] md:h-[30rem] object-cover rounded-lg"
-            />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {listing.images.map((path, index) => (
+            <div key={index} className={`${index === 0 ? 'col-span-2 row-span-2' : ''}`}>
+              <img
+                src={`http://localhost:3001${path}`}
+                alt={`Listing view ${index + 1}`}
+                className="w-full h-full object-cover rounded-2xl"
+              />
+            </div>
           ))}
         </div>
 
-        {/* Details Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-10">
-            {/* Quick Info */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <div className="flex items-center space-x-6 text-gray-600">
-                <div className="flex items-center">
-                  <span className="mr-2 text-xl">👤</span>
-                  {listing.guestCount} guests
-                </div>
-                <span>•</span>
-                <div className="flex items-center">
-                  <span className="mr-2 text-xl">🛌</span>
-                  {listing.bedroomCount} bedrooms
-                </div>
-                <span>•</span>
-                <div className="flex items-center">
-                  <span className="mr-2 text-xl">🛁</span>
-                  {listing.bathroomCount} bathrooms
-                </div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pb-16">
+          {/* Left Column - Details */}
+          <div className="lg:col-span-2 space-y-12">
+            {/* Quick Stats */}
+            <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50">
+              <div className="flex items-center space-x-3">
+                <FaUsers className="w-5 h-5 text-gray-700" />
+                <span className="font-medium">{listing.guestCount} guests</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <FaBed className="w-5 h-5 text-gray-700" />
+                <span className="font-medium">{listing.bedroomCount} bedrooms</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <FaBath className="w-5 h-5 text-gray-700" />
+                <span className="font-medium">{listing.bathroomCount} baths</span>
               </div>
             </div>
 
-            {/* About the Place */}
-            {listing.description && (
-              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-                <h3 className="text-3xl font-semibold mb-4">
-                  About this Place
-                </h3>
-                <p className="text-gray-700 leading-loose">
-                  {listing.description}
-                </p>
-              </div>
-            )}
+            {/* Description */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold">About this place</h2>
+              <p className="text-gray-600 leading-relaxed">{listing.description}</p>
+            </div>
 
             {/* Highlights */}
             {listing.highlight && (
-              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-                <h3 className="text-3xl font-semibold mb-4">Highlights</h3>
-                <p className="text-gray-700 leading-loose">
-                  {listing.highlight}
-                </p>
-              </div>
-            )}
-
-            {/* Highlights */}
-            {listing.highlight && (
-              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-                <h3 className="text-3xl font-semibold mb-4">
-                  HighlightsDescription
-                </h3>
-                <p className="text-gray-700 leading-loose">
-                  {listing.highlightDescription}
-                </p>
+              <div className="space-y-6">
+                <h2 className="text-2xl font-semibold">What makes this place special</h2>
+                <div className="p-6 rounded-2xl bg-gray-50">
+                  <p className="text-gray-600">{listing.highlight}</p>
+                  {listing.highlightDescription && (
+                    <p className="mt-4 text-gray-600">{listing.highlightDescription}</p>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Amenities */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h3 className="text-3xl font-semibold mb-6">
-                What this Place Offers
-              </h3>
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold">What this place offers</h2>
               <div className="grid grid-cols-2 gap-6">
                 {listing.amenities.map((item, index) => {
-                  const facility = facilities.find((fac) => fac.name === item);
+                  const facility = facilities.find((f) => f.name === item);
                   return (
-                    <div key={index} className="flex items-center space-x-4">
-                      <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
-                        {facility?.icon || <span>Icon</span>}
-                      </div>
-                      <p className="text-gray-700">{facility?.name || item}</p>
+                    <div key={index} className="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                      <div className="text-gray-700">{facility?.icon || "🔵"}</div>
+                      <span className="text-gray-600">{facility?.name || item}</span>
                     </div>
                   );
                 })}
@@ -303,56 +266,62 @@ const ListingDetails: React.FC = () => {
             </div>
           </div>
 
-          {/* Booking Section */}
+          {/* Right Column - Booking */}
           <div className="lg:col-span-1">
-            <div className="sticky top-10">
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-                <div className="flex items-baseline justify-between mb-6">
-                  <h2 className="text-3xl font-bold">${listing.price}</h2>
-                  <span className="text-gray-500">/ night</span>
-                </div>
-
-                <DateRange
-                  ranges={dateRange}
-                  onChange={handleSelect}
-                  minDate={new Date()}
-                  className="mb-6 border border-gray-300 rounded-xl bg-gray-50 p-4 shadow-inner"
-                />
-
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-center text-gray-700">
-                    <span>
-                      ${listing.price} x {dayCount}{" "}
-                      {dayCount === 1 ? "night" : "nights"}
-                    </span>
-                    <span>${totalPrice}</span>
-                  </div>
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between items-center font-semibold text-lg">
-                      <span>Total</span>
-                      <span>${totalPrice}</span>
+            <div className="sticky top-24">
+              <div className="rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-baseline justify-between mb-6">
+                    <div className="flex items-baseline space-x-1">
+                      <span className="text-3xl font-bold">${listing.price}</span>
+                      <span className="text-gray-500">night</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-sm">
+                      <Star className="w-4 h-4 fill-current text-yellow-400" />
+                      <span className="font-medium">4.9</span>
                     </div>
                   </div>
-                </div>
 
-                <button
-                  className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all
-                    ${
-                      customerId
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg"
-                        : "bg-gray-400 cursor-not-allowed"
-                    }`}
-                  onClick={() => {}}
-                  disabled={!customerId}
-                >
-                  {customerId ? "Book Now" : "Please login to book"}
-                </button>
+                  <DateRange
+                    ranges={dateRange}
+                    onChange={handleSelect}
+                    minDate={new Date()}
+                    className="mb-6"
+                  />
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between py-3">
+                      <span className="text-gray-600">
+                        ${listing.price} × {dayCount} {dayCount === 1 ? "night" : "nights"}
+                      </span>
+                      <span className="font-medium">${totalPrice}</span>
+                    </div>
+                    
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold text-lg">Total</span>
+                        <span className="font-semibold text-lg">${totalPrice}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    className={`w-full mt-6 py-4 px-6 rounded-xl font-medium text-base transition-all
+                      ${customerId
+                        ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg"
+                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      }`}
+                    disabled={!customerId}
+                  >
+                    {customerId ? "Reserve now" : "Please login to book"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
