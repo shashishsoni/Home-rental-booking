@@ -168,13 +168,13 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="h-full min-h-screen">
       <Navbar />
       
       {/* Hero Section */}
-      <div className=" bg-white mt-16 px-4 sm:px-6 lg:px-8 max-w-8xl mx-auto">
+      <div className=" bg-white px-4 sm:px-6 lg:px-8 max-w-8xl mx-auto">
         <div className="pt-8 pb-12">
-          <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+          <div className="mt-20 flex items-center space-x-2 text-sm text-gray-500 mb-4">
             <FaMapPin className="w-4 h-4" />
             <span>{`${listing.city}, ${listing.province}, ${listing.country}`}</span>
           </div>
