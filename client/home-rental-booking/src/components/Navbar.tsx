@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const profileImageUrl = user?.profileImagePath
-    ? `http://localhost:3001/public/uploads/${user.profileImagePath.split('/').pop()}`
+    ? `http://localhost:3001/public/uploads/${user.profileImagePath}`
     : 'http://localhost:3001/public/uploads/default-profile.png';
 
   const handleLogout = async () => {

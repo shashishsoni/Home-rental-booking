@@ -24,6 +24,11 @@ export interface UserState {
 export interface Listing {
   _id: string;
   creator: string;
+  parsedCreator: {
+    firstname: string;
+    lastname: string;
+    profileImagePath: string | null;
+  };
   title: string;
   description: string;
   price: number;

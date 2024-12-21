@@ -173,16 +173,43 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 router.get("/:listingId", async (req: Request, res: Response) => {
   try {
     const { listingId } = req.params;
-    const listing = await Listing.findById(listingId);
-    res.status(200).json({ listing });
+
+    // Find the listing and populate the Creator field
+    const listing = await Listing.findById(listingId).populate("Creator");
+
+    if (!listing) {
+      res.status(404).json({ message: "Listing not found" });
+      return;
+    }
+
+    // Prepare the Creator data
+    const creator = listing.Creator as {
+      profileImagePath?: string;
+      firstname?: string;
+      lastname?: string;
+    };
+
+    const parsedCreator = {
+      profileImagePath: creator?.profileImagePath || "/uploads/default-profile.png",
+      firstname: creator?.firstname || "Unknown",
+      lastname: creator?.lastname || "",
+    };
+
+    // Return the data with parsedCreator
+    res.status(200).json({
+      listing: {
+        ...listing.toJSON(),
+        parsedCreator,
+      },
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch listing",
-        error: (err as Error).message,
-      });
+    console.error("Error fetching listing:", err);
+    res.status(500).json({
+      message: "Failed to fetch listing",
+      error: (err as Error).message,
+    });
   }
 });
+
 
 export default router;

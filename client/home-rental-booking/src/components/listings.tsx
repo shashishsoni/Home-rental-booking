@@ -39,6 +39,17 @@ const Listings = () => {
         creator: listing.Creator
           ? `${listing.Creator.firstname} ${listing.Creator.lastname}`
           : "Unknown",
+        parsedCreator: listing.Creator
+          ? {
+              firstname: listing.Creator.firstname || "Unknown",
+              lastname: listing.Creator.lastname || "",
+              profileImagePath: listing.Creator.profileImagePath || null,
+            }
+          : {
+              firstname: "Unknown",
+              lastname: "",
+              profileImagePath: null,
+            },
         title: listing.title || "Untitled",
         description: listing.description || "No description provided.",
         price: listing.price || 0,
