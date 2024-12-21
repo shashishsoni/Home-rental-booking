@@ -5,7 +5,7 @@ import { DateRange, RangeKeyDict } from "react-date-range";
 import Navbar from "../components/Navbar";
 import Loader from "../components/loader";
 import { facilities } from "../data";
-import { FaUsers, FaBed, FaBath, FaMapPin } from "react-icons/fa";
+import { FaUsers, FaBed, FaBath, FaMapPin} from "react-icons/fa";
 import { FaStar as Star } from "react-icons/fa";
 
 interface APIListing {
@@ -132,8 +132,8 @@ const ListingDetails: React.FC = () => {
     images: data.listing.listingImages,
     creator: {
       profileImagePath: data.listing.parsedCreator?.profileImagePath
-        ? `/public/uploads/${data.listing.parsedCreator.profileImagePath}`
-        : "/public/uploads/default-profile.png", // Default image
+        ? `/uploads/${data.listing.parsedCreator.profileImagePath}`
+        : "/uploads/default-profile.png", // Default image
       firstname: data.listing.parsedCreator?.firstname || "Unknown",
       lastname: data.listing.parsedCreator?.lastname || "",
     },
@@ -178,113 +178,109 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <div className="h-full min-h-screen">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
       <Navbar />
-
-      {/* Hero Section */}
-      <div className=" bg-white px-4 sm:px-6 lg:px-8 max-w-8xl mx-auto">
-        <div className="pt-8 pb-12">
-          <div className="mt-20 flex items-center space-x-2 text-sm text-gray-500 mb-4">
-            <FaMapPin className="w-4 h-4" />
-            <span>{`${listing.city}, ${listing.province}, ${listing.country}`}</span>
+      <div className="mt-24 flex-grow">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Location and Title Section */}
+          <div className="pt-10 pb-8">
+            <div className="inline-flex items-center gap-2 bg-blue-50/80 rounded-full px-4 py-1.5 mb-4">
+              <span className="text-blue-600 font-medium capitalize">{listing.type}</span>
+              <span className="text-gray-300">•</span>
+              <div className="flex items-center gap-2">
+                <FaMapPin className="w-4 h-4 text-blue-600" />
+                <span className="text-gray-600">{`${listing.city}, ${listing.province}, ${listing.country}`}</span>
+              </div>
+            </div>
+  
+            <h1 className="text-4xl font-bold text-gray-900 mb-6">{listing.title}</h1>
+  
+            {/* Host Info */}
+            <div className="flex items-center gap-4">
+              {listing.creator.profileImagePath ? (
+                <img
+                  src={`http://localhost:3001/public${listing.creator.profileImagePath}`}
+                  alt={`${listing.creator.firstname} ${listing.creator.lastname}`}
+                  className="w-12 h-12 rounded-full object-cover border-2 border-gray-100"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center">
+                  <span className="text-lg font-semibold">
+                    {listing.creator.firstname.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div>
+                <p className="text-lg font-medium text-gray-900">
+                  {listing.creator.firstname} {listing.creator.lastname}
+                </p>
+                <p className="text-sm text-blue-600 font-medium">Superhost</p>
+              </div>
+            </div>
           </div>
-
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            {listing.title}
-          </h1>
-
-          {/* Host Info */}
-          <div className="flex items-center space-x-4">
-            {/* Profile Image */}
-            {listing.creator.profileImagePath ? (
-              <img
-                src={`http://localhost:3001${listing.creator.profileImagePath}`}
-                alt={`${listing.creator.firstname} ${listing.creator.lastname}`}
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100"
-              />
-            ) : (
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <span className="text-lg font-medium text-gray-500">
-                  {listing.creator.firstname.charAt(0).toUpperCase() || "U"}
-                </span>
+  
+          {/* Image Gallery */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 h-[500px]">
+            {listing.images.map((path, index) => (
+              <div
+                key={index}
+                className={`relative group rounded-xl overflow-hidden ${
+                  index === 0 ? "col-span-2 row-span-2" : ""
+                }`}
+              >
+                <img
+                  src={`http://localhost:3001${path}`}
+                  alt={`Listing view ${index + 1}`}
+                  className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 group-hover:to-black/20 transition duration-300" />
               </div>
-            )}
-            {/* Name */}
-            <div>
-              <p className="font-medium text-gray-900">
-                {listing.creator.firstname} {listing.creator.lastname}
-              </p>
-              <p className="text-sm text-gray-500">Superhost</p>
-            </div>
+            ))}
           </div>
-        </div>
-
-        {/* Image Gallery */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {listing.images.map((path, index) => (
-            <div
-              key={index}
-              className={`${index === 0 ? "col-span-2 row-span-2" : ""}`}
-            >
-              <img
-                src={`http://localhost:3001${path}`}
-                alt={`Listing view ${index + 1}`}
-                className="w-full h-full object-cover rounded-2xl"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pb-16">
-          {/* Left Column - Details */}
-          <div className="lg:col-span-2 space-y-12">
-            {/* Quick Stats */}
-            <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50">
-              <div className="flex items-center space-x-3">
-                <FaUsers className="w-5 h-5 text-gray-700" />
-                <span className="font-medium">{listing.guestCount} guests</span>
+  
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column */}
+            <div className="lg:col-span-2 space-y-10">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { icon: <FaUsers className="w-6 h-6" />, label: "Guests", value: listing.guestCount },
+                  { icon: <FaBed className="w-6 h-6" />, label: "Bedrooms", value: listing.bedroomCount },
+                  { icon: <FaBath className="w-6 h-6" />, label: "Bathrooms", value: listing.bathroomCount }
+                ].map((stat, index) => (
+                  <div key={index} className="bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition duration-300">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
+                        {stat.icon}
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">{stat.label}</p>
+                        <p className="text-xl font-semibold text-gray-900">{stat.value}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center space-x-3">
-                <FaBed className="w-5 h-5 text-gray-700" />
-                <span className="font-medium">
-                  {listing.bedroomCount} bedrooms
-                </span>
+  
+              {/* Description */}
+              <div className="bg-white/50 backdrop-blur-sm p-6 rounded-xl border border-gray-100 shadow-sm">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">About this place</h2>
+                <p className="text-gray-600 leading-relaxed">{listing.description}</p>
               </div>
-              <div className="flex items-center space-x-3">
-                <FaBath className="w-5 h-5 text-gray-700" />
-                <span className="font-medium">
-                  {listing.bathroomCount} baths
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold">About this place</h2>
-              <p className="text-gray-600 leading-relaxed">
-                {listing.description}
-              </p>
-            </div>
-
-            {/* Highlights */}
-            {listing.highlight && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold">
-                  What makes this place special
-                </h2>
-                <div className="p-6 rounded-2xl bg-gray-50">
-                  <p className="text-gray-600">{listing.highlight}</p>
+  
+              {/* Highlights */}
+              {listing.highlight && (
+                <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 backdrop-blur-sm p-6 rounded-xl border border-blue-100">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">What makes this place special</h2>
+                  <p className="text-gray-700">{listing.highlight}</p>
                   {listing.highlightDescription && (
-                    <p className="mt-4 text-gray-600">
-                      {listing.highlightDescription}
-                    </p>
+                    <p className="mt-4 text-gray-600">{listing.highlightDescription}</p>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* Amenities */}
+              )}
+  
+              {/* Amenities */}
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold">What this place offers</h2>
               <div className="grid grid-cols-2 gap-6">
@@ -322,62 +318,56 @@ const ListingDetails: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* Right Column - Booking */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <div className="rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-                <div className="p-6">
-                  <div className="flex items-baseline justify-between mb-6">
-                    <div className="flex items-baseline space-x-1">
-                      <span className="text-3xl font-bold">
-                        ${listing.price}
-                      </span>
-                      <span className="text-gray-500">night</span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-sm">
-                      <Star className="w-4 h-4 fill-current text-yellow-400" />
-                      <span className="font-medium">4.9</span>
-                    </div>
-                  </div>
-
-                  <DateRange
-                    ranges={dateRange}
-                    onChange={handleSelect}
-                    minDate={new Date()}
-                    className="mb-6"
-                  />
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between py-3">
-                      <span className="text-gray-600">
-                        ${listing.price} × {dayCount}{" "}
-                        {dayCount === 1 ? "night" : "nights"}
-                      </span>
-                      <span className="font-medium">${totalPrice}</span>
-                    </div>
-
-                    <div className="border-t pt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg">Total</span>
-                        <span className="font-semibold text-lg">
-                          ${totalPrice}
-                        </span>
+  
+            {/* Right Column - Booking */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-bold text-gray-900">${listing.price}</span>
+                        <span className="text-gray-500">night</span>
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-lg">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span className="font-medium text-gray-700">4.9</span>
                       </div>
                     </div>
-                  </div>
-
-                  <button
-                    className={`w-full mt-6 py-4 px-6 rounded-xl font-medium text-base transition-all
-                      ${
-                        customerId
-                          ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg"
+  
+                    <div className="[&_.rdrCalendarWrapper]:bg-white/80 [&_.rdrDateDisplayWrapper]:bg-transparent [&_.rdrMonthAndYearPickers_select]:bg-gray-50 [&_.rdrMonthAndYearPickers_select]:border-gray-200 [&_.rdrMonth]:p-0 [&_.rdrDay]:bg-transparent [&_.rdrDayNumber]:text-gray-700 [&_.rdrDayNumber]:font-medium [&_.rdrSelected]:bg-transparent [&_.rdrStartEdge]:bg-blue-600 [&_.rdrEndEdge]:bg-blue-600 [&_.rdrInRange]:bg-blue-50 [&_.rdrDayDisabled]:bg-transparent [&_.rdrDayDisabled_.rdrDayNumber_span]:text-gray-300">
+                      <DateRange
+                        ranges={dateRange}
+                        onChange={handleSelect}
+                        showDateDisplay={false}
+                        minDate={new Date()}
+                        className="mb-6"
+                        rangeColors={['#2563EB']}
+                      />
+                    </div>
+  
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                      <div className="flex justify-between text-gray-600">
+                        <span>${listing.price} × {dayCount} {dayCount === 1 ? "night" : "nights"}</span>
+                        <span className="font-medium">${totalPrice}</span>
+                      </div>
+                      <div className="flex justify-between text-lg font-semibold text-gray-900">
+                        <span>Total</span>
+                        <span>${totalPrice}</span>
+                      </div>
+                    </div>
+  
+                    <button
+                      className={`w-full mt-6 py-4 px-6 rounded-xl font-medium text-base transition-all
+                        ${customerId
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg"
                           : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      }`}
-                    disabled={!customerId}
-                  >
-                    {customerId ? "Reserve now" : "Please login to book"}
-                  </button>
+                        }`}
+                      disabled={!customerId}
+                    >
+                      {customerId ? "Reserve Now" : "Sign in to Book"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
