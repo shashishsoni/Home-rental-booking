@@ -1,275 +1,359 @@
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, ReactNode } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { DateRange, RangeKeyDict } from "react-date-range";
 import { facilities } from "../data";
-import React, { useState } from 'react';
-import { Heart, Share2, MapPin, Users, Bed, Bath, Star, Shield } from 'lucide-react';
+import Loader from "../components/loader";
+import Navbar from "../components/Navbar";
 
-const ListingDetail = () => {
-  const [loading, setLoading] = useState(true);
-  const [listing, setListing] = useState<Listing | null>(null);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const { listingId } = useParams();
-
-  interface Listing {
-    title: string;
-    listingPhotoPaths: string[];
-    type: string;
-    city: string;
-    province: string;
-    country: string;
-    guestCount: number;
-    bedroomCount: number;
-    bedCount: number;
-    bathroomCount: number;
-    amenities: {
-      id: number;
-      name: string;
-      icon: string;
-    }[];
-    creator: {
-      profileImagePath: string;
-      firstname: string;
-      lastname: string;
-    } | null;
-    description: string;
-    highlight: string;
-    highlightDescription: string;
-  }
-
-  const getlistingdetail = async () => {
-    try {
-      const response = await fetch(`http://localhost:3001/listing/${listingId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Raw API data:", data); // Debugging raw API response
-  
-        if (!data || !data.listing) {
-          console.error("Unexpected API response structure:", data);
-          return;
-        }
-  
-        const rawListing = data.listing;
-        const normalizedListing = {
-          title: rawListing.title || "No Title",
-          listingPhotoPaths: Array.isArray(rawListing.listingImages) ? rawListing.listingImages : [],
-          type: rawListing.type || "Not Specified",
-          city: rawListing.city || "Unknown City",
-          province: rawListing.province || "Unknown Province",
-          country: rawListing.country || "Unknown Country",
-          guestCount: rawListing.guest || 0,
-          bedroomCount: rawListing.bedroom || 0,
-          bedCount: rawListing.bed || 0,
-          bathroomCount: rawListing.bathroom || 0,
-          amenities: Array.isArray(rawListing.amenities)
-            ? rawListing.amenities.map((amenity: string) => ({
-                id: Math.random(),
-                name: amenity.replace(/["\[\]]/g, "").trim(),
-                icon: facilities.find((facility) => facility.name === amenity)?.icon || "",
-              }))
-            : [],
-          creator: rawListing.Creator
-            ? {
-                profileImagePath: rawListing.creator?.profileImagePath || "",
-                firstname: rawListing.creator?.firstname || "Unknown",
-                lastname: rawListing.creator?.lastname || "",
-              }
-            : null,
-          description: rawListing.description || "No Description",
-          highlight: "Highlights",
-          highlightDescription: rawListing.Highlightdescription || "No Highlight Description",
-        };
-  
-        console.log("Normalized Listing Data:", normalizedListing); // Debugging normalized data
-        setListing(normalizedListing);
-      } else {
-        console.error("Failed to fetch listing details, status:", response.status);
-        setListing(null);
-      }
-    } catch (error) {
-      console.error("Error fetching listing:", error);
-      setListing(null);
-    } finally {
-      setLoading(false);
-    }
+interface APIListing {
+  _id: string;
+  Creator: string;
+  title: string;
+  type: string;
+  city: string;
+  province: string;
+  country: string;
+  guest: number;
+  bedroom: number;
+  apartment: string;
+  bathroom: number;
+  description: string;
+  Highlights: string;
+  Highlightdescription: string;
+  amenities: string[];
+  price: number;
+  listingImages: string[];
+  creator: {
+    profileImagePath?: string;
+    firstName?: string;
+    lastName?: string;
   };
-  
+}
 
-  React.useEffect(() => {
-    getlistingdetail();
+interface Listing {
+  highlightDescription: ReactNode;
+  title: string;
+  listingPhotoPaths: string[];
+  type: string;
+  city: string;
+  province: string;
+  country: string;
+  guestCount: number;
+  bedroomCount: number;
+  bedCount: number;
+  bathroomCount: number;
+  description: string;
+  highlight: string;
+  highlightDesc: string;
+  amenities: string[];
+  price: number;
+  creator: {
+    profileImagePath?: string;
+    firstName?: string;
+    lastName?: string;
+    _id: string;
+  };
+}
+
+interface CustomDateRange {
+  startDate: Date;
+  endDate: Date;
+  key: string;
+}
+
+const ListingDetails: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [listing, setListing] = useState<Listing | null>(null);
+  const { listingId } = useParams<{ listingId: string }>();
+  const navigate = useNavigate();
+  const customerId = useSelector((state: any) => state?.user?._id);
+
+  const [dateRange, setDateRange] = useState<CustomDateRange[]>([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+
+  const dayCount = Math.max(
+    1,
+    Math.round(
+      (dateRange[0].endDate.getTime() - dateRange[0].startDate.getTime()) /
+        (1000 * 60 * 60 * 24)
+    )
+  );
+
+  const totalPrice = listing ? listing.price * dayCount : 0;
+
+  const parseAmenities = (amenities: string[]): string[] => {
+    return amenities.map((amenity) => amenity.trim()).filter(Boolean);
+  };
+
+  const transformApiResponse = (data: { listing: APIListing }): Listing => {
+    const cleanedAmenities = parseAmenities(data.listing.amenities);
+    return {
+      highlightDescription: data.listing.Highlightdescription,
+      title: data.listing.title,
+      listingPhotoPaths: data.listing.listingImages,
+      type: data.listing.type,
+      city: data.listing.city,
+      province: data.listing.province,
+      country: data.listing.country,
+      guestCount: data.listing.guest,
+      bedroomCount: data.listing.bedroom,
+      bedCount: 1,
+      bathroomCount: data.listing.bathroom,
+      description: data.listing.description,
+      highlight: data.listing.Highlights || "",
+      highlightDesc: data.listing.Highlightdescription,
+      amenities: cleanedAmenities,
+      price: data.listing.price,
+      creator: {
+        profileImagePath: data.listing.creator?.profileImagePath || "",
+        firstName: data.listing.creator?.firstName || "N/A",
+        lastName: data.listing.creator?.lastName || "N/A",
+        _id: data.listing.Creator || "",
+      },
+    };
+  };
+
+  useEffect(() => {
+    const getListingDetails = async (): Promise<void> => {
+      if (!listingId) {
+        setError("No listing ID provided");
+        setLoading(false);
+        return;
+      }
+    
+      try {
+        console.log("Fetching listing details...");
+        const response = await fetch(`http://localhost:3001/listing/${listingId}`);
+        console.log(`Response status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("API response:", data);
+        const transformedListing = transformApiResponse(data);
+        setListing(transformedListing);
+        setLoading(false);
+      } catch (err: any) {
+        console.error("Error fetching listing:", err.message);
+        setError("Failed to load listing");
+        setLoading(false);
+      }
+    };
+
+    getListingDetails();
   }, [listingId]);
 
-  React.useEffect(() => {
-    console.log("Updated listings state:", listing); // Debug state update
-  }, [listing]);
+  const handleSelect = (rangesByKey: RangeKeyDict) => {
+    const selection = rangesByKey.selection;
+    if (selection.startDate && selection.endDate) {
+      setDateRange([
+        {
+          startDate: selection.startDate,
+          endDate: selection.endDate,
+          key: "selection",
+        },
+      ]);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex justify-center items-center bg-gray-100 z-50">
-        <div className="animate-pulse text-2xl text-blue-600">Loading your perfect getaway...</div>
-      </div>
+      <>
+        <Navbar />
+        <div className="flex justify-center items-center min-h-screen">
+          <Loader />
+        </div>
+      </>
     );
   }
 
-  if (!listing) {
+  if (error || !listing) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center text-center p-6">
-        <h2 className="text-3xl font-bold text-red-500 mb-4">Oops! Listing Not Found</h2>
-        <p className="text-gray-600">We couldn't retrieve the details for this listing. Please try again later.</p>
-      </div>
+      <>
+        <Navbar />
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <h2 className="text-xl font-bold text-red-600">
+            {error || "Listing not found"}
+          </h2>
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Go Back
+          </button>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Title and Actions */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-gray-900">{listing.title}</h1>
-          <div className="flex space-x-4">
-            <button className="text-gray-600 hover:text-gray-900 transition">
-              <Share2 className="w-6 h-6" />
-            </button>
-            <button className="text-gray-600 hover:text-red-600 transition">
-              <Heart className="w-6 h-6" />
-            </button>
+    <>
+      <Navbar />
+      <div className="mt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Title Section */}
+        <div className="mb-10">
+          <h1 className="text-5xl font-bold text-gray-900 mb-5">
+            {listing.title}
+          </h1>
+          <div className="flex items-center text-gray-600 space-x-4">
+            <span className="inline-flex items-center px-4 py-2 rounded-full bg-gray-200 text-sm font-medium">
+              {listing.type}
+            </span>
+            <span>•</span>
+            <span className="text-lg">
+              {listing.city}, {listing.province}, {listing.country}
+            </span>
           </div>
         </div>
 
         {/* Image Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-          {listing.listingPhotoPaths.length > 0 && (
-            <>
-              <div className="md:row-span-2">
-                <img 
-                  src={`http://localhost:3001/public${listing.listingPhotoPaths[activeImageIndex].replace("public", "").replace("//", "/")}`} 
-                  alt="Main Listing" 
-                  className="w-full h-full object-cover rounded-2xl shadow-lg"
-                />
-              </div>
-              <div className="hidden md:grid grid-cols-2 gap-4">
-                {listing.listingPhotoPaths.slice(1, 3).map((image, index) => (
-                  <img 
-                    key={index}
-                    src={`http://localhost:3001/public${image.replace("public", "").replace("//", "/")}`} 
-                    alt={`Listing view ${index + 2}`}
-                    className="w-full h-48 object-cover rounded-xl hover:opacity-80 transition cursor-pointer"
-                    onClick={() => setActiveImageIndex(index + 1)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {listing.listingPhotoPaths.map((path, index) => (
+            <img
+              key={index}
+              src={`http://localhost:3001${path}`}
+              alt={`Listing photo ${index + 1}`}
+              className="w-full h-[15rem] md:h-[30rem] object-cover rounded-lg"
+            />
+          ))}
         </div>
 
-        {/* Listing Details Container */}
-        <div className="grid md:grid-cols-3 gap-10">
-          {/* Left Column - Detailed Information */}
-          <div className="md:col-span-2 space-y-8">
-            {/* Location and Basic Info */}
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                    <MapPin className="w-6 h-6 mr-2 text-blue-500" />
-                    {listing.type} in {listing.city}, {listing.province}
-                  </h2>
-                  <p className="text-gray-600 mt-2 flex items-center space-x-4">
-                    <Users className="w-5 h-5 text-gray-500" /> {listing.guestCount} guests
-                    <Bed className="w-5 h-5 text-gray-500 ml-4" /> {listing.bedroomCount} bedrooms
-                    <Bath className="w-5 h-5 text-gray-500 ml-4" /> {listing.bathroomCount} bathrooms
-                  </p>
+        {/* Details Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-10">
+            {/* Quick Info */}
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+              <div className="flex items-center space-x-6 text-gray-600">
+                <div className="flex items-center">
+                  <span className="mr-2 text-xl">👤</span>
+                  {listing.guestCount} guests
                 </div>
-                {listing.creator && (
-                  <img 
-                    src={`http://localhost:3001/${listing.creator.profileImagePath.replace("public", "")}`} 
-                    alt="Host" 
-                    className="w-16 h-16 rounded-full border-4 border-blue-100 shadow-md"
-                  />
-                )}
+                <span>•</span>
+                <div className="flex items-center">
+                  <span className="mr-2 text-xl">🛌</span>
+                  {listing.bedroomCount} bedrooms
+                </div>
+                <span>•</span>
+                <div className="flex items-center">
+                  <span className="mr-2 text-xl">🛁</span>
+                  {listing.bathroomCount} bathrooms
+                </div>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">About this place</h3>
-              <p className="text-gray-600 leading-relaxed">{listing.description}</p>
-            </div>
+            {/* About the Place */}
+            {listing.description && (
+              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                <h3 className="text-3xl font-semibold mb-4">
+                  About this Place
+                </h3>
+                <p className="text-gray-700 leading-loose">
+                  {listing.description}
+                </p>
+              </div>
+            )}
+
+            {/* Highlights */}
+            {listing.highlight && (
+              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                <h3 className="text-3xl font-semibold mb-4">Highlights</h3>
+                <p className="text-gray-700 leading-loose">
+                  {listing.highlight}
+                </p>
+              </div>
+            )}
+
+            {/* Highlights */}
+            {listing.highlight && (
+              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                <h3 className="text-3xl font-semibold mb-4">
+                  HighlightsDescription
+                </h3>
+                <p className="text-gray-700 leading-loose">
+                  {listing.highlightDescription}
+                </p>
+              </div>
+            )}
 
             {/* Amenities */}
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">What this place offers</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {listing.amenities.map((item, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center space-x-3 text-gray-700 hover:bg-blue-50 p-2 rounded-lg transition"
-                  >
-                    <span className="text-xl">
-                      {facilities.find((facility) => facility.name === item.name)?.icon}
-                    </span>
-                    <span className="text-sm">{item.name}</span>
-                  </div>
-                ))}
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+              <h3 className="text-3xl font-semibold mb-6">
+                What this Place Offers
+              </h3>
+              <div className="grid grid-cols-2 gap-6">
+                {listing.amenities.map((item, index) => {
+                  const facility = facilities.find((fac) => fac.name === item);
+                  return (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
+                        {facility?.icon || <span>Icon</span>}
+                      </div>
+                      <p className="text-gray-700">{facility?.name || item}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* Right Column - Booking Card */}
-          <div className="hidden md:block">
-            <div className="sticky top-10 bg-white rounded-xl shadow-xl p-6 border-t-4 border-blue-500">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <span className="text-2xl font-bold text-gray-800">$150</span>
-                  <span className="text-gray-600 ml-2">/ night</span>
+          {/* Booking Section */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-10">
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+                <div className="flex items-baseline justify-between mb-6">
+                  <h2 className="text-3xl font-bold">${listing.price}</h2>
+                  <span className="text-gray-500">/ night</span>
                 </div>
-                <div className="flex items-center text-yellow-500">
-                  <Star className="w-5 h-5 fill-current" />
-                  <span className="ml-2 text-gray-800">4.8 (42 reviews)</span>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between border rounded-lg p-3">
-                  <input 
-                    type="date" 
-                    className="w-full text-gray-600 focus:outline-none" 
-                    placeholder="Check-in" 
-                  />
-                </div>
-                <div className="flex justify-between border rounded-lg p-3">
-                  <input 
-                    type="date" 
-                    className="w-full text-gray-600 focus:outline-none" 
-                    placeholder="Check-out" 
-                  />
-                </div>
-                <div className="flex justify-between border rounded-lg p-3">
-                  <select className="w-full text-gray-600 focus:outline-none">
-                    <option>1 Guest</option>
-                    <option>2 Guests</option>
-                    <option>3 Guests</option>
-                    <option>4 Guests</option>
-                  </select>
-                </div>
-              </div>
 
-              <button className="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 transition flex items-center justify-center">
-                Reserve
-                <Shield className="w-5 h-5 ml-2" />
-              </button>
+                <DateRange
+                  ranges={dateRange}
+                  onChange={handleSelect}
+                  minDate={new Date()}
+                  className="mb-6 border border-gray-300 rounded-xl bg-gray-50 p-4 shadow-inner"
+                />
 
-              <p className="text-center text-gray-500 mt-4 text-sm">
-                You won't be charged yet
-              </p>
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center text-gray-700">
+                    <span>
+                      ${listing.price} x {dayCount}{" "}
+                      {dayCount === 1 ? "night" : "nights"}
+                    </span>
+                    <span>${totalPrice}</span>
+                  </div>
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between items-center font-semibold text-lg">
+                      <span>Total</span>
+                      <span>${totalPrice}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all
+                    ${
+                      customerId
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }`}
+                  onClick={() => {}}
+                  disabled={!customerId}
+                >
+                  {customerId ? "Book Now" : "Please login to book"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default ListingDetail;
+export default ListingDetails;
