@@ -135,6 +135,7 @@ const ListingDetails: React.FC = () => {
     }
     .rdrNextButton i {
       border-color: transparent transparent transparent #4b5563;
+      margin: 0px 0 0 11px;
     }
   `;
 
@@ -340,7 +341,7 @@ const ListingDetails: React.FC = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-12">
             {/* Image Gallery */}
-            <div className="relative rounded-3xl overflow-hidden w-[1130px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
+            <div className="relative rounded-3xl overflow-hidden w-[1050px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
               <img
                 src={`http://localhost:3001${listing?.images[currentImageIndex]}`}
                 alt={`View ${currentImageIndex + 1}`}
@@ -415,31 +416,34 @@ const ListingDetails: React.FC = () => {
             </div>
 
             {/* Description */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
-              <h2 className="text-3xl font-bold">About this place</h2>
-              <p className="text-gray-600 text-lg leading-relaxed">
+            <div className="bg-gradient-to-r from-gray-50 via-white to-gray-200 rounded-3xl border border-gray-300 p-10 space-y-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
+              <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight font-poppins">
+                About this place
+              </h2>
+              <p className="text-gray-800 text-lg leading-relaxed font-roboto">
                 {listing?.description}
               </p>
             </div>
 
             {/* Highlights */}
             {listing?.highlight && (
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 space-y-6">
-                <h2 className="text-3xl font-bold text-blue-900">Highlights</h2>
-                <p className="text-blue-800 text-xl font-medium">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 space-y-6  transition-all duration-300 shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
+                <h2 className="text-4xl font-extrabold text-black tracking-tight font-inter">
+                  Highlights
+                </h2>
+                <p className="text-black text-xl font-medium leading-relaxed font-inter">
                   {listing.highlight}
                 </p>
                 {listing.highlightDescription && (
-                  <p className="text-blue-700 text-lg">
+                  <p className="text-black text-lg font-light leading-relaxed font-inter">
                     {listing.highlightDescription}
                   </p>
                 )}
               </div>
             )}
 
-            {/* Amenities */}
-            <div className="space-y-10 p-8">
-              <h2 className="text-3xl font-bold text-gray-800">
+            <div className="space-y-10 p-8 bg-white rounded-3xl shadow-[0_15px_10px_rgba(255,255,255,0.6)] transition-all duration-300">
+              <h2 className="text-4xl font-extrabold text-gray-900 font-poppins tracking-tight">
                 What this place offers
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
@@ -459,12 +463,12 @@ const ListingDetails: React.FC = () => {
                     return (
                       <div
                         key={index}
-                        className="flex items-center space-x-6 p-6 bg-white rounded-2xl shadow-md hover:shadow-lg hover:bg-gray-50 transition-all duration-300 transform hover:-translate-y-1"
+                        className="border border-black  flex items-center space-x-4 p-6 bg-white rounded-xl transition-all duration-300 transform hover:-translate-y-1"
                       >
-                        <div className="text-gray-700 text-2xl">
+                        <div className="text-blue-500 text-2xl">
                           {facility?.icon || "🔵"}
                         </div>
-                        <span className="text-gray-700 font-semibold text-lg">
+                        <span className="text-gray-800 font-medium text-lg font-roboto">
                           {facility?.name || cleanedItem}
                         </span>
                       </div>
@@ -476,18 +480,22 @@ const ListingDetails: React.FC = () => {
 
           {/* Right Column - Booking Card */}
           <div className="lg:col-span-1">
-            <div className="sticky top-28 bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
+            <div className="sticky top-28 bg-white rounded-2xl border border-gray-200 shadow-2xl p-8 space-y-6">
+              {/* Price Section */}
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold">${listing?.price}</span>
+                  <span className="text-5xl font-extrabold text-gray-900">
+                  ₹{listing?.price}
+                  </span>
                   <span className="text-gray-500 text-lg">/ night</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300">
                   <Star className="w-5 h-5 text-yellow-400" />
-                  <span className="font-semibold">4.9</span>
+                  <span className="font-semibold text-blue-900">4.9</span>
                 </div>
               </div>
 
+              {/* Date Range Picker */}
               <div className="mb-8">
                 <DateRange
                   ranges={dateRange}
@@ -495,27 +503,29 @@ const ListingDetails: React.FC = () => {
                   showDateDisplay={false}
                   minDate={new Date()}
                   rangeColors={["#3b82f6"]}
-                  className="border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+                  className="border border-gray-300 rounded-xl overflow-hidden shadow-lg"
                 />
               </div>
 
+              {/* Price Breakdown */}
               <div className="space-y-4 pt-6 border-t border-gray-200">
-                <div className="flex justify-between text-gray-600 text-lg">
+                <div className="flex justify-between text-gray-700 text-lg">
                   <span>
-                    ${listing?.price} × {dayCount} nights
+                  ₹{listing?.price} × {dayCount} nights
                   </span>
-                  <span>${totalPrice}</span>
+                  <span>₹{totalPrice}</span>
                 </div>
-                <div className="flex justify-between text-xl font-bold">
+                <div className="flex justify-between text-xl font-bold text-gray-800">
                   <span>Total</span>
-                  <span>${totalPrice}</span>
+                  <span>₹{totalPrice}</span>
                 </div>
               </div>
 
+              {/* Reserve Button */}
               <button
-                className={`w-full mt-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${
+                className={`w-full mt-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 ease-in-out ${
                   customerId
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-2xl hover:shadow-xl transform hover:translate-y-1"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}
                 disabled={!customerId}
