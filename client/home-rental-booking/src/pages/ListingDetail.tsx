@@ -257,72 +257,80 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="w-[100%] min-h-screen bg-black shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-9">
       <Navbar />
-      <div className="max-w-full mx-auto px-4 pt-28 pb-20">
+      <div className="mx-auto px-4 mt-20 pb-20">
         {/* Main Header */}
-        <div className="mb-16 space-y-8">
+        <div className="mb-6 space-y-8">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
             <div className="space-y-4">
               <div className="flex-col items-center gap-4">
-                <h1 className="text-4xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 tracking-tight [text-shadow:_0_4px_8px_rgba(59,130,246,0.4)]">
+                <h1 className="text-4xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-100 via-blue-600 to-indigo-800 tracking-tight [text-shadow:_0_8px_16px_rgba(255,255,255,0.6)]">
                   {listing?.title}
                 </h1>
                 <br />
-                <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium tracking-wide text-sm shadow-[0_2px_10px_-3px_rgba(59,130,246,0.6)] transition-all hover:shadow-[0_4px_12px_-3px_rgba(59,130,246,0.7)]">
+                <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 text-white font-medium tracking-wide text-sm shadow-[0_15px_10px_rgba(255,255,255,0.6)] transition-all">
                   {listing.type}
                 </span>
               </div>
-            </div>
-            <div className="flex gap-4">
-              <button className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-gray-50 border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md">
-                <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            </div>{" "}
+            <div className="flex gap-4 mt-[-35px] md:mb-0">
+              <button className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-gray-200 shadow-[0_15px_10px_rgba(255,255,255,0.6)] transition-all duration-200">
+                <Share2 className="w-4 h-4" />
                 <span className="font-medium">Share</span>
               </button>
-              <button className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-gray-50 border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md">
-                <Heart className="w-4 h-4 group-hover:text-red-500 group-hover:scale-110 transition-all" />
+              <button className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-gray-200 shadow-[0_15px_10px_rgba(255,255,255,0.6)] transition-all duration-200">
+                <Heart className="w-4 h-4" />
                 <span className="font-medium">Save</span>
               </button>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-3 text-gray-600">
-              <div className="p-2 rounded-full bg-gray-50">
-                <MapPin className="w-5 h-5 text-gray-500" />
+            <div className="flex items-center gap-5 text-gray-800">
+              <div className="shadow-[0_15px_10px_rgba(255,255,255,0.6)] p-3 rounded-full bg-gradient-to-r from-blue-400 via-blue-100 to-blue-400 sshadow-[0_15px_10px_rgba(255,255,255,0.6)] ring-2 ring-blue-300">
+                <MapPin className="w-7 h-7 text-blue-500" />
               </div>
-              <span className="text-lg">{`${listing?.city}, ${listing?.province}, ${listing?.country}`}</span>
+              <span className="text-lg font-semibold bg-gradient-to-r from-blue-100 to-blue-300 text-transparent bg-clip-text tracking-tight relative ">
+                {`${listing?.city}, ${listing?.province}, ${listing?.country}`}
+              </span>
             </div>
-            <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white shadow-sm border border-gray-100">
-              <Star className="w-5 h-5 text-yellow-400" />
-              <span className="font-semibold text-lg">4.9</span>
-              <span className="text-gray-500">(128 reviews)</span>
+            <div className="shadow-[0_15px_10px_rgba(255,255,255,0.6)] flex items-center gap-4 px-5 py-3 rounded-full bg-gradient-to-r from-white to-gray-50 border border-gray-200 transition-shadow duration-200">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
+                <Star className="w-5 h-5 text-yellow-500" />
+              </div>
+              <span className="font-semibold text-lg text-gray-800">4.9</span>
+              <span className="text-sm text-gray-600">(128 reviews)</span>
             </div>
           </div>
         </div>
 
         {/* Host Information */}
-        <div className="mb-12 p-8 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-6">
+        <div className="shadow-[0_15px_10px_rgba(255,255,255,0.6)] mb-12 mt-12 p-8 bg-white rounded-3xl border border-gray-300 transition-all duration-300 ease-in-out">
+          <div className="flex items-center gap-8">
+            {/* Profile Image */}
             <div className="relative">
               <img
                 src={`http://localhost:3001/public${listing?.creator.profileImagePath}`}
                 alt={`${listing?.creator.firstname} ${listing?.creator.lastname}`}
-                className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-xl"
+                className="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-md"
               />
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+              <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full border-2 border-gray-100 shadow-sm"></div>
             </div>
-            <div className="space-y-1">
-              <h3 className="text-xl font-bold">
+            {/* Host Details */}
+            <div className="space-y-3">
+              <h3 className="text-2xl font-bold text-gray-900">
                 Hosted by {listing?.creator.firstname}{" "}
                 {listing?.creator.lastname}
               </h3>
-              <p className="text-gray-600 flex items-center gap-2">
-                <span className="inline-flex px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 text-sm font-medium">
+              <p className="text-gray-700 flex items-center gap-3">
+                <span className="inline-flex px-4 py-1.5 rounded-lg bg-purple-200 text-purple-800 text-sm font-medium">
                   Superhost
                 </span>
-                <span>·</span>
-                <span>5 years hosting</span>
+                <span className="text-gray-500">·</span>
+                <span className="text-gray-600 font-medium">
+                  5 years hosting
+                </span>
               </p>
             </div>
           </div>
@@ -332,13 +340,15 @@ const ListingDetails: React.FC = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-12">
             {/* Image Gallery */}
-            <div className="relative rounded-3xl overflow-hidden aspect-video shadow-2xl">
+            <div className="relative rounded-3xl overflow-hidden w-[1130px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
               <img
                 src={`http://localhost:3001${listing?.images[currentImageIndex]}`}
                 alt={`View ${currentImageIndex + 1}`}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-fill"
               />
+              {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              {/* Navigation Controls */}
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-xl">
                 <button
                   onClick={() => handleImageNavigation("prev")}
@@ -359,37 +369,45 @@ const ListingDetails: React.FC = () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ">
               {[
                 {
-                  icon: <Users className="w-6 h-6" />,
+                  icon: (
+                    <Users className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
+                  ),
                   label: "Guests",
                   value: listing?.guestCount,
                 },
                 {
-                  icon: <Bed className="w-6 h-6" />,
+                  icon: (
+                    <Bed className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
+                  ),
                   label: "Bedrooms",
                   value: listing?.bedroomCount,
                 },
                 {
-                  icon: <Bath className="w-6 h-6" />,
+                  icon: (
+                    <Bath className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
+                  ),
                   label: "Bathrooms",
                   value: listing?.bathroomCount,
                 },
               ].map((stat, index) => (
                 <div
                   key={index}
-                  className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
+                  className="group bg-white p-6 rounded-xl border border-gray-200 transition-shadow duration-300 shadow-[0_15px_10px_rgba(255,255,255,0.6)]"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
+                    <div className="p-3 rounded-xl bg-gradient-to-r from-blue-100 to-blue-300 text-blue-600 group-hover:scale-110 transition-transform">
                       {stat.icon}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">
+                      <p className="text-sm text-gray-500 font-semibold">
                         {stat.label}
                       </p>
-                      <p className="text-2xl font-bold">{stat.value}</p>
+                      <p className="text-3xl font-extrabold text-gray-800">
+                        {stat.value}
+                      </p>
                     </div>
                   </div>
                 </div>
