@@ -136,10 +136,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">
-              {creator.charAt(0).toUpperCase()}
+              {creator.firstname.charAt(0).toUpperCase()}
             </span>
           </div>
-          <p className="text-sm text-gray-600">By {creator}</p>
+          <p className="text-sm text-gray-600">
+            By {creator.firstname} {creator.lastname}
+          </p>
         </div>
         <a
           href={`/listing/${listingId}`}

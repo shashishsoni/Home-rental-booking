@@ -10,6 +10,8 @@ import helmet from 'helmet';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
+import bookingRoutes from './routes/Bookingapi';
+import userRouters from './routes/userapi';
 
 dotenv.config();
 
@@ -66,6 +68,8 @@ app.options('*', cors(corsOptions));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/listing', listingRoutes);
+app.use('/booking', bookingRoutes);
+app.use('/user', userRouters);
 
 // CORS Error Handler
 interface CustomError extends Error {

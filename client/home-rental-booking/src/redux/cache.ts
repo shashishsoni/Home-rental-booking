@@ -42,12 +42,11 @@ export const userSlice = createSlice({
     },
     setListings: (state, action: PayloadAction<Listing[]>) => {
       state.listings = action.payload; 
-    }
+    },
   },
 });
 
-// Export actions
-export const { setLogin, setLogout, setListings } = userSlice.actions;
+export const { setLogin, setLogout, setListings} = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;

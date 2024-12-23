@@ -151,14 +151,43 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
   try {
     let listings;
     if (qCategory) {
-      listings = await Listing.find({ category: qCategory }).populate(
-        "Creator"
-      );
+      listings = await Listing.find({ category: qCategory })
+        .populate('Creator', '_id firstname lastname profileImagePath');
     } else {
-      listings = await Listing.find().populate("Creator");
+      listings = await Listing.find()
+        .populate('Creator', '_id firstname lastname profileImagePath');
     }
 
-    res.status(200).json({ listings });
+    const transformedListings = listings.map(listing => {
+      const listingObj = listing.toJSON();
+      const creator = listing.Creator as any;
+
+      // Handle case where Creator is just an ID (old data)
+      if (typeof creator === 'string') {
+        return {
+          ...listingObj,
+          creator: {
+            _id: creator,
+            firstname: "Unknown",
+            lastname: "",
+            profileImagePath: "/uploads/default-profile.png"
+          }
+        };
+      }
+
+      // Handle populated Creator object (new data)
+      return {
+        ...listingObj,
+        creator: {
+          _id: creator._id,
+          firstname: creator.firstname || "Unknown",
+          lastname: creator.lastname || "",
+          profileImagePath: creator.profileImagePath || "/uploads/default-profile.png"
+        }
+      };
+    });
+
+    res.status(200).json({ listings: transformedListings });
   } catch (err) {
     console.error("Error fetching listings:", err);
     res
@@ -182,18 +211,23 @@ router.get("/:listingId", async (req: Request, res: Response) => {
       return;
     }
 
-    // Prepare the Creator data
-    const creator = listing.Creator as {
-      profileImagePath?: string;
-      firstname?: string;
-      lastname?: string;
-    };
+    // Parse the Creator field to handle old data structure
+    const creator = listing.Creator as any;
 
-    const parsedCreator = {
-      profileImagePath: creator?.profileImagePath || "/uploads/default-profile.png",
-      firstname: creator?.firstname || "Unknown",
-      lastname: creator?.lastname || "",
-    };
+    // Handle both old and new data structures
+    const parsedCreator = typeof creator === 'string' 
+      ? {
+          _id: creator,
+          profileImagePath: "/uploads/default-profile.png",
+          firstname: "Unknown",
+          lastname: ""
+        }
+      : {
+          _id: creator._id,
+          profileImagePath: creator.profileImagePath || "/uploads/default-profile.png",
+          firstname: creator.firstname || "Unknown",
+          lastname: creator.lastname || ""
+        };
 
     // Return the data with parsedCreator
     res.status(200).json({

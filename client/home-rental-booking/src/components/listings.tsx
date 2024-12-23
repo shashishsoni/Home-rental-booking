@@ -36,9 +36,11 @@ const Listings = () => {
       // Sanitize data before updating Redux store
       const sanitizedListings = data.listings.map((listing: any) => ({
         _id: listing._id,
-        creator: listing.Creator
-          ? `${listing.Creator.firstname} ${listing.Creator.lastname}`
-          : "Unknown",
+        creator: {
+          _id: listing.Creator?._id || listing.Creator,
+          firstname: listing.Creator?.firstname || "Unknown",
+          lastname: listing.Creator?.lastname || "",
+        },
         parsedCreator: listing.Creator
           ? {
               firstname: listing.Creator.firstname || "Unknown",
@@ -162,9 +164,13 @@ const Listings = () => {
             }}
           >
             {listings && listings.length > 0 ? (
-              listings.map((listing: Listing) => (
-                <div key={listing._id}>
-                  <ListingCard listingId={listing._id} {...listing} />
+              listings.map(({ _id, creator, ...rest }: Listing) => (
+                <div key={_id}>
+                  <ListingCard
+                    listingId={_id} // Explicitly pass the `listingId`
+                    creator={creator} // Pass the `creator` object
+                    {...rest} // Spread other properties
+                  />
                 </div>
               ))
             ) : (

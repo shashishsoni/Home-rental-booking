@@ -18,6 +18,7 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/loader";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { tr } from "date-fns/locale";
 
 interface APIListing {
   _id: string;
@@ -44,6 +45,7 @@ interface APIListing {
 }
 
 interface Listing {
+  _id: string;
   title: string;
   type: string;
   city: string;
@@ -74,7 +76,7 @@ interface CustomDateRange {
 const ListingDetails: React.FC = () => {
   const { listingId } = useParams<{ listingId: string }>();
   const navigate = useNavigate();
-  const customerId = useSelector((state: any) => state.user?._id);
+  const userId = useSelector((state: any) => state.user?.user?._id);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -199,6 +201,7 @@ const ListingDetails: React.FC = () => {
       firstname: data.listing.parsedCreator?.firstname || "Unknown",
       lastname: data.listing.parsedCreator?.lastname || "",
     },
+    _id: "",
   });
 
   const handleImageNavigation = (direction: "prev" | "next") => {
@@ -215,6 +218,17 @@ const ListingDetails: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % (listing?.images.length || 1)
+      );
+    }, 3000); // 3000ms = 3 seconds
+
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
+  }, [listing?.images.length]);
+
   // Handle date range selection
   const handleSelect = (rangesByKey: RangeKeyDict) => {
     const { startDate, endDate } = rangesByKey.selection;
@@ -222,6 +236,37 @@ const ListingDetails: React.FC = () => {
       setDateRange([{ startDate, endDate, key: "selection" }]);
     }
   };
+
+  //submit booking by user
+  const customerId = useSelector((state: any) => state.user?.user?._id);
+  const handleSubmit = async () => {
+    try {
+      const bookingForms = {
+        customerId,
+        hostId: listing?._id,
+        listingId: listing?._id,
+        startDate: dateRange[0].startDate.toDateString(),
+        endDate: dateRange[0].endDate.toDateString(),
+        totalPrice: (listing?.price ?? 0) * dayCount,
+      };
+
+      const response = await fetch("http://localhost:3001/booking/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingForms),
+      });
+
+      if (!response.ok) {
+        navigate(`${customerId}/trips`);
+        throw new Error("Failed to book listing");
+      }
+    } catch (error) {
+      console.log("submite booking listing failed:", error);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -485,7 +530,7 @@ const ListingDetails: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-baseline gap-2">
                   <span className="text-5xl font-extrabold text-gray-900">
-                  ₹{listing?.price}
+                    ₹{listing?.price}
                   </span>
                   <span className="text-gray-500 text-lg">/ night</span>
                 </div>
@@ -511,7 +556,7 @@ const ListingDetails: React.FC = () => {
               <div className="space-y-4 pt-6 border-t border-gray-200">
                 <div className="flex justify-between text-gray-700 text-lg">
                   <span>
-                  ₹{listing?.price} × {dayCount} nights
+                    ₹{listing?.price} × {dayCount} nights
                   </span>
                   <span>₹{totalPrice}</span>
                 </div>
@@ -524,13 +569,19 @@ const ListingDetails: React.FC = () => {
               {/* Reserve Button */}
               <button
                 className={`w-full mt-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 ease-in-out ${
-                  customerId
+                  userId
                     ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-2xl hover:shadow-xl transform hover:translate-y-1"
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}
-                disabled={!customerId}
+                disabled={!userId}
+                onClick={() => {
+                  if (userId) {
+                    handleSubmit();
+                    console.log("Processing booking...");
+                  }
+                }}
               >
-                {customerId ? "Reserve Now" : "Sign in to Book"}
+                {userId ? "Reserve Now" : "Log in to Book"}
               </button>
             </div>
           </div>

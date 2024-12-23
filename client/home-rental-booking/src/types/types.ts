@@ -23,7 +23,7 @@ export interface UserState {
 
 export interface Listing {
   _id: string;
-  creator: string;
+  creator: Creator;
   parsedCreator: {
     firstname: string;
     lastname: string;
@@ -48,9 +48,15 @@ export interface Listing {
   highlightDescription: string;
 }
 
+export interface Creator {
+  _id: string;
+  firstname: string;
+  lastname: string;
+}
+
 export interface ListingCardProps {
   listingId: string;
-  creator: string;
+  creator: Creator;
   ListingPhotoPaths: string[];
   city: string;
   province?: string; 
