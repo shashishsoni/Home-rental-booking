@@ -21,6 +21,7 @@ export interface UserState {
   listings: Listing[];
 }
 
+
 export interface Listing {
   _id: string;
   creator: Creator;

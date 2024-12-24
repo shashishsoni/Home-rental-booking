@@ -8,6 +8,7 @@ import LoadingWrapper from "./components/common/LoadingWrapper";
 import CreateListing from "./pages/CreateListing";
 import './App.css';
 import ListingDetail from "./pages/ListingDetail";
+import TripList from "./pages/TripList";
 
 const App = () => {
   // Accessing user state from Redux
@@ -32,6 +33,8 @@ const App = () => {
           <Route path="/create-Listing" element={<CreateListing />} />
 
           <Route path="/Listing/:listingId" element={<ListingDetail/>}></Route>
+
+          <Route path="/:userId/trips" element={<TripList/>}></Route>
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>

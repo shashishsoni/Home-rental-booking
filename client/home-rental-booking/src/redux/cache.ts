@@ -1,6 +1,6 @@
 // cache.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Listing, UserState} from "../types/types";  // Import UserState from types.ts
+import { Listing, UserState } from "../types/types"; // Import UserState from types.ts
 
 const initialState: UserState = {
   user: null,
@@ -8,7 +8,6 @@ const initialState: UserState = {
   profileImagePath: null,
   listings: [],
 };
-
 
 export const userSlice = createSlice({
   name: "user",
@@ -41,12 +40,12 @@ export const userSlice = createSlice({
       state.profileImagePath = null;
     },
     setListings: (state, action: PayloadAction<Listing[]>) => {
-      state.listings = action.payload; 
+      state.listings = action.payload;
     },
   },
 });
 
-export const { setLogin, setLogout, setListings} = userSlice.actions;
+export const { setLogin, setLogout, setListings } = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;

@@ -259,7 +259,7 @@ const ListingDetails: React.FC = () => {
       });
 
       if (!response.ok) {
-        navigate(`${customerId}/trips`);
+        navigate(`/${customerId}/trips`);
         throw new Error("Failed to book listing");
       }
     } catch (error) {
