@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
                         </Link>
                       </li>
                       <li>
-                        <Link to="/wishlist" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                        <Link to={`/${user._id}/wishlist`} className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
                           <span className="text-sm font-medium">Wishlist</span>
                         </Link>
                       </li>

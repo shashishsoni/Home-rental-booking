@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ListingCardProps } from "../types/types";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
+import { setWishlist } from "../redux/cache";
+
 
 const ListingCard: React.FC<ListingCardProps> = ({
   listingId,
@@ -13,6 +18,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
   price,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.user?.user);
+  const token = useSelector((state: any) => state.user?.token);
+  const wishlist = useSelector((state: any) => state.user?.wishlist || []);
 
   // Auto-slide functionality
   useEffect(() => {
@@ -26,8 +36,64 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
   }, [ListingPhotoPaths]);
 
+  const isWishlisted = wishlist?.find((item: any) => item === listingId);
+
+  const handleWishlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user || !token) {
+      navigate('/login');
+      return;
+    }
+
+    // Prevent liking own listing
+    if (user._id === creator._id) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/user/${user._id}/${listingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      dispatch(setWishlist(data.wishlist));
+      
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    }
+  };
+
   return (
-    <div className="flex flex-col mt-8 w-[400px] h-full bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-200">
+    <div className="flex flex-col mt-8 w-[400px] h-full bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-200 relative">
+      {/* Heart Button */}
+      <button
+        onClick={handleWishlist}
+        disabled={!user || user._id === creator._id}
+        className={`absolute top-4 left-4 z-20 p-2.5 rounded-full 
+          ${!user ? 'bg-gray-200/50 cursor-not-allowed' : 
+            user._id === creator._id ? 'bg-gray-200/50 cursor-not-allowed' : 
+            'bg-white/90 hover:bg-white shadow-md'} 
+          backdrop-blur-sm transition-all duration-300`}
+        title={user._id === creator._id ? "Can't wishlist your own listing" : ""}
+      >
+        <Heart 
+          className={`w-5 h-5 ${
+            isWishlisted ? 'fill-red-500 text-red-500' : 
+            user._id === creator._id ? 'text-gray-400' : 'text-gray-600'
+          }`} 
+        />
+      </button>
+
       {/* Image Slider with Overlay */}
       <div className="relative h-[300px] group">
         {ListingPhotoPaths.length > 0 ? (

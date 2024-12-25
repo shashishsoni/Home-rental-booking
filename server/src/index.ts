@@ -20,7 +20,7 @@ const app = express();
 // CORS Options
 const corsOptions = {
   origin: 'http://localhost:5173', // Allow the front-end URL for development (change for production)
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true, // Enable cookies and credentials
   maxAge: 86400,      // Cache preflight response for 24 hours

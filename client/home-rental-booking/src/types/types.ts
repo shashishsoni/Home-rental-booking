@@ -22,17 +22,11 @@ export interface Trip {
 }
 
 export interface UserState {
-  user: {
-    _id: string;
-    firstname: string;
-    lastname: string;
-    Email: string;
-    profileImagePath: string;
-    triplist?: Trip[];
-  } | null;
+  user: any;
   token: string | null;
   profileImagePath: string | null;
   listings: Listing[];
+  wishlist: string[];
 }
 
 

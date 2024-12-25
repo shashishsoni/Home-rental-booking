@@ -1,6 +1,4 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "./redux/storecache"; // Adjust import if RootState is defined elsewhere
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -9,10 +7,9 @@ import CreateListing from "./pages/CreateListing";
 import './App.css';
 import ListingDetail from "./pages/ListingDetail";
 import TripList from "./pages/TripList";
+import WishlistPage from "./pages/wishlistpage";
 
 const App = () => {
-  // Accessing user state from Redux
-  const userState = useSelector((state: RootState) => state.user);
 
   return (
     <LoadingWrapper>
@@ -35,6 +32,8 @@ const App = () => {
           <Route path="/Listing/:listingId" element={<ListingDetail/>}></Route>
 
           <Route path="/:userId/trips" element={<TripList/>}></Route>
+
+          <Route path="/wishlist" element={<WishlistPage />} />
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>

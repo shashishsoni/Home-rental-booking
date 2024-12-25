@@ -38,8 +38,9 @@ const userSchema = new Schema<IUserDocument>({
     default: [],
   },
   WishList: {
-    type:  Schema.Types.Mixed,
-    default: [],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Listing',
+    default: []
   },
   PropertyList: {
     type:  Schema.Types.Mixed,

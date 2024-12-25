@@ -7,6 +7,7 @@ const initialState: UserState = {
   token: null,
   profileImagePath: null,
   listings: [],
+  wishlist: [],
 };
 
 export const userSlice = createSlice({
@@ -24,6 +25,7 @@ export const userSlice = createSlice({
           Email: string;
           profileImagePath: string;
           triplist?: Trip[];
+          WishList: string[];
         };
         token: string;
         profileImagePath?: string;
@@ -32,12 +34,14 @@ export const userSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.profileImagePath = action.payload.profileImagePath || null;
+      state.wishlist = action.payload.user.WishList || [];
     },
     // Action to handle logout
     setLogout: (state) => {
       state.user = null;
       state.token = null;
       state.profileImagePath = null;
+      state.wishlist = [];
     },
     setListings: (state, action: PayloadAction<Listing[]>) => {
       state.listings = action.payload;
@@ -55,10 +59,13 @@ export const userSlice = createSlice({
         state.user.triplist.push(action.payload);
       }
     },
+    setWishlist: (state, action: PayloadAction<string[]>) => {
+      state.wishlist = action.payload;
+    },
   },
 });
 
-export const { setLogin, setLogout, setListings, setTripList, addTrip } = userSlice.actions;
+export const { setLogin, setLogout, setListings, setTripList, addTrip, setWishlist } = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;

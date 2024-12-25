@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Loader, Calendar, DollarSign, MapPin, Clock } from "lucide-react";
+import { Loader, Calendar, MapPin, Clock, IndianRupee } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Trip } from "../types/types";
 import { setTripList } from "../redux/cache";
@@ -284,7 +284,7 @@ const TripList: React.FC = () => {
                       <div className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:border-purple-500/50 transition-colors duration-300">
                         <div className="flex items-center space-x-4">
                           <div className="p-3 bg-purple-500/10 rounded-xl">
-                            <DollarSign className="w-6 h-6 text-purple-400" />
+                            <IndianRupee className="w-6 h-6 text-purple-400" />
                           </div>
                           <div>
                             <p className="text-gray-400 text-sm font-medium uppercase tracking-wider">Total</p>
