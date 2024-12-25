@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { addTrip } from "@/redux/cache";
+import { useSelector, useDispatch } from "react-redux";
 import { DateRange, RangeKeyDict } from "react-date-range";
 import {
   Users,
@@ -18,17 +19,12 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/loader";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { tr } from "date-fns/locale";
+
 
 interface APIListing {
   _id: string;
-  creator: string;
-  parsedCreator: {
-    firstname: string;
-    lastname: string;
-    profileImagePath: string;
-  };
   title: string;
+  category: string;
   type: string;
   city: string;
   province: string;
@@ -42,6 +38,17 @@ interface APIListing {
   amenities: string[];
   price: number;
   listingImages: string[];
+  Creator: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+  };
+  parsedCreator: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    profileImagePath: string;
+  };
 }
 
 interface Listing {
@@ -64,6 +71,7 @@ interface Listing {
     profileImagePath: string;
     firstname: string;
     lastname: string;
+    _id: string;
   };
 }
 
@@ -77,6 +85,9 @@ const ListingDetails: React.FC = () => {
   const { listingId } = useParams<{ listingId: string }>();
   const navigate = useNavigate();
   const userId = useSelector((state: any) => state.user?.user?._id);
+  const token = useSelector((state: any) => state.user?.token);
+  const state = useSelector((state: any) => state);
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -141,6 +152,11 @@ const ListingDetails: React.FC = () => {
     }
   `;
 
+  // Log state changes
+  useEffect(() => {
+    console.log("Current Redux State:", state);
+  }, [state]);
+
   useEffect(() => {
     const styleSheet = document.createElement("style");
     styleSheet.type = "text/css";
@@ -164,7 +180,9 @@ const ListingDetails: React.FC = () => {
         if (!response.ok) throw new Error("Failed to fetch listing");
 
         const data = await response.json();
+        console.log("Full API Response:", JSON.stringify(data, null, 2));
         const transformedListing = transformApiResponse(data);
+        console.log("Transformed Listing:", transformedListing); // Debug log
         setListing(transformedListing);
         setLoading(false);
       } catch (err: any) {
@@ -177,32 +195,37 @@ const ListingDetails: React.FC = () => {
   }, [listingId]);
 
   // Transform API response to match Listing interface
-  const transformApiResponse = (data: { listing: APIListing }): Listing => ({
-    title: data.listing.title,
-    type: data.listing.type,
-    city: data.listing.city,
-    province: data.listing.province,
-    country: data.listing.country,
-    guestCount: data.listing.guest,
-    bedroomCount: data.listing.bedroom,
-    bathroomCount: data.listing.bathroom,
-    description: data.listing.description,
-    highlight: data.listing.Highlights || "",
-    highlightDescription: data.listing.Highlightdescription || "",
-    amenities: data.listing.amenities
-      .map((amenity) => amenity.trim())
-      .filter(Boolean),
-    price: data.listing.price,
-    images: data.listing.listingImages,
-    creator: {
-      profileImagePath: data.listing.parsedCreator?.profileImagePath
-        ? `/uploads/${data.listing.parsedCreator.profileImagePath}`
-        : "/uploads/default-profile.png", // Default image
-      firstname: data.listing.parsedCreator?.firstname || "Unknown",
-      lastname: data.listing.parsedCreator?.lastname || "",
-    },
-    _id: "",
-  });
+  const transformApiResponse = (data: { listing: APIListing }): Listing => {
+    console.log("Raw API data:", data);
+
+    return {
+      _id: data.listing._id,
+      title: data.listing.title || "",
+      type: data.listing.type,
+      city: data.listing.city,
+      province: data.listing.province,
+      country: data.listing.country,
+      guestCount: data.listing.guest,
+      bedroomCount: data.listing.bedroom,
+      bathroomCount: data.listing.bathroom,
+      description: data.listing.description,
+      highlight: data.listing.Highlights || "",
+      highlightDescription: data.listing.Highlightdescription || "",
+      amenities: data.listing.amenities
+        .map((amenity) => amenity.trim())
+        .filter(Boolean),
+      price: data.listing.price,
+      images: data.listing.listingImages,
+      creator: {
+        _id: data.listing.Creator._id,
+        profileImagePath: data.listing.parsedCreator?.profileImagePath
+          ? `/uploads/${data.listing.parsedCreator.profileImagePath}`
+          : "/uploads/default-profile.png",
+        firstname: data.listing.parsedCreator?.firstname || "Unknown",
+        lastname: data.listing.parsedCreator?.lastname || "",
+      },
+    };
+  };
 
   const handleImageNavigation = (direction: "prev" | "next") => {
     if (!listing) return;
@@ -217,6 +240,12 @@ const ListingDetails: React.FC = () => {
       );
     }
   };
+
+  useEffect(() => {
+    console.log("Current userId:", userId);
+    console.log("Current listing:", listing);
+    console.log("Current dateRange:", dateRange);
+  }, [userId, listing, dateRange]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -237,36 +266,64 @@ const ListingDetails: React.FC = () => {
     }
   };
 
-  //submit booking by user
-  const customerId = useSelector((state: any) => state.user?.user?._id);
   const handleSubmit = async () => {
     try {
-      const bookingForms = {
-        customerId,
-        hostId: listing?._id,
-        listingId: listing?._id,
-        startDate: dateRange[0].startDate.toDateString(),
-        endDate: dateRange[0].endDate.toDateString(),
-        totalPrice: (listing?.price ?? 0) * dayCount,
+      // Verify user is logged in
+      if (!userId || !token) {
+        throw new Error("Please log in to book a listing");
+      }
+
+      // Debug logs
+      console.log("Full listing object:", listing);
+      console.log("Creator information:", listing?.creator);
+
+      // Verify listing data with detailed checks
+      if (!listing) {
+        throw new Error("Listing information is missing");
+      }
+      if (!listing._id) {
+        throw new Error(`Listing ID is missing for listing: ${JSON.stringify(listing)}`);
+      }
+      if (!listing.creator) {
+        throw new Error(`Creator information is missing for listing: ${JSON.stringify(listing)}`);
+      }
+      if (!listing.creator._id) {
+        throw new Error(`Creator ID is missing for creator: ${JSON.stringify(listing.creator)}`);
+      }
+
+      const bookingData = {
+        customerId: userId,
+        hostId: listing.creator._id,
+        listingId: listing._id,
+        startDate: dateRange[0].startDate.toISOString(),
+        endDate: dateRange[0].endDate.toISOString(),
+        totalPrice: listing.price * dayCount,
       };
 
-      const response = await fetch("http://localhost:3001/booking/create", {
+      console.log("Sending booking data:", bookingData);
+
+      const response = await fetch("http://localhost:3001/bookings/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(bookingForms),
+        body: JSON.stringify(bookingData),
       });
 
       if (!response.ok) {
-        navigate(`/${customerId}/trips`);
-        throw new Error("Failed to book listing");
+        const errorData = await response.json();
+        throw new Error(errorData?.message || "Failed to create booking");
       }
-    } catch (error) {
-      console.log("submite booking listing failed:", error);
+
+      const newBooking = await response.json();
+      dispatch(addTrip(newBooking));
+      navigate(`/${userId}/trips`);
+    } catch (error: any) {
+      console.error("Booking error:", error);
+      alert(error.message);
     }
   };
-
 
   if (loading) {
     return (

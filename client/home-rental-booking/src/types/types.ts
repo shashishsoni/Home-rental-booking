@@ -8,6 +8,19 @@ export interface FormDataState {
   message?: string; 
 }
 
+export interface Trip {
+  _id: string;
+  customerId: string;
+  hostId: string;
+  listingId: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 export interface UserState {
   user: {
     _id: string;
@@ -15,6 +28,7 @@ export interface UserState {
     lastname: string;
     Email: string;
     profileImagePath: string;
+    triplist?: Trip[];
   } | null;
   token: string | null;
   profileImagePath: string | null;

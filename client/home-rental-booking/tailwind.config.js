@@ -8,6 +8,11 @@ module.exports = {
     extend: {
       animation: {
         'slide': 'slide 20s linear infinite',
+        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
+        'glow-border': 'glow-border 3s linear infinite',
+        'glow-pulse-slow': 'glow-pulse-slow 6s ease-in-out infinite',
+        'spin-slow': 'spin-slow 8s linear infinite',
+        'reverse-spin': 'reverse-spin 12s linear infinite'
       },
       keyframes: {
         slide: {
@@ -21,6 +26,78 @@ module.exports = {
             backgroundPosition: '0 0',
           },
         },
+        glow1: {
+          '0%, 100%': { transform: 'translate(10%, 10%) scale(1)' },
+          '50%': { transform: 'translate(0%, 0%) scale(1.1)' },
+        },
+        glow2: {
+          '0%, 100%': { transform: 'translate(-10%, 10%) scale(1.1)' },
+          '50%': { transform: 'translate(0%, 0%) scale(1)' },
+        },
+        glow3: {
+          '0%, 100%': { transform: 'translate(0%, 0%) scale(1)' },
+          '50%': { transform: 'translate(10%, 10%) scale(1.1)' },
+        },
+        glow4: {
+          '0%, 100%': { transform: 'translate(0%, 0%) scale(1.1)' },
+          '50%': { transform: 'translate(-10%, 10%) scale(1)' },
+        },
+        'glow-pulse': {
+          '0%, 100%': {
+            opacity: 0.8,
+            transform: 'scale(1.1)'
+          },
+          '50%': {
+            opacity: 0.4,
+            transform: 'scale(0.9)'
+          },
+        },
+        'glow-border': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          }
+        },
+        'glow-pulse-slow': {
+          '0%, 100%': {
+            opacity: 0.7,
+            transform: 'scale(1.2) rotate(0deg)'
+          },
+          '50%': {
+            opacity: 0.5,
+            transform: 'scale(0.8) rotate(180deg)'
+          }
+        },
+        'spin-slow': {
+          '0%': {
+            transform: 'rotate(0deg)',
+            backgroundPosition: '0% 50%',
+          },
+          '50%': {
+            backgroundPosition: '100% 50%',
+          },
+          '100%': {
+            transform: 'rotate(360deg)',
+            backgroundPosition: '0% 50%',
+          }
+        },
+        'reverse-spin': {
+          '0%': {
+            transform: 'rotate(360deg)',
+            backgroundPosition: '100% 50%',
+          },
+          '50%': {
+            backgroundPosition: '0% 50%',
+          },
+          '100%': {
+            transform: 'rotate(0deg)',
+            backgroundPosition: '100% 50%',
+          }
+        }
       },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
@@ -86,42 +163,6 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      animation: {
-        glow1: "glow1 4s linear infinite",
-        glow2: "glow2 4s linear infinite",
-        glow3: "glow3 4s linear infinite",
-        glow4: "glow4 4s linear infinite",
-      },
-      keyframes: {
-        glow1: {
-          "0%": { transform: "translate(10%, 10%) scale(1)" },
-          "25%": { transform: "translate(-10%, 10%) scale(1)" },
-          "50%": { transform: "translate(-10%, -10%) scale(1)" },
-          "75%": { transform: "translate(10%, -10%) scale(1)" },
-          "100%": { transform: "translate(10%, 10%) scale(1)" },
-        },
-        glow2: {
-          "0%": { transform: "translate(-10%, -10%) scale(1)" },
-          "25%": { transform: "translate(10%, -10%) scale(1)" },
-          "50%": { transform: "translate(10%, 10%) scale(1)" },
-          "75%": { transform: "translate(-10%, 10%) scale(1)" },
-          "100%": { transform: "translate(-10%, -10%) scale(1)" },
-        },
-        glow3: {
-          "0%": { transform: "translate(-10%, 10%) scale(1)" },
-          "25%": { transform: "translate(-10%, -10%) scale(1)" },
-          "50%": { transform: "translate(10%, -10%) scale(1)" },
-          "75%": { transform: "translate(10%, 10%) scale(1)" },
-          "100%": { transform: "translate(-10%, 10%) scale(1)" },
-        },
-        glow4: {
-          "0%": { transform: "translate(10%, -10%) scale(1)" },
-          "25%": { transform: "translate(10%, 10%) scale(1)" },
-          "50%": { transform: "translate(-10%, 10%) scale(1)" },
-          "75%": { transform: "translate(-10%, -10%) scale(1)" },
-          "100%": { transform: "translate(10%, -10%) scale(1)" },
-        },
       },
     },
   },

@@ -68,7 +68,7 @@ app.options('*', cors(corsOptions));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/listing', listingRoutes);
-app.use('/booking', bookingRoutes);
+app.use('/bookings', bookingRoutes);
 app.use('/user', userRouters);
 
 // CORS Error Handler

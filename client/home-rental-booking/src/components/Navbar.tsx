@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import home from "../assets/home-transformed.png";
+import home from "../assets/home2.png";
 import { Person, Menu } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogout } from "@/redux/cache";
 import { persistor } from "@/redux/storecache";
 import { RootState } from "@/redux/storecache";
+import { Search } from "lucide-react";
 
 const Navbar: React.FC = () => {
-  const [Dropdown, setDropdownMenu] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   //acess user data from reudux store
   const user = useSelector((state: RootState) => state.user?.user);
 
@@ -17,7 +18,7 @@ const Navbar: React.FC = () => {
 
   const profileImageUrl = user?.profileImagePath
     ? `http://localhost:3001/public/uploads/${user.profileImagePath}`
-    : 'http://localhost:3001/public/uploads/default-profile.png';
+    : "http://localhost:3001/public/uploads/default-profile.png";
 
   const handleLogout = async () => {
     try {
@@ -39,108 +40,147 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[95%] h-[8%] shadow-lg px-4 py-2 flex items-center justify-between z-50 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-full mt-4">
-      {/* Left: Logo/Image */}
-      <div className="flex items-center">
-        <img
-          src={home}// Replace with actual logo path
-          alt="Logo"
-          className="h-[75px] w-[130px] rounded-full"
-        />
-      </div>
+    <div className="fixed top-0 left-0 right-0 px-6 py-4 z-50">
+      <nav className="max-w-9xl mx-auto flex items-center justify-between h-20 px-8 bg-black/10 backdrop-blur-lg rounded-full border border-white/10">
+        {/* Logo Section */}
+        <div className="flex-1 flex items-center justify-start">
+          <Link 
+            to="/" 
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-purple-500/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 animate-glow-pulse"></div>
+            <img 
+              src={home} 
+              alt="Logo" 
+              className="h-10 w-auto relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] group-hover:scale-100 transition-transform duration-500" 
+            />
+          </Link>
+        </div>
 
-      {/* Center: Glowing Search Bar */}
-      <div className="flex-0 ">
-        <div className="relative w-[130%]">
-          <div className="overflow-hidden z-0 rounded-full relative p-2">
-            <form role="form" className="relative flex z-50 bg-white rounded-full bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg">
+        {/* Search Section */}
+        <div className="flex-1 flex items-center justify-center max-w-xl px-4">
+          <div className="w-full relative group">
+            {/* Static glowing border */}
+            <div className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 opacity-70 blur-sm group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            {/* Search bar content */}
+            <div className="relative flex bg-black/20 rounded-full border border-white/10 backdrop-blur-sm overflow-hidden">
               <input
                 type="text"
-                placeholder="search..."
-                className="flex-1 h-12 px-4 text-gray-950 placeholder-gray-950 bg-white rounded-l-full focus:outline-none bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg "
+                placeholder="Where to?"
+                className="w-full h-12 pl-6 pr-4 bg-transparent text-white placeholder-white/60 rounded-l-full focus:outline-none transition-all"
               />
-              <button className="h-12 px-8 font-semibold text-zinc-800 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg rounded-r-full hover:bg-indigo-300 focus:bg-indigo-300 focus:outline-none">
-                Search
+              <button className="h-12 px-8 font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 rounded-r-full hover:opacity-90 transition-opacity flex items-center gap-2">
+                <Search size={18} />
+                <span>Search</span>
               </button>
-            </form>
-            <div className="glow glow-1 z-10 animate-glow1 bg-pink-400 rounded-full w-120 h-120 -top-10 -left-10 absolute"></div>
-            <div className="glow glow-2 z-20 animate-glow2 bg-purple-400 rounded-full w-120 h-120 -top-10 -left-10 absolute"></div>
-            <div className="glow glow-3 z-30 animate-glow3 bg-yellow-400 rounded-full w-120 h-120 -top-10 -left-10 absolute"></div>
-            <div className="glow glow-4 z-40 animate-glow4 bg-blue-400 rounded-full w-120 h-120 -top-10 -left-10 absolute"></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Right: Dropdown Menu */}
-      <div className="relative">
-        <div className="flex items-center space-x-4">
-          {user ? (
-            <a href="/create-listing" className="text-blue-500 hover:text-blue-700">
-              Become a Host
-            </a>
-          ) : (
-            <a href="/login" className="text-blue-500 hover:text-blue-700">
-              Become a Host
-            </a>
-          )}
-
-          <button
-            onClick={() => setDropdownMenu(!Dropdown)}
-            className="flex items-center space-x-2 px-4 py-2 border-blue-400 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg"
+        {/* Right Menu Section */}
+        <div className="flex-1 flex items-center justify-end gap-4">
+          <Link 
+            to={user ? "/create-listing" : "/login"}
+            className="px-5 py-2.5 text-white font-medium rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition-all duration-300 shadow-lg"
           >
-            <Menu />
-            {!user ? (
-              <Person />
-            ) : (
-              <img
-                src={profileImageUrl}
-                alt="Profile"
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            )}
-          </button>
+            Become a Host
+          </Link>
 
-          {/* Dropdown Items */}
-          {Dropdown && (
-            <div className={`absolute right-0 w-48 bg-[rgba(255,255,255,0.1)] backdrop-filter backdrop-blur-lg border border-gray-200 rounded-lg shadow-lg ${user ? 'mt-80' : 'mt-36'}`}>
-              <ul className="py-1">
-                {!user ? (
-                  <>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/signup" onClick={() => navigate("/signup")}>Sign Up</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/login" onClick={() => navigate("/login")}>Log In</Link>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="">Trip List</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="">Wish List</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="">Property List</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="">Reservation List</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/create-listing">Become A Host</Link>
-                    </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
-                      <Link to="/">Log Out</Link>
-                    </li>
-                  </>
+          <div className="relative">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full transition-all duration-300"
+            >
+              <Menu className="w-5 h-5" />
+              {user ? (
+                <img
+                  src={profileImageUrl}
+                  alt="Profile"
+                  className="h-8 w-8 rounded-full object-cover ring-2 ring-white/20"
+                />
+              ) : (
+                <Person className="w-5 h-5" />
+              )}
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg overflow-hidden">
+                {user && (
+                  <div className="p-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={profileImageUrl}
+                        alt="Profile"
+                        className="h-12 w-12 rounded-full object-cover ring-2 ring-white/20"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-white font-medium">
+                          {user.firstname} {user.lastname}
+                        </span>
+                        <span className="text-white/60 text-sm">View profile</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </ul>
-            </div>
-          )}
+                <ul className="py-1 divide-y divide-white/10">
+                  {!user ? (
+                    <>
+                      <li>
+                        <Link to="/signup" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Sign Up</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/login" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Log In</span>
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <Link to={`/${user._id}/trips`} className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Your Trips</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/wishlist" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Wishlist</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/properties" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Your Properties</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/reservations" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Your Reservations</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/create-listing" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                          <span className="text-sm font-medium">Become a Host</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <button 
+                          onClick={handleLogout}
+                          className="w-full text-left px-6 py-3 text-red-400 hover:bg-white/10 transition-colors"
+                        >
+                          <span className="text-sm font-medium">Log Out</span>
+                        </button>
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 
