@@ -22,14 +22,10 @@ const toggleWishlist: RequestHandler = async (req, res) => {
     try {
         const { userId, listingId } = req.params;
         
-        // Add error logging
-        console.log('Attempting to update wishlist:', { userId, listingId });
-        
         const user = await User.findById(userId);
         const listing = await Listing.findById(listingId);
 
         if (!user || !listing) {
-            console.log('Not found:', { user: !!user, listing: !!listing });
             res.status(404).json({ message: "User or listing not found" });
             return;
         }
@@ -39,22 +35,19 @@ const toggleWishlist: RequestHandler = async (req, res) => {
             user.WishList = [];
         }
 
-        const favoriteListing = user.WishList.find(
-            (item) => item?.toString() === listingId
-        );
+        const isWishlisted = user.WishList.includes(listingId);
 
-        if (favoriteListing) {
-            user.WishList = user.WishList.filter(
-                (item) => item?.toString() !== listingId
-            );
+        if (isWishlisted) {
+            user.WishList = user.WishList.filter(id => id.toString() !== listingId);
         } else {
-            user.WishList.push(listingId); // Use listingId directly instead of listing._id
+            user.WishList.push(listingId);
         }
 
         await user.save();
+
         res.json({
-            message: favoriteListing ? "Listing removed from wishlist" : "Listing added to wishlist",
-            isWishlisted: !favoriteListing,
+            success: true,
+            message: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
             wishlist: user.WishList
         });
 

@@ -35,13 +35,14 @@ app.use(helmet());
 
 // Serve Static Files with CORP headers
 const __dirname = dirname(fileURLToPath(import.meta.url));
-app.use('/public/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
-  setHeaders: (res, path, stat) => {
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
+  setHeaders: (res) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');  // Allow cross-origin resource sharing
     res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');  // Ensure proper embedder policy
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');  // Allow the front-end URL
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');  // Allow only GET and OPTIONS methods
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD,OPTIONS');  // Allow only GET and OPTIONS methods
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');  // Allow necessary headers
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
 }));
 

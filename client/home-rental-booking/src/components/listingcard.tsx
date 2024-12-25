@@ -18,25 +18,39 @@ const ListingCard: React.FC<ListingCardProps> = ({
   price,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [imageLoadError, setImageLoadError] = useState<boolean[]>(
+    new Array(ListingPhotoPaths.length).fill(false)
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user?.user);
   const token = useSelector((state: any) => state.user?.token);
   const wishlist = useSelector((state: any) => state.user?.wishlist || []);
 
+  
+
   // Auto-slide functionality
+  // Auto-slide functionality with error handling
   useEffect(() => {
     if (ListingPhotoPaths.length > 1) {
       const interval = setInterval(() => {
-        setCurrentIndex(
-          (prevIndex) => (prevIndex + 1) % ListingPhotoPaths.length
-        );
+        setCurrentIndex((prevIndex) => {
+          // Find the next non-errored image
+          let nextIndex = (prevIndex + 1) % ListingPhotoPaths.length;
+          let attempts = 0;
+          while (imageLoadError[nextIndex] && attempts < ListingPhotoPaths.length) {
+            nextIndex = (nextIndex + 1) % ListingPhotoPaths.length;
+            attempts++;
+          }
+          return nextIndex;
+        });
       }, 3000);
       return () => clearInterval(interval);
     }
-  }, [ListingPhotoPaths]);
+  }, [ListingPhotoPaths, imageLoadError]);
 
-  const isWishlisted = wishlist?.find((item: any) => item === listingId);
+  const isWishlisted = wishlist.includes(listingId);
+  const isOwnListing = user && creator && user._id === creator._id;
 
   const handleWishlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,30 +61,64 @@ const ListingCard: React.FC<ListingCardProps> = ({
       return;
     }
 
-    // Prevent liking own listing
-    if (user._id === creator._id) {
-      return;
-    }
-
     try {
-      const response = await fetch(`http://localhost:3001/user/${user._id}/${listingId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `http://localhost:3001/user/${user._id}/${listingId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
         }
-      });
-      
+      );
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error('Failed to update wishlist');
       }
-      
+
       const data = await response.json();
       dispatch(setWishlist(data.wishlist));
-      
     } catch (error) {
       console.error("Error updating wishlist:", error);
     }
+  };
+
+
+  const getImageUrl = (photoPath: string) => {
+    try {
+      // If it's a full URL, ensure it points to the backend server
+      if (photoPath.startsWith('http')) {
+        const url = new URL(photoPath);
+        return `http://localhost:3001${url.pathname}`;
+      }
+      
+      // Clean the path and ensure it starts with a forward slash
+      const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
+      return `http://localhost:3001/${cleanPath}`;
+    } catch (error) {
+      console.error('Error formatting image URL:', error);
+      return '';
+    }
+  };
+
+  // Reset image error state when photos change
+  useEffect(() => {
+    setImageLoadError(new Array(ListingPhotoPaths.length).fill(false));
+  }, [ListingPhotoPaths]);
+
+  const handleImageError = (index: number) => {
+    console.log('Image load error at index:', index);
+    setImageLoadError(prev => {
+      const newErrors = [...prev];
+      newErrors[index] = true;
+      return newErrors;
+    });
+  };
+
+  // Function to get available images count
+  const getAvailableImagesCount = () => {
+    return ListingPhotoPaths.length - imageLoadError.filter(Boolean).length;
   };
 
   return (
@@ -78,25 +126,25 @@ const ListingCard: React.FC<ListingCardProps> = ({
       {/* Heart Button */}
       <button
         onClick={handleWishlist}
-        disabled={!user || user._id === creator._id}
+        disabled={!user || isOwnListing}
         className={`absolute top-4 left-4 z-20 p-2.5 rounded-full 
           ${!user ? 'bg-gray-200/50 cursor-not-allowed' : 
-            user._id === creator._id ? 'bg-gray-200/50 cursor-not-allowed' : 
+            isOwnListing ? 'bg-gray-200/50 cursor-not-allowed' : 
             'bg-white/90 hover:bg-white shadow-md'} 
           backdrop-blur-sm transition-all duration-300`}
-        title={user._id === creator._id ? "Can't wishlist your own listing" : ""}
+        title={isOwnListing ? "Can't wishlist your own listing" : ""}
       >
         <Heart 
           className={`w-5 h-5 ${
             isWishlisted ? 'fill-red-500 text-red-500' : 
-            user._id === creator._id ? 'text-gray-400' : 'text-gray-600'
+            isOwnListing ? 'text-gray-400' : 'text-gray-600'
           }`} 
         />
       </button>
 
-      {/* Image Slider with Overlay */}
+      {/* Image Slider with Error Handling */}
       <div className="relative h-[300px] group">
-        {ListingPhotoPaths.length > 0 ? (
+        {getAvailableImagesCount() > 0 ? (
           <div
             className="absolute inset-0 flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -105,12 +153,16 @@ const ListingCard: React.FC<ListingCardProps> = ({
               <div
                 key={index}
                 className="w-full flex-shrink-0 relative"
-                style={{
-                  backgroundImage: `url(http://localhost:3001${photo})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              />
+              >
+                {!imageLoadError[index] ? (
+                  <img
+                    src={getImageUrl(photo)}
+                    alt={`Property ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={() => handleImageError(index)}
+                  />
+                ) : null}
+              </div>
             ))}
           </div>
         ) : (
@@ -118,6 +170,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             <p className="text-gray-500 text-lg">No Images Available</p>
           </div>
         )}
+
 
         {/* Absolute Positioning for Price */}
         <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-2 rounded-full shadow-lg flex flex-col items-center text-white">

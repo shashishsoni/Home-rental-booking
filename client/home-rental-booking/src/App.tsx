@@ -33,7 +33,7 @@ const App = () => {
 
           <Route path="/:userId/trips" element={<TripList/>}></Route>
 
-          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/:userId/wishlist" element={<WishlistPage />} />
         </Routes>
       </BrowserRouter>
     </LoadingWrapper>
