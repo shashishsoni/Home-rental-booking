@@ -457,7 +457,7 @@ const ListingDetails: React.FC = () => {
                     <img
                       src={`http://localhost:3001/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
                       alt={`Listing photo ${index + 1}`}
-                      className="w-[1050px] h-[600px] object-fill transition-transform duration-700"
+                      className="w-[1050px] h-[600px] object-cover transition-transform duration-700"
                     />
                     {/* Enhanced Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
