@@ -59,9 +59,6 @@ router.post(
   upload.single("profileImage"),
   async (req: MulterRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // Debug: Log the entire request body and file
-      console.log('Request Body:', req.body);
-      console.log('Uploaded File:', req.file);
      
       const { firstname, lastname, Email, password, confirmPassword } = req.body;
      

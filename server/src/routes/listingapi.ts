@@ -81,9 +81,6 @@ router.post(
         return;
       }
 
-      // Debug request data
-      console.log("Request body:", req.body);
-
       // Validate uploaded files
       const listingImages = req.files as Express.Multer.File[];
       if (!listingImages || listingImages.length === 0) {
@@ -135,12 +132,10 @@ router.post(
         .json({ message: "Listing created successfully", listing: newListing });
     } catch (err) {
       console.error("Error creating listing:", err);
-      res
-        .status(500)
-        .json({
-          message: "Internal server error",
-          error: (err as Error).message,
-        });
+      res.status(500).json({
+        message: "Internal server error",
+        error: (err as Error).message,
+      });
     }
   }
 );
@@ -151,27 +146,31 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
   try {
     let listings;
     if (qCategory) {
-      listings = await Listing.find({ category: qCategory })
-        .populate('Creator', '_id firstname lastname profileImagePath');
+      listings = await Listing.find({ category: qCategory }).populate(
+        "Creator",
+        "_id firstname lastname profileImagePath"
+      );
     } else {
-      listings = await Listing.find()
-        .populate('Creator', '_id firstname lastname profileImagePath');
+      listings = await Listing.find().populate(
+        "Creator",
+        "_id firstname lastname profileImagePath"
+      );
     }
 
-    const transformedListings = listings.map(listing => {
+    const transformedListings = listings.map((listing) => {
       const listingObj = listing.toJSON();
       const creator = listing.Creator as any;
 
       // Handle case where Creator is just an ID (old data)
-      if (typeof creator === 'string') {
+      if (typeof creator === "string") {
         return {
           ...listingObj,
           creator: {
             _id: creator,
             firstname: "Unknown",
             lastname: "",
-            profileImagePath: "/uploads/default-profile.png"
-          }
+            profileImagePath: "/uploads/default-profile.png",
+          },
         };
       }
 
@@ -182,20 +181,19 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
           _id: creator._id,
           firstname: creator.firstname || "Unknown",
           lastname: creator.lastname || "",
-          profileImagePath: creator.profileImagePath || "/uploads/default-profile.png"
-        }
+          profileImagePath:
+            creator.profileImagePath || "/uploads/default-profile.png",
+        },
       };
     });
 
     res.status(200).json({ listings: transformedListings });
   } catch (err) {
     console.error("Error fetching listings:", err);
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch listings",
-        error: (err as Error).message,
-      });
+    res.status(500).json({
+      message: "Failed to fetch listings",
+      error: (err as Error).message,
+    });
   }
 });
 
@@ -210,41 +208,40 @@ router.get("/search", (async (req: Request, res: Response) => {
 
     const listings = await Listing.find({
       $or: [
-        { category: { $regex: query, $options: 'i' } },
-        { type: { $regex: query, $options: 'i' } },
-        { city: { $regex: query, $options: 'i' } },
-        { country: { $regex: query, $options: 'i' } },
-        { title: { $regex: query, $options: 'i' } }
-      ]
-    }).populate('Creator', '_id firstname lastname profileImagePath');
+        { category: { $regex: query, $options: "i" } },
+        { type: { $regex: query, $options: "i" } },
+        { city: { $regex: query, $options: "i" } },
+        { country: { $regex: query, $options: "i" } },
+        { title: { $regex: query, $options: "i" } },
+      ],
+    }).populate("Creator", "_id firstname lastname profileImagePath");
 
-    res.json({ 
-      listings: listings.map(listing => {
+    res.json({
+      listings: listings.map((listing) => {
         const creator = listing.Creator as any;
         return {
           _id: listing._id,
-          title: listing.title || '',
-          category: listing.category || '',
-          type: listing.type || '',
-          city: listing.city || '',
-          country: listing.country || '',
+          title: listing.title || "",
+          category: listing.category || "",
+          type: listing.type || "",
+          city: listing.city || "",
+          country: listing.country || "",
           price: listing.price || 0,
           listingImages: listing.listingImages || [],
           Creator: {
             _id: creator._id,
-            firstname: creator.firstname || 'Unknown',
-            lastname: creator.lastname || '',
-            profileImagePath: creator.profileImagePath || 'default-profile.png'
-          }
+            firstname: creator.firstname || "Unknown",
+            lastname: creator.lastname || "",
+            profileImagePath: creator.profileImagePath || "default-profile.png",
+          },
         };
-      }) 
+      }),
     });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Failed to search listings" });
   }
 }) as RequestHandler);
-
 
 // Then the listingId route
 router.get("/:listingId", async (req: Request, res: Response) => {
@@ -263,19 +260,21 @@ router.get("/:listingId", async (req: Request, res: Response) => {
     const creator = listing.Creator as any;
 
     // Handle both old and new data structures
-    const parsedCreator = typeof creator === 'string' 
-      ? {
-          _id: creator,
-          profileImagePath: "/uploads/default-profile.png",
-          firstname: "Unknown",
-          lastname: ""
-        }
-      : {
-          _id: creator._id,
-          profileImagePath: creator.profileImagePath || "/uploads/default-profile.png",
-          firstname: creator.firstname || "Unknown",
-          lastname: creator.lastname || ""
-        };
+    const parsedCreator =
+      typeof creator === "string"
+        ? {
+            _id: creator,
+            profileImagePath: "/uploads/default-profile.png",
+            firstname: "Unknown",
+            lastname: "",
+          }
+        : {
+            _id: creator._id,
+            profileImagePath:
+              creator.profileImagePath || "/uploads/default-profile.png",
+            firstname: creator.firstname || "Unknown",
+            lastname: creator.lastname || "",
+          };
 
     // Return the data with parsedCreator
     res.status(200).json({

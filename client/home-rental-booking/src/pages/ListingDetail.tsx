@@ -108,8 +108,6 @@ const ListingDetails: React.FC = () => {
   ]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  console.log(listing);
-
   // Calculate total days and price
   const dayCount = Math.max(
     1,
@@ -161,7 +159,7 @@ const ListingDetails: React.FC = () => {
 
   // Log state changes
   useEffect(() => {
-    console.log("Current Redux State:", state);
+    
   }, [state]);
 
   useEffect(() => {
@@ -187,9 +185,9 @@ const ListingDetails: React.FC = () => {
         if (!response.ok) throw new Error("Failed to fetch listing");
 
         const data = await response.json();
-        console.log("Full API Response:", JSON.stringify(data, null, 2));
+        
         const transformedListing = transformApiResponse(data);
-        console.log("Transformed Listing:", transformedListing); // Debug log
+        
         setListing(transformedListing);
         setLoading(false);
       } catch (err: any) {
@@ -203,7 +201,7 @@ const ListingDetails: React.FC = () => {
 
   // Transform API response to match Listing interface
   const transformApiResponse = (data: { listing: APIListing }): Listing => {
-    console.log("Raw API data:", data);
+    
 
     return {
       _id: data.listing._id,
@@ -247,12 +245,6 @@ const ListingDetails: React.FC = () => {
       );
     }
   };
-
-  useEffect(() => {
-    console.log("Current userId:", userId);
-    console.log("Current listing:", listing);
-    console.log("Current dateRange:", dateRange);
-  }, [userId, listing, dateRange]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -687,7 +679,6 @@ const ListingDetails: React.FC = () => {
                 onClick={() => {
                   if (userId) {
                     handleSubmit();
-                    console.log("Processing booking...");
                   }
                 }}
               >

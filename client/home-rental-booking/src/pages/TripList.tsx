@@ -36,7 +36,7 @@ const TripList: React.FC = () => {
       }
 
       try {
-        console.log("Fetching trips for user:", userId);
+        
 
         const response = await fetch(`http://localhost:3001/user/${userId}/trips`, {
           method: 'GET',
@@ -51,7 +51,7 @@ const TripList: React.FC = () => {
         }
 
         const data = await response.json();
-        console.log("Received trips data:", data);
+        
 
         if (data.trips && Array.isArray(data.trips)) {
           const sortedTrips = data.trips.sort((a: Trip, b: Trip) => 

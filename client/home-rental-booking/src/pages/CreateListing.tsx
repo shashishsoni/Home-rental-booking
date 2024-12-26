@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { categories, types, facilities } from "@/data";
 import { RemoveCircleOutline, AddCircleOutline } from "@mui/icons-material";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { IoIosImages } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +47,7 @@ const CreateListing = () => {
     { label: "Beds", value: 1 },
     { label: "Bathrooms", value: 1 },
   ]);
-  console.log(items);
+
   const handleIncrease = (index: number) => {
     setItems((prevItems) =>
       prevItems.map((item, i) =>
@@ -154,7 +154,7 @@ const CreateListing = () => {
       formData.append("Highlights", FromDescription.HighLight);
       formData.append("Highlightdescription", FromDescription.HighLightDetails);
       formData.append("price", String(FromDescription.price));
-      console.log("Form data:", formData);
+    
       // Debug: log the FormData entries
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);

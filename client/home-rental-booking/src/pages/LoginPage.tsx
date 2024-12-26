@@ -47,7 +47,7 @@ function LoginPage() {
       const data = await response.json();
       if (data.token && data.user) {
         localStorage.setItem('user', JSON.stringify(data.user)); // Add this line
-        console.log("Dispatching setLogin with data:", { user: data.user, token: data.token });
+  
         dispatch(setLogin({ user: data.user, token: data.token }));
         navigate("/");
       } else {

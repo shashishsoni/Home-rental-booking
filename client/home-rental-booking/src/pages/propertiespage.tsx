@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Listing } from "../types/types";
 import Navbar from "../components/Navbar";
 import ListingCard from "../components/listingcard";
 import { setProperties } from "../redux/cache";
 import Footer from '../components/Footer';
+import { selectUser, selectToken, selectProperties} from '../redux/selectors';
 
 const PropertiesPage = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state: any) => state.user?.user);
-  const token = useSelector((state: any) => state.user?.token);
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+  const properties = useSelector(selectProperties);
 
   useEffect(() => {
     let isMounted = true;
@@ -61,8 +63,6 @@ const PropertiesPage = () => {
       isMounted = false;
     };
   }, [user?._id, dispatch, token]);
-
-  const properties = useSelector((state: any) => state.user?.properties || []);
 
   if (!user) {
     return (

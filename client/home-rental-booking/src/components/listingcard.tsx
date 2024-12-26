@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ListingCardProps } from "../types/types";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { setWishlist } from "../redux/cache";
-
+import { selectWishlist } from "../redux/selectors";
+import { RootState } from '../redux/storecache';
 
 const ListingCard: React.FC<ListingCardProps> = ({
   listingId,
@@ -18,28 +19,42 @@ const ListingCard: React.FC<ListingCardProps> = ({
   price,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [imageLoadError, setImageLoadError] = useState<boolean[]>(
-    new Array(ListingPhotoPaths.length).fill(false)
-  );
+  const [imageLoadError, setImageLoadError] = useState<boolean[]>(new Array(ListingPhotoPaths.length).fill(false));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user?.user);
   const token = useSelector((state: any) => state.user?.token);
-  const wishlist = useSelector((state: any) => state.user?.wishlist || []);
-
   
+  // Memoize the wishlist to prevent unnecessary re-renders
+  const wishlist = useSelector(selectWishlist) || [];
+  const isWishlisted = useMemo(() => wishlist.includes(listingId), [wishlist, listingId]);
+
+  // Format image paths
+  const formatImagePaths = (paths: string[]) => {
+    return paths.map((path) => path.replace(/^\/?(public\/)?/, ''));
+  };
+
+  const formattedImagePaths = formatImagePaths(ListingPhotoPaths);
+
+  const getImageUrl = (photoPath: string) => {
+    // If the path is already a full URL, return it as is
+    if (photoPath.startsWith('http')) {
+        return photoPath;
+    }
+    // Clean the path and ensure it starts with a forward slash
+    const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
+    return `http://localhost:3001/${cleanPath}`;
+  };
 
   // Auto-slide functionality
-  // Auto-slide functionality with error handling
   useEffect(() => {
-    if (ListingPhotoPaths.length > 1) {
+    if (formattedImagePaths.length > 1) {
       const interval = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          // Find the next non-errored image
-          let nextIndex = (prevIndex + 1) % ListingPhotoPaths.length;
+          let nextIndex = (prevIndex + 1) % formattedImagePaths.length;
           let attempts = 0;
-          while (imageLoadError[nextIndex] && attempts < ListingPhotoPaths.length) {
-            nextIndex = (nextIndex + 1) % ListingPhotoPaths.length;
+          while (imageLoadError[nextIndex] && attempts < formattedImagePaths.length) {
+            nextIndex = (nextIndex + 1) % formattedImagePaths.length;
             attempts++;
           }
           return nextIndex;
@@ -47,10 +62,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
       }, 3000);
       return () => clearInterval(interval);
     }
-  }, [ListingPhotoPaths, imageLoadError]);
+  }, [formattedImagePaths, imageLoadError]);
 
-  const isWishlisted = wishlist.includes(listingId);
-  const isOwnListing = user && creator && user._id === creator._id;
+  const isOwnListing = user && creator && user._id === creator._id ? true : false;
 
   const handleWishlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -62,16 +76,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:3001/user/${user._id}/${listingId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
+      const response = await fetch(`http://localhost:3001/user/${user._id}/${listingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         }
-      );
+      });
 
       if (!response.ok) {
         throw new Error('Failed to update wishlist');
@@ -84,31 +95,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
   };
 
-
-  const getImageUrl = (photoPath: string) => {
-    try {
-      // If it's a full URL, ensure it points to the backend server
-      if (photoPath.startsWith('http')) {
-        const url = new URL(photoPath);
-        return `http://localhost:3001${url.pathname}`;
-      }
-      
-      // Clean the path and ensure it starts with a forward slash
-      const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
-      return `http://localhost:3001/${cleanPath}`;
-    } catch (error) {
-      console.error('Error formatting image URL:', error);
-      return '';
-    }
-  };
-
   // Reset image error state when photos change
   useEffect(() => {
     setImageLoadError(new Array(ListingPhotoPaths.length).fill(false));
   }, [ListingPhotoPaths]);
 
   const handleImageError = (index: number) => {
-    console.log('Image load error at index:', index);
+    // console.log('Image load error at index:', index);
     setImageLoadError(prev => {
       const newErrors = [...prev];
       newErrors[index] = true;
@@ -149,7 +142,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
             className="absolute inset-0 flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {ListingPhotoPaths.map((photo, index) => (
+            {formattedImagePaths.map((photo, index) => (
               <div
                 key={index}
                 className="w-full flex-shrink-0 relative"
