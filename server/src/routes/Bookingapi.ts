@@ -48,13 +48,7 @@ router.post(
 );
 
 // Configure nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'your-email@gmail.com', // Replace with your email
-    pass: 'your-app-password' // Replace with your app password
-  }
-});
+
 
 // Add this new endpoint
 router.post("/send-confirmation", async (req: Request, res: Response) => {
@@ -84,7 +78,6 @@ router.post("/send-confirmation", async (req: Request, res: Response) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
     res.status(200).json({ message: 'Confirmation email sent' });
   } catch (error) {
     console.error('Error sending email:', error);

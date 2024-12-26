@@ -126,12 +126,14 @@ const TripList: React.FC = () => {
 
   if (!tripsWithDetails || tripsWithDetails.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100">
+      <div className="w-screen max-w-full min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
         <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold mb-8 text-gray-800">Your Trips</h1>
-          <div className="backdrop-blur-lg bg-white/30 p-12 rounded-2xl text-center text-gray-600">
-            No trips found. Start your journey today!
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="w-full max-w-7xl px-4">
+            <h1 className="text-4xl font-bold mb-8 text-white text-center">Your Trips</h1>
+            <div className="backdrop-blur-lg bg-white/10 p-12 rounded-2xl text-center text-gray-200">
+              No trips found. Start your journey today!
+            </div>
           </div>
         </div>
       </div>

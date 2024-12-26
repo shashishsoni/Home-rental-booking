@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { addTrip } from "@/redux/cache";
 import { useSelector, useDispatch } from "react-redux";
 import { DateRange, RangeKeyDict } from "react-date-range";
+
+
 import {
   Users,
   Bed,
@@ -305,6 +307,8 @@ const ListingDetails: React.FC = () => {
 
       const newBooking = await response.json();
       dispatch(addTrip(newBooking));
+
+    
       navigate(`/${userId}/trips`);
     } catch (error) {
       console.error('Error creating booking:', error);

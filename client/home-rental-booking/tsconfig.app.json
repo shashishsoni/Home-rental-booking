@@ -31,5 +31,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src/**/*",
+    "../../server/src/routes/emailService.ts"
+  ]
 }
