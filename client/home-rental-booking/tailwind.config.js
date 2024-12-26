@@ -12,7 +12,8 @@ module.exports = {
         'glow-border': 'glow-border 3s linear infinite',
         'glow-pulse-slow': 'glow-pulse-slow 6s ease-in-out infinite',
         'spin-slow': 'spin-slow 8s linear infinite',
-        'reverse-spin': 'reverse-spin 12s linear infinite'
+        'reverse-spin': 'reverse-spin 12s linear infinite',
+        'fade-in': 'fade-in 0.3s ease-out'
       },
       keyframes: {
         slide: {
@@ -97,6 +98,10 @@ module.exports = {
             transform: 'rotate(0deg)',
             backgroundPosition: '100% 50%',
           }
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(-10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
         }
       },
       fontFamily: {

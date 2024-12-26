@@ -6,6 +6,7 @@ import { setListings, setWishlist } from "../redux/cache";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from 'react';
 import { Listing as ListingType } from "../types/types";
+import Footer from "../components/Footer";
 
 interface Listing extends ListingType {
   _id: string;
@@ -167,9 +168,10 @@ const WishlistPage = () => {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
       <Navbar />
-      <div className="max-w-full w-screen mx-auto px-4 py-32">
+      <div className="mb-12 max-w-full w-screen mx-auto px-4 py-32">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
@@ -291,6 +293,8 @@ const WishlistPage = () => {
         </AnimatePresence>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

@@ -5,6 +5,9 @@ import Navbar from "@/components/Navbar";
 import { Trip } from "../types/types";
 import { setTripList } from "../redux/cache";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { fadeIn } from "../utils/animations";
+import Footer from '../components/Footer';
 
 interface TripWithListing extends Trip {
   listing?: {
@@ -136,9 +139,9 @@ const TripList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
       <Navbar />
-      <div className="w-screen p-4 sm:p-8">
+      <div className="mb-12 w-screen p-4 sm:p-8">
         {/* Enhanced Hero Section */}
         <div className="text-center mt-24 mb-16 relative">
           <h1 className="text-7xl font-bold mb-4 relative z-10">
@@ -153,9 +156,12 @@ const TripList: React.FC = () => {
         </div>
 
         <div className="w-full space-y-12">
-          {tripsWithDetails.map((trip) => (
-            <div
+          {tripsWithDetails.map((trip, index) => (
+            <motion.div
               key={trip._id}
+              variants={fadeIn('right', 2 * (index + 1))}
+              initial="hidden"
+              animate="show"
               onClick={() => navigate(`/listing/${trip.listingId}`)}
               className="w-full group relative bg-black/40 backdrop-blur-xl rounded-3xl overflow-hidden 
                 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] 
@@ -173,7 +179,7 @@ const TripList: React.FC = () => {
                       {trip.listing.images.map((image, imgIndex) => (
                         <img
                           key={imgIndex}
-                          src={`http://localhost:3001${image}`}
+                          src={`http://localhost:3001/uploads/${image.replace(/^.*[\\\/]/, '')}`}
                           alt={`${trip.listing?.title} - ${imgIndex + 1}`}
                           className="absolute inset-0 w-full h-full object-cover transform transition-all duration-1000"
                           style={{
@@ -228,7 +234,7 @@ const TripList: React.FC = () => {
                 </div>
 
                 {/* Enhanced Content Section */}
-                <div className="md:w-1/2 p-10 md:p-14 flex flex-col justify-between backdrop-blur-lg bg-black/20">
+                <div className="md:w-1/2 p-8 flex flex-col justify-between">
                   <div>
                     {/* Title and Location */}
                     <div className="mb-8">
@@ -314,10 +320,11 @@ const TripList: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

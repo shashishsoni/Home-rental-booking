@@ -7,9 +7,11 @@ import { setLogout } from "@/redux/cache";
 import { persistor } from "@/redux/storecache";
 import { RootState } from "@/redux/storecache";
 import { Search } from "lucide-react";
+import SearchBar from './SearchBar';
 
 const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   //acess user data from reudux store
   const user = useSelector((state: RootState) => state.user?.user);
 
@@ -39,6 +41,13 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 px-6 py-4 z-50">
       <nav className="max-w-9xl mx-auto flex items-center justify-between h-20 px-8 bg-black/10 backdrop-blur-lg rounded-full border border-white/10">
@@ -59,7 +68,7 @@ const Navbar: React.FC = () => {
 
         {/* Search Section */}
         <div className="flex-1 flex items-center justify-center max-w-xl px-4">
-          <div className="w-full relative group">
+          <form onSubmit={handleSearch} className="w-full relative group">
             {/* Static glowing border */}
             <div className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 opacity-70 blur-sm group-hover:opacity-100 transition-opacity duration-500"></div>
             
@@ -67,15 +76,20 @@ const Navbar: React.FC = () => {
             <div className="relative flex bg-black/20 rounded-full border border-white/10 backdrop-blur-sm overflow-hidden">
               <input
                 type="text"
-                placeholder="Where to?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by category, location, or type..."
                 className="w-full h-12 pl-6 pr-4 bg-transparent text-white placeholder-white/60 rounded-l-full focus:outline-none transition-all"
               />
-              <button className="h-12 px-8 font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 rounded-r-full hover:opacity-90 transition-opacity flex items-center gap-2">
+              <button 
+                type="submit"
+                className="h-12 px-8 font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 rounded-r-full hover:opacity-90 transition-opacity flex items-center gap-2"
+              >
                 <Search size={18} />
                 <span>Search</span>
               </button>
             </div>
-          </div>
+          </form>
         </div>
 
         {/* Right Menu Section */}
@@ -150,12 +164,12 @@ const Navbar: React.FC = () => {
                         </Link>
                       </li>
                       <li>
-                        <Link to="/properties" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                        <Link to={`/${user._id}/properties`} className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
                           <span className="text-sm font-medium">Your Properties</span>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/reservations" className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
+                        <Link to={`/${user._id}/reservations`} className="flex items-center px-6 py-3 text-white hover:bg-white/10 transition-colors">
                           <span className="text-sm font-medium">Your Reservations</span>
                         </Link>
                       </li>

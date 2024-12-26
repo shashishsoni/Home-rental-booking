@@ -158,7 +158,7 @@ const Listings = () => {
           <Loader />
         ) : (
           <div
-            className="grid gap-4"
+            className="mb-12 grid gap-4"
             style={{
               gridTemplateColumns: "repeat(4, 1fr)",
             }}

@@ -3,6 +3,34 @@ import { Booking } from "../models/Booking";
 import { User } from "../models/user";
 import { Listing } from "../models/Listing";
 
+
+interface PopulatedUser {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    Email: string;
+    profileImagePath: string;
+}
+
+interface PopulatedBooking {
+    _id: string;
+    customerId: PopulatedUser;
+    listingId: {
+        _id: string;
+        title: string;
+        city: string;
+        country: string;
+        listingImages: string[];
+        price: number;
+        Creator: PopulatedUser;
+    };
+    startDate: string;
+    endDate: string;
+    totalPrice: number;
+    createdAt: Date;
+}
+
+
 const router: Router = express.Router();
 
 // get trip list
@@ -61,5 +89,88 @@ const toggleWishlist: RequestHandler = async (req, res) => {
 };
 
 router.patch("/:userId/:listingId", toggleWishlist);
+
+// get properties list
+router.get("/:userId/properties", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const properties = await Listing.find({ Creator: userId })
+            .populate('Creator', 'firstname lastname Email profileImagePath');
+        res.json({ properties });
+    } catch (error) {
+        console.error("Error fetching properties:", error);
+        res.status(500).json({ message: "Failed to fetch properties" });
+    }
+});
+
+// get reservations list (bookings made by the user on other people's listings)
+router.get("/:userId/reservations", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        
+        const reservations = await Booking.find({ customerId: userId })
+            .populate({
+                path: 'listingId',
+                select: 'title city country listingImages price Creator',
+                populate: {
+                    path: 'Creator',
+                    model: 'User',
+                    select: 'firstname lastname Email profileImagePath'
+                }
+            })
+            .sort({ createdAt: -1 }) as unknown as PopulatedBooking[];
+
+        const formattedReservations = reservations.map(booking => ({
+            _id: booking._id,
+            host: booking.listingId.Creator,
+            listingId: {
+                _id: booking.listingId._id,
+                title: booking.listingId.title,
+                city: booking.listingId.city,
+                country: booking.listingId.country,
+                listingImages: booking.listingId.listingImages,
+                price: booking.listingId.price
+            },
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+            totalPrice: booking.totalPrice,
+            createdAt: booking.createdAt
+        }));
+            
+        res.json({ reservations: formattedReservations });
+    } catch (error) {
+        console.error("Error fetching reservations:", error);
+        res.status(500).json({ message: "Failed to fetch reservations" });
+    }
+});
+
+// Add this new endpoint to get user details
+router.get("/:userId/details", (async (req: Request<{userId: string}>, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    const listingsCount = await Listing.countDocuments({ Creator: userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      Email: user.Email,
+      profileImagePath: user.profileImagePath,
+      listings: listingsCount,
+      phone: "+91 98765 43210",
+      whatsapp: "919876543210",
+      rating: 4.8,
+      totalReviews: 24
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Failed to fetch user details" });
+  }
+}) as RequestHandler<{userId: string}>);
 
 export default router;

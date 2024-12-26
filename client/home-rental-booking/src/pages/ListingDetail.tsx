@@ -19,6 +19,10 @@ import Navbar from "../components/Navbar";
 import Loader from "../components/loader";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { motion } from "framer-motion";
+import { fadeIn } from "../utils/animations";
+import Footer from '../components/Footer';
+import PaymentModal from '../components/PaymentModal';
 
 
 interface APIListing {
@@ -100,6 +104,7 @@ const ListingDetails: React.FC = () => {
       key: "selection",
     },
   ]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   console.log(listing);
 
@@ -228,14 +233,14 @@ const ListingDetails: React.FC = () => {
   };
 
   const handleImageNavigation = (direction: "prev" | "next") => {
-    if (!listing) return;
-
+    if (!listing?.images.length) return;
+    
     if (direction === "prev") {
-      setCurrentImageIndex((prev) =>
+      setCurrentImageIndex(prev => 
         prev === 0 ? listing.images.length - 1 : prev - 1
       );
     } else {
-      setCurrentImageIndex((prev) =>
+      setCurrentImageIndex(prev => 
         prev === listing.images.length - 1 ? 0 : prev + 1
       );
     }
@@ -267,29 +272,13 @@ const ListingDetails: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userId || !dateRange[0].startDate || !dateRange[0].endDate) return;
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = async () => {
     try {
-      // Verify user is logged in
-      if (!userId || !token) {
-        throw new Error("Please log in to book a listing");
-      }
-
-      // Debug logs
-      console.log("Full listing object:", listing);
-      console.log("Creator information:", listing?.creator);
-
-      // Verify listing data with detailed checks
-      if (!listing) {
-        throw new Error("Listing information is missing");
-      }
-      if (!listing._id) {
-        throw new Error(`Listing ID is missing for listing: ${JSON.stringify(listing)}`);
-      }
-      if (!listing.creator) {
-        throw new Error(`Creator information is missing for listing: ${JSON.stringify(listing)}`);
-      }
-      if (!listing.creator._id) {
-        throw new Error(`Creator ID is missing for creator: ${JSON.stringify(listing.creator)}`);
-      }
+      if (!listing || !userId || !token) return;
 
       const bookingData = {
         customerId: userId,
@@ -297,31 +286,29 @@ const ListingDetails: React.FC = () => {
         listingId: listing._id,
         startDate: dateRange[0].startDate.toISOString(),
         endDate: dateRange[0].endDate.toISOString(),
-        totalPrice: listing.price * dayCount,
+        totalPrice: totalPrice
       };
-
-      console.log("Sending booking data:", bookingData);
 
       const response = await fetch("http://localhost:3001/bookings/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(bookingData),
+        body: JSON.stringify(bookingData)
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.message || "Failed to create booking");
+        throw new Error(errorData.message || 'Failed to create booking');
       }
 
       const newBooking = await response.json();
       dispatch(addTrip(newBooking));
       navigate(`/${userId}/trips`);
-    } catch (error: any) {
-      console.error("Booking error:", error);
-      alert(error.message);
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      // Add user feedback here
     }
   };
 
@@ -360,9 +347,9 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <div className="w-[100%] min-h-screen bg-black shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-9">
+    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
       <Navbar />
-      <div className="mx-auto px-4 mt-20 pb-20">
+      <div className="mb-12 w-screen max-w-full mx-auto px-4 mt-32 pl-12 pr-12">
         {/* Main Header */}
         <div className="mb-6 space-y-8">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
@@ -409,123 +396,185 @@ const ListingDetails: React.FC = () => {
         </div>
 
         {/* Host Information */}
-        <div className="shadow-[0_15px_10px_rgba(255,255,255,0.6)] mb-12 mt-12 p-8 bg-white rounded-3xl border border-gray-300 transition-all duration-300 ease-in-out">
+        <motion.div 
+          variants={fadeIn('up', 0.2)}
+          initial="hidden"
+          animate="show"
+          className="shadow-[0_15px_10px_rgba(255,255,255,0.6)] mb-12 mt-12 p-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 
+            hover:shadow-[0_20px_40px_rgba(120,119,198,0.3)] transition-all duration-500 hover:scale-[1.02] group"
+        >
           <div className="flex items-center gap-8">
-            {/* Profile Image */}
-            <div className="relative">
+            <div className="relative group-hover:scale-110 transition-transform duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
               <img
-                src={`http://localhost:3001/public${listing?.creator.profileImagePath}`}
+                src={listing?.creator.profileImagePath ? 
+                  `http://localhost:3001/uploads/${listing.creator.profileImagePath.replace(/^.*[\\\/]/, '')}` : 
+                  'default-profile.jpg'
+                }
                 alt={`${listing?.creator.firstname} ${listing?.creator.lastname}`}
-                className="w-24 h-24 rounded-full object-cover border-4 border-gray-100 shadow-md"
+                className="relative w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl z-10"
               />
-              <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full border-2 border-gray-100 shadow-sm"></div>
+              <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full border-2 border-white shadow-lg z-20 animate-pulse" />
             </div>
-            {/* Host Details */}
             <div className="space-y-3">
-              <h3 className="text-2xl font-bold text-gray-900">
-                Hosted by {listing?.creator.firstname}{" "}
-                {listing?.creator.lastname}
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                Hosted by {listing?.creator.firstname} {listing?.creator.lastname}
               </h3>
-              <p className="text-gray-700 flex items-center gap-3">
-                <span className="inline-flex px-4 py-1.5 rounded-lg bg-purple-200 text-purple-800 text-sm font-medium">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex px-4 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium shadow-lg">
                   Superhost
                 </span>
                 <span className="text-gray-500">·</span>
-                <span className="text-gray-600 font-medium">
+                <span className="text-gray-600 font-medium group-hover:text-purple-600 transition-colors">
                   5 years hosting
                 </span>
-              </p>
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-12">
             {/* Image Gallery */}
-            <div className="relative rounded-3xl overflow-hidden w-[1050px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
-              <img
-                src={`http://localhost:3001${listing?.images[currentImageIndex]}`}
-                alt={`View ${currentImageIndex + 1}`}
-                className="w-full h-full object-fill"
-              />
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              {/* Navigation Controls */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-xl">
+            <div className="relative rounded-3xl overflow-hidden w-[1050px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)] group">
+              <div 
+                className="flex transition-transform duration-700 ease-out h-full"
+                style={{ 
+                  transform: `translateX(-${currentImageIndex * 100}%)`,
+                  width: `${listing?.images.length || 1}00%`
+                }}
+              >
+                {listing?.images.map((photo, index) => (
+                  <div
+                    key={index}
+                    className="relative w-full h-full flex-shrink-0  transition-transform duration-700"
+                  >
+                    <img
+                      src={`http://localhost:3001/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
+                      alt={`Listing photo ${index + 1}`}
+                      className="w-[1050px] h-[600px] object-fill transition-transform duration-700"
+                    />
+                    {/* Enhanced Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Enhanced Navigation Controls */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-full px-8 py-4 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => handleImageNavigation("prev")}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-6 h-6 text-gray-700" />
                 </button>
-                <span className="font-semibold px-3">
+                <span className="font-semibold px-4 text-gray-800">
                   {currentImageIndex + 1} / {listing?.images.length}
                 </span>
                 <button
                   onClick={() => handleImageNavigation("next")}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-6 h-6 text-gray-700" />
                 </button>
               </div>
+
+              {/* Image Navigation Dots */}
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {listing?.images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      index === currentImageIndex
+                        ? 'bg-white scale-125'
+                        : 'bg-white/50 hover:bg-white/75'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Side Navigation Arrows */}
+              <button
+                onClick={() => handleImageNavigation("prev")}
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={() => handleImageNavigation("next")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
-                  icon: (
-                    <Users className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
-                  ),
+                  icon: <Users className="w-6 h-6" />,
                   label: "Guests",
                   value: listing?.guestCount,
+                  gradient: "from-blue-500 to-purple-500"
                 },
                 {
-                  icon: (
-                    <Bed className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
-                  ),
+                  icon: <Bed className="w-6 h-6" />,
                   label: "Bedrooms",
                   value: listing?.bedroomCount,
+                  gradient: "from-purple-500 to-pink-500"
                 },
                 {
-                  icon: (
-                    <Bath className="w-6 h-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]" />
-                  ),
+                  icon: <Bath className="w-6 h-6" />,
                   label: "Bathrooms",
                   value: listing?.bathroomCount,
+                  gradient: "from-pink-500 to-red-500"
                 },
               ].map((stat, index) => (
-                <div
+                <motion.div
                   key={index}
-                  className="group bg-white p-6 rounded-xl border border-gray-200 transition-shadow duration-300 shadow-[0_15px_10px_rgba(255,255,255,0.6)]"
+                  variants={fadeIn('up', 0.1 * (index + 1))}
+                  initial="hidden"
+                  animate="show"
+                  className="group bg-white/80 backdrop-blur-xl p-6 rounded-xl border border-white/20 
+                    hover:shadow-[0_20px_40px_rgba(120,119,198,0.2)] transition-all duration-500 
+                    hover:scale-105 cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-blue-100 to-blue-300 text-blue-600 group-hover:scale-110 transition-transform">
+                    <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.gradient} text-white 
+                      group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                       {stat.icon}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-semibold">
+                      <p className="text-sm text-gray-500 font-medium group-hover:text-purple-500 transition-colors">
                         {stat.label}
                       </p>
-                      <p className="text-3xl font-extrabold text-gray-800">
+                      <p className="text-3xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                         {stat.value}
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
             {/* Description */}
-            <div className="bg-gradient-to-r from-gray-50 via-white to-gray-200 rounded-3xl border border-gray-300 p-10 space-y-6 shadow-[0_15px_10px_rgba(255,255,255,0.6)]">
-              <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight font-poppins">
+            <motion.div 
+              variants={fadeIn('up', 0.3)}
+              initial="hidden"
+              animate="show"
+              className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 p-10 space-y-6 
+                hover:shadow-[0_20px_40px_rgba(120,119,198,0.2)] transition-all duration-500 
+                hover:scale-[1.01] group"
+            >
+              <h2 className="text-4xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent tracking-tight font-poppins">
                 About this place
               </h2>
-              <p className="text-gray-800 text-lg leading-relaxed font-roboto">
+              <p className="text-gray-800 text-lg leading-relaxed font-roboto group-hover:text-gray-900 transition-colors">
                 {listing?.description}
               </p>
-            </div>
+            </motion.div>
 
             {/* Highlights */}
             {listing?.highlight && (
@@ -644,6 +693,17 @@ const ListingDetails: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentSuccess}
+        amount={totalPrice}
+        listingTitle={listing?.title || 'Property'}
+        startDate={dateRange[0].startDate}
+        endDate={dateRange[0].endDate}
+        nights={dayCount}
+      />
     </div>
   );
 };

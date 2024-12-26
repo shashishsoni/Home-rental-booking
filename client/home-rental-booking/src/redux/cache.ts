@@ -1,6 +1,6 @@
 // cache.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Listing, UserState, Trip } from "../types/types"; // Import UserState from types.ts
+import { Listing, UserState, Trip , Booking} from "../types/types"; // Import UserState from types.ts
 
 
 const initialState: UserState = {
@@ -9,6 +9,8 @@ const initialState: UserState = {
   profileImagePath: null,
   listings: [],
   wishlist: [],
+  properties: [],
+  reservations: [],
 };
 
 export const userSlice = createSlice({
@@ -27,6 +29,8 @@ export const userSlice = createSlice({
           profileImagePath: string;
           triplist?: Trip[];
           WishList: string[];
+          properties?: Listing[];
+          reservations?: Booking[];
         };
         token: string;
         profileImagePath?: string;
@@ -81,10 +85,83 @@ export const userSlice = createSlice({
        // Save to localStorage whenever wishlist changes
        localStorage.setItem('userWishlist', JSON.stringify(action.payload));
     },
+    setProperties: (state, action: PayloadAction<Listing[]>) => {
+      state.properties = action.payload;
+      // Save to localStorage
+      localStorage.setItem('userProperties', JSON.stringify(action.payload));
+    },
+    setReservation: (state, action: PayloadAction<Booking[]>) => {
+      state.reservations = action.payload;
+      // Save to localStorage
+      localStorage.setItem('userReservation', JSON.stringify(action.payload));
+    },
   },
 });
 
-export const { setLogin, setLogout, setListings, setTripList, addTrip, setWishlist } = userSlice.actions;
+export const { setLogin, setLogout, setListings, setTripList, addTrip, setWishlist, setProperties, setReservation } = userSlice.actions;
 
 // Export reducer
 export default userSlice.reducer;
+
+// Add these types and actions for search
+export interface SearchState {
+  searchResults: any[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialSearchState: SearchState = {
+  searchResults: [],
+  loading: false,
+  error: null
+};
+
+// Add these action types
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+export const SET_SEARCH_LOADING = 'SET_SEARCH_LOADING';
+export const SET_SEARCH_ERROR = 'SET_SEARCH_ERROR';
+
+// Add these action creators
+export const setSearchResults = (results: any[]) => ({
+  type: SET_SEARCH_RESULTS,
+  payload: results
+});
+
+export const setSearchLoading = (loading: boolean) => ({
+  type: SET_SEARCH_LOADING,
+  payload: loading
+});
+
+export const setSearchError = (error: string | null) => ({
+  type: SET_SEARCH_ERROR,
+  payload: error
+});
+
+// Update your reducer
+export const searchReducer = (state = initialSearchState, action: any): SearchState => {
+  switch (action.type) {
+    case SET_SEARCH_RESULTS:
+      return {
+        ...state,
+        searchResults: action.payload,
+        error: null,
+        loading: false
+      };
+    case SET_SEARCH_LOADING:
+      return {
+        ...state,
+        loading: action.payload,
+        searchResults: state.searchResults,
+        error: state.error
+      };
+    case SET_SEARCH_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+        searchResults: [],
+        loading: false
+      };
+    default:
+      return state;
+  }
+};

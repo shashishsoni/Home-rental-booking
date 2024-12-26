@@ -22,11 +22,23 @@ export interface Trip {
 }
 
 export interface UserState {
-  user: any;
+  user: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    Email: string;
+    profileImagePath: string;
+    triplist?: Trip[];
+    WishList: string[];
+    properties?: Listing[];
+    reservations?: Booking[];
+  } | null;
   token: string | null;
   profileImagePath: string | null;
   listings: Listing[];
   wishlist: string[];
+  properties: Listing[];
+  reservations: Booking[];
 }
 
 
@@ -73,4 +85,27 @@ export interface ListingCardProps {
   category: string;
   type: string;
   price: number;
+}
+
+export interface Booking {
+  _id: string;
+  customerId: {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    Email: string;
+    profileImagePath: string;
+  };
+  listingId: {
+    _id: string;
+    title: string;
+    city: string;
+    country: string;
+    listingImages: string[];
+    price: number;
+  };
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  createdAt: string;
 }

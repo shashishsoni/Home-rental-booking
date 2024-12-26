@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { IoIosImages } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 const CreateListing = () => {
   //Create all the Function
@@ -186,8 +187,8 @@ const CreateListing = () => {
     <>
       <Navbar />
       <div className="w-screen h-full flex flex-col">
-        <div className="w-[80%] flex flex-col p-6 md:px-10 mt-28 mb-8 rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px] m-auto">
-          <h1 className="text-2xl md:text-4xl font-bold text-center text-black py-8 pt-0">
+        <div className="w-[80%] flex flex-col p-6 md:px-10 mt-28 mb-12 rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px] m-auto">
+          <h1 className="text-2xl md:text-4xl font-bold text-center text-white py-8 pt-0">
             Publish Your Place
           </h1>
           <div className="flex-grow">
@@ -622,6 +623,7 @@ const CreateListing = () => {
           </button>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

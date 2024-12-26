@@ -1,5 +1,5 @@
 // Import required modules
-import express, { Router, Request, Response } from "express";
+import express, { Router, Request, Response, RequestHandler } from "express";
 import multer from "multer";
 import mongoose from "mongoose";
 import fs from "fs";
@@ -199,6 +199,54 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// Search endpoint
+router.get("/search", (async (req: Request, res: Response) => {
+  try {
+    const query = req.query.q as string;
+    if (!query) {
+      res.status(400).json({ message: "Search query is required" });
+      return;
+    }
+
+    const listings = await Listing.find({
+      $or: [
+        { category: { $regex: query, $options: 'i' } },
+        { type: { $regex: query, $options: 'i' } },
+        { city: { $regex: query, $options: 'i' } },
+        { country: { $regex: query, $options: 'i' } },
+        { title: { $regex: query, $options: 'i' } }
+      ]
+    }).populate('Creator', '_id firstname lastname profileImagePath');
+
+    res.json({ 
+      listings: listings.map(listing => {
+        const creator = listing.Creator as any;
+        return {
+          _id: listing._id,
+          title: listing.title || '',
+          category: listing.category || '',
+          type: listing.type || '',
+          city: listing.city || '',
+          country: listing.country || '',
+          price: listing.price || 0,
+          listingImages: listing.listingImages || [],
+          Creator: {
+            _id: creator._id,
+            firstname: creator.firstname || 'Unknown',
+            lastname: creator.lastname || '',
+            profileImagePath: creator.profileImagePath || 'default-profile.png'
+          }
+        };
+      }) 
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Failed to search listings" });
+  }
+}) as RequestHandler);
+
+
+// Then the listingId route
 router.get("/:listingId", async (req: Request, res: Response) => {
   try {
     const { listingId } = req.params;
@@ -244,6 +292,5 @@ router.get("/:listingId", async (req: Request, res: Response) => {
     });
   }
 });
-
 
 export default router;

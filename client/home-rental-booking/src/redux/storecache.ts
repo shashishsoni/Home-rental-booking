@@ -17,10 +17,13 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
+import { searchReducer } from './cache';
+import { SearchState } from './cache';
 
 // Define the root state type
-interface RootState {
+export interface RootState {
   user: UserState;
+  search: SearchState;
 }
 
 // Define our custom state structure
@@ -36,7 +39,9 @@ interface CustomState {
 // Combine reducers
 const rootReducer = combineReducers({
   user: userReducer,
+  search: searchReducer
 });
+
 
 // Type-safe migration functions
 type MigrationFunction = (state: PersistedState) => Promise<PersistedState>;
@@ -72,18 +77,10 @@ const persistConfig: PersistConfig<RootState> = {
   storage,
   whitelist: ["user"],
   migrate: async (state: PersistedState): Promise<PersistedState> => {
-    if (!state) {
-      return migrations[0](state);
-    }
-
+    if (!state) return migrations[0](state);
     const version = (state as CustomState)?._persist?.version || 0;
     const migrate = migrations[version];
-
-    if (migrate) {
-      return await migrate(state);
-    }
-
-    return migrations[0](state);
+    return migrate ? await migrate(state) : migrations[0](state);
   },
 };
 
@@ -102,4 +99,3 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-export type { RootState };
