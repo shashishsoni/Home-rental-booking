@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { categories } from "../data";
 import ListingCard from "./listingcard";
 import Loader from "./loader";
