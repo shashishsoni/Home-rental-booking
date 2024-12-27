@@ -115,6 +115,19 @@ home-rental-booking/
         └── migration.ts
 ```
 
+## 🔗️ Image Storage and Access
+
+- **Image Uploads**: Uploaded images are stored in the `public/uploads` directory of the server. Ensure that this directory exists and is writable.
+- **Accessing Images**: Images can be accessed via the following URL format:
+  ```
+  http://localhost:3001/uploads/<image_filename>
+  ```
+  For example, if you upload an image named `listing-123.jpg`, it can be accessed at:
+  ```
+  http://localhost:3001/uploads/listing-123.jpg
+  ```
+- **Local Storage**: The application uses local storage to save user-specific data such as wishlist and properties.
+
 ## 🔗 API Endpoints
 
 ### Authentication
@@ -149,9 +162,9 @@ Name: _________________
 Email: ________________
 Phone: ________________
 Address: ______________
-City: _________________
-State: ________________
-Zip: __________________
+City: ________________
+State: _______________
+Zip: _________________
 ```
 
 ### Property Listing
@@ -164,7 +177,6 @@ Price: ________________
 Guests: _______________
 Bedrooms: _____________
 Bathrooms: ____________
-Amenities: ____________
 ```
 
 ### Image Requirements
@@ -197,22 +209,22 @@ MIT License - See [LICENSE](LICENSE) file
 - [React Toastify Docs](https://www.npmjs.com/package/react-toastify)
 - [React Icons Docs](https://react-icons.github.io/react-icons/)
 
-![signup page](<FireShot Capture 012 - Vite + React + TS - localhost.png>)
+![signup page](<proj images/FireShot Capture 012 - Vite + React + TS - localhost.png>)
 
-![login page](<FireShot Capture 013 - Vite + React + TS - localhost.png>)
+![login page](<proj images/FireShot Capture 013 - Vite + React + TS - localhost.png>)
 
-![home page](<FireShot Capture 003 - Vite + React + TS - localhost.png>)
+![home page](<proj images/FireShot Capture 003 - Vite + React + TS - localhost.png>)
 
-![create listing page](<FireShot Capture 004 - Vite + React + TS - localhost.png>)
+![create listing page](<proj images/FireShot Capture 004 - Vite + React + TS - localhost.png>)
 
-![listing page](<Vite + React + TS.png>)
+![listing page](<proj images/Vite + React + TS.png>)
 
-![paymet pop up](<FireShot Capture 014 - Vite + React + TS - localhost.png>)
+![paymet pop up](<proj images/FireShot Capture 014 - Vite + React + TS - localhost.png>)
 
-![trip details page](<FireShot Capture 005 - Vite + React + TS - localhost.png>)
+![trip details page](<proj images/FireShot Capture 005 - Vite + React + TS - localhost.png>)
 
-![wishlist page](<FireShot Capture 009 - Vite + React + TS - localhost.png>)
+![wishlist page](<proj images/FireShot Capture 009 - Vite + React + TS - localhost.png>)
 
-![property details page](<FireShot Capture 010 - Vite + React + TS - localhost.png>)
+![property details page](<proj images/FireShot Capture 010 - Vite + React + TS - localhost.png>)
 
-![reservation page](<FireShot Capture 011 - Vite + React + TS - localhost.png>)
+![reservation page](<proj images/FireShot Capture 011 - Vite + React + TS - localhost.png>)
