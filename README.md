@@ -1,171 +1,191 @@
-# Home Rental Booking Application
+# 🏠 Home Rental Booking Application
 
-This is a full-stack application for managing home rentals, allowing users to create listings, view properties, and manage their wishlist.
+A full-stack application for managing home rentals, enabling users to create listings, view properties, and manage wishlists.
 
-## Table of Contents
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Folder Structure](#folder-structure)
-- [API Endpoints](#api-endpoints)
-- [Editable Input Section](#editable-input-section)
-- [Contributing](#contributing)
-- [License](#license)
+## ✨ Features
 
-## Features
-- User authentication (login and registration)
-- Create, read, update, and delete property listings
-- Wishlist functionality to save favorite properties
-- Image upload and drag-and-drop functionality for property images
-- Responsive design for mobile and desktop views
+### 🔒 User Authentication
+- Secure login and registration
+- JWT-based session management
+- Password encryption and validation
 
-## Technologies Used
-- **Frontend**: React, Redux, TypeScript, Vite, Tailwind CSS
-- **Backend**: Node.js, Express, MongoDB
-- **Libraries**: MUI (Material-UI), Framer Motion, Hello Pangea DnD
-- **Deployment**: Docker (optional)
+### 🏘️ Property Management
+- Create, edit, and delete property listings
+- Upload and manage multiple property images
+- Drag-and-drop image reordering
+- Rich property details including amenities, pricing, and availability
 
-## Installation
+### 🔍 Search & Discovery
+- Advanced property search with filters
+- Property categorization
+- Interactive map view of listings
+- Responsive grid layout for property cards
+
+### 👤 User Features
+- Personal dashboard
+- Wishlist management
+- Booking history
+- User profile customization
+
+## 🛠️ Tech Stack
+
+### Frontend
+![React](https://img.shields.io/badge/React-18-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-Latest-blue)
+![Vite](https://img.shields.io/badge/Vite-Latest-646CFF)
+![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38B2AC)
+
+### Backend
+![Node.js](https://img.shields.io/badge/Node.js-Latest-339933)
+![Express](https://img.shields.io/badge/Express-Latest-000000)
+![MongoDB](https://img.shields.io/badge/MongoDB-Latest-47A248)
+
+## 🚀 Getting Started
 
 ### Prerequisites
-Make sure you have the following installed:
 - Node.js (v14 or higher)
 - MongoDB (local or cloud instance)
 - Git
 
-### Clone the Repository
+### Installation
 
-bash
-git clone https://github.com/yourusername/home-rental-booking.git
+1. **Clone Repository**
+```bash
+git clone https://github.com/shashishsoni/Home-rental-booking.git
 cd home-rental-booking
+```
 
-### Install Backend Dependencies
-Navigate to the server directory and install the dependencies:
-
+2. **Backend Setup**
 ```bash
 cd server
 npm install
 ```
 
-### Install Frontend Dependencies
-Navigate to the client directory and install the dependencies:
+3. **Frontend Setup**
 ```bash
 cd client/home-rental-booking
 npm install
 ```
 
-### Environment Variables
-Create a `.env` file in the `server` directory and add the following variables:
-```
+4. **Environment Configuration**
+Create `.env` in the server directory:
+```env
 MONGO_DB=mongodb://localhost:27017/home-rental
 JWT_SECRET=your_jwt_secret
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_email_password
 ```
 
-### Run the Application
-1. **Start the Backend Server**:
-   ```bash
-   cd server
-   npm run dev
-   ```
+### Launch Application
 
-2. **Start the Frontend Application**:
-   ```bash
-   cd client/home-rental-booking
-   npm run dev
-   ```
+1. **Start Backend**
+```bash
+cd server
+npm run dev
+```
 
-3. Open your browser and navigate to `http://localhost:5173` to view the application.
+2. **Start Frontend**
+```bash
+cd client/home-rental-booking
+npm run dev
+```
 
-## Usage
-- **User Registration**: Users can register by providing their email and password.
-- **User Login**: Users can log in to access their dashboard.
-- **Create Listing**: Users can create new property listings by filling out the form.
-- **View Listings**: Users can view all available listings and their details.
-- **Wishlist**: Users can save their favorite listings to their wishlist.
+Access the application at `http://localhost:5173`
 
-## Folder Structure
+## 📁 Project Structure
 ```
 home-rental-booking/
 ├── client/
-│   ├── home-rental-booking/  # React frontend
-│   ├── public/                # Static assets
-│   ├── src/
-│   │   ├── components/        # Reusable components
-│   │   ├── pages/             # Page components
-│   │   ├── redux/             # Redux store and slices
-│   │   ├── utils/             # Utility functions
-│   │   ├── assets/            # Images and other assets
-│   │   ├── App.css            # Global styles
-│   │   └── index.tsx          # Entry point
+│   ├── home-rental-booking/
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── redux/
+│       ├── utils/
+│       ├── assets/
+│       ├── App.css
+│       └── index.tsx
 └── server/
-    ├── src/
-    │   ├── routes/            # API routes
-    │   ├── middleware/         # Middleware functions
-    │   ├── models/             # Mongoose models
-    │   ├── index.ts            # Server entry point
-    │   └── migration.ts        # Database migration scripts
+    └── src/
+        ├── routes/
+        ├── middleware/
+        ├── models/
+        ├── index.ts
+        └── migration.ts
 ```
 
-## API Endpoints
-- **User Authentication**
-  - `POST /auth/register`: Register a new user
-  - `POST /auth/login`: Log in a user
+## 🔗 API Endpoints
 
-- **Listings**
-  - `GET /listing`: Get all listings
-  - `POST /listing/create`: Create a new listing
-  - `GET /listing/:id`: Get a specific listing by ID
-  - `PATCH /listing/:id`: Update a listing by ID
-  - `DELETE /listing/:id`: Delete a listing by ID
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register user |
+| POST | `/auth/login` | Login user |
+| POST | `/auth/logout` | Logout user |
 
-- **Wishlist**
-  - `GET /user/:id/wishlist`: Get user's wishlist
-  - `PATCH /user/:id/:listingId`: Add or remove a listing from the wishlist
+### Listings
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/listing` | Get all listings |
+| POST | `/listing/create` | Create listing |
+| GET | `/listing/:id` | Get specific listing |
+| PATCH | `/listing/:id` | Update listing |
+| DELETE | `/listing/:id` | Delete listing |
 
-## Editable Input Section
+### User Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users/profile` | Get profile |
+| PUT | `/api/users/profile` | Update profile |
+| GET | `/api/users/wishlist` | Get wishlist |
+| POST | `/api/users/wishlist/:listingId` | Add to wishlist |
 
-### User Information
+## 📝 Input Forms
 
-Please fill in the following details:
+### User Profile
+```
+Name: _________________
+Email: ________________
+Phone: ________________
+Address: ______________
+City: _________________
+State: ________________
+Zip: __________________
+```
 
-- **Name**: ______________________
-- **Email**: ______________________
-- **Phone Number**: _______________
-- **Address**: _____________________
-- **City**: ________________________
-- **State**: _______________________
-- **Zip Code**: ____________________
+### Property Listing
+```
+Title: ________________
+Description: __________
+Category: _____________
+Type: _________________
+Price: ________________
+Guests: _______________
+Bedrooms: _____________
+Bathrooms: ____________
+Amenities: ____________
+```
 
-### Listing Information
+### Image Requirements
+- Supported formats: PNG, JPG, JPEG, SVG, WebP
+- AVIF not supported
 
-Please provide details about the listing:
+## 🤝 Contributing
 
-- **Property Title**: _______________
-- **Description**: __________________
-- **Category**: _____________________
-- **Type**: _________________________
-- **Price**: ________________________
-- **Number of Guests**: ______________
-- **Number of Bedrooms**: ____________
-- **Number of Bathrooms**: ___________
-- **Amenities**: _____________________
+1. Fork repository
+2. Create feature branch (`git checkout -b feature/Amazing`)
+3. Commit changes (`git commit -m 'Add Amazing'`)
+4. Push branch (`git push origin feature/Amazing`)
+5. Open Pull Request
 
-### Image Uploads
+## 📄 License
 
-Please upload images for the listing:
+MIT License - See [LICENSE](LICENSE) file
 
-- **Upload Images**: [Choose Files]
+## 🙏 Acknowledgments
 
----
-
-### Notes
-- Ensure all required fields are filled out before submitting.
-- You can add additional comments or notes here: ______________________________________________________
-
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+- [React Docs](https://react.dev)
+- [MongoDB Docs](https://docs.mongodb.com)
+- [Express.js Docs](https://expressjs.com)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
