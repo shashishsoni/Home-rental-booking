@@ -4,8 +4,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { User } from "../models/user";
-import { Listing } from "../models/Listing";
+import { User } from "../models/user.js";
+import { Listing } from "../models/Listing.js";
 // Create router
 const router = Router();
 // Setup paths
