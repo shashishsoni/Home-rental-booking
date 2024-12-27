@@ -189,3 +189,30 @@ MIT License - See [LICENSE](LICENSE) file
 - [MongoDB Docs](https://docs.mongodb.com)
 - [Express.js Docs](https://expressjs.com)
 - [Tailwind CSS Docs](https://tailwindcss.com/docs)
+- [React Query Docs](https://tanstack.com/query/latest)
+- [React Router Docs](https://reactrouter.com/en/main)
+- [React Hook Form Docs](https://react-hook-form.com/get-started)
+- [React Dropzone Docs](https://react-dropzone.js.org/)
+- [React Slick Docs](https://react-slick.neostack.com/docs/get-started)
+- [React Toastify Docs](https://www.npmjs.com/package/react-toastify)
+- [React Icons Docs](https://react-icons.github.io/react-icons/)
+
+![signup page](<FireShot Capture 012 - Vite + React + TS - localhost.png>)
+
+![login page](<FireShot Capture 013 - Vite + React + TS - localhost.png>)
+
+![home page](<FireShot Capture 003 - Vite + React + TS - localhost.png>)
+
+![create listing page](<FireShot Capture 004 - Vite + React + TS - localhost.png>)
+
+![listing page](<Vite + React + TS.png>)
+
+![paymet pop up](<FireShot Capture 014 - Vite + React + TS - localhost.png>)
+
+![trip details page](<FireShot Capture 005 - Vite + React + TS - localhost.png>)
+
+![wishlist page](<FireShot Capture 009 - Vite + React + TS - localhost.png>)
+
+![property details page](<FireShot Capture 010 - Vite + React + TS - localhost.png>)
+
+![reservation page](<FireShot Capture 011 - Vite + React + TS - localhost.png>)
