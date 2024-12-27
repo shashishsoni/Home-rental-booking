@@ -7,7 +7,6 @@ import { setLogout } from "@/redux/cache";
 import { persistor } from "@/redux/storecache";
 import { RootState } from "@/redux/storecache";
 import { Search } from "lucide-react";
-import SearchBar from './SearchBar';
 
 const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

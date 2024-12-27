@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { setWishlist } from "../redux/cache";
 import { selectWishlist } from "../redux/selectors";
-import { RootState } from '../redux/storecache';
 
 const ListingCard: React.FC<ListingCardProps> = ({
   listingId,
