@@ -209,22 +209,22 @@ MIT License - See [LICENSE](LICENSE) file
 - [React Toastify Docs](https://www.npmjs.com/package/react-toastify)
 - [React Icons Docs](https://react-icons.github.io/react-icons/)
 
-![signup page](<proj images/FireShot Capture 012 - Vite + React + TS - localhost.png>)
+![signup page](<proj image/FireShot Capture 012 - Vite + React + TS - localhost.png>)
 
-![login page](<proj images/FireShot Capture 013 - Vite + React + TS - localhost.png>)
+![login page](<proj image/FireShot Capture 013 - Vite + React + TS - localhost.png>)
 
-![home page](<proj images/FireShot Capture 003 - Vite + React + TS - localhost.png>)
+![home page](<proj image/FireShot Capture 003 - Vite + React + TS - localhost.png>)
 
-![create listing page](<proj images/FireShot Capture 004 - Vite + React + TS - localhost.png>)
+![create listing page](<proj image/FireShot Capture 004 - Vite + React + TS - localhost.png>)
 
-![listing page](<proj images/Vite + React + TS.png>)
+![listing page](<proj image/Vite + React + TS.png>)
 
-![paymet pop up](<proj images/FireShot Capture 014 - Vite + React + TS - localhost.png>)
+![paymet pop up](<proj image/FireShot Capture 014 - Vite + React + TS - localhost.png>)
 
-![trip details page](<proj images/FireShot Capture 005 - Vite + React + TS - localhost.png>)
+![trip details page](<proj image/FireShot Capture 005 - Vite + React + TS - localhost.png>)
 
-![wishlist page](<proj images/FireShot Capture 009 - Vite + React + TS - localhost.png>)
+![wishlist page](<proj image/FireShot Capture 009 - Vite + React + TS - localhost.png>)
 
-![property details page](<proj images/FireShot Capture 010 - Vite + React + TS - localhost.png>)
+![property details page](<proj image/FireShot Capture 010 - Vite + React + TS - localhost.png>)
 
-![reservation page](<proj images/FireShot Capture 011 - Vite + React + TS - localhost.png>)
+![reservation page](<proj image/FireShot Capture 011 - Vite + React + TS - localhost.png>)
