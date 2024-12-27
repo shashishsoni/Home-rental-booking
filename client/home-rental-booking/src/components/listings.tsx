@@ -19,8 +19,8 @@ const Listings = () => {
     try {
       const response = await fetch(
         slectedCategory !== "All"
-          ? `http://localhost:3001/listing?category=${slectedCategory}`
-          : "http://localhost:3001/listing",
+          ? `${import.meta.env.VITE_API_URL}/listing?category=${slectedCategory}`
+          : "${import.meta.env.VITE_API_URL}/listing",
         {
           method: "GET",
           credentials: "include", // Keep this for potential session management

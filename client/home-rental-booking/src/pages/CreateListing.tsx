@@ -160,7 +160,7 @@ const CreateListing = () => {
         console.log(pair[0], pair[1]);
       }
       // Send the post request to the server
-      const response = await fetch("http://localhost:3001/listing/create", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/listing/create`, {
         method: "POST",
         body: formData,
       });

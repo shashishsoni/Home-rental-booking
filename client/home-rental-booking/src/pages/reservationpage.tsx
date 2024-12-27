@@ -59,7 +59,7 @@ const ReservationPage = () => {
       if (!user?._id) return;
 
       try {
-        const response = await fetch(`http://localhost:3001/user/${user._id}/reservations`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${user._id}/reservations`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -101,7 +101,7 @@ const ReservationPage = () => {
   const handleContactOwner = async (hostId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/user/${hostId}/details`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${hostId}/details`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -187,7 +187,7 @@ const ReservationPage = () => {
                           className="relative w-full h-[400px] flex-shrink-0"
                         >
                           <img
-                            src={`http://localhost:3001/${image.replace(/^\/?(public\/)?/, '')}`}
+                            src={`${import.meta.env.VITE_API_URL}/${image.replace(/^\/?(public\/)?/, '')}`}
                             alt={`${reservation.listingId.title} - Image ${index + 1}`}
                             className="absolute inset-0 w-full h-full object-cover"
                             style={{ 
@@ -227,7 +227,7 @@ const ReservationPage = () => {
                         <div className="relative group">
                           <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur group-hover:blur-md transition-all duration-300" />
                           <img
-                            src={`http://localhost:3001/uploads/${reservation.host.profileImagePath}`}
+                            src={`${import.meta.env.VITE_API_URL}/uploads/${reservation.host.profileImagePath}`}
                             alt={`${reservation.host.firstname}'s profile`}
                             className="w-16 h-16 rounded-full object-cover relative z-10 ring-2 ring-white/20"
                             style={{
@@ -320,7 +320,7 @@ const ReservationPage = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur" />
                 <img
-                  src={`http://localhost:3001/uploads/${ownerDetails.profileImagePath}`}
+                  src={`${import.meta.env.VITE_API_URL}/uploads/${ownerDetails.profileImagePath}`}
                   alt={`${ownerDetails.firstname}'s profile`}
                   className="w-20 h-20 rounded-full object-cover relative z-10 ring-2 ring-white/20"
                 />

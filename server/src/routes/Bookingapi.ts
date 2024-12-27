@@ -2,7 +2,6 @@ import e, { Router, Request, Response } from 'express';
 const router = Router();
 
 import { Booking } from '../models/Booking';
-import nodemailer from 'nodemailer';
 
 interface BookingRequest{
     customerId: string;

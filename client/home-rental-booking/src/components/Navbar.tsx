@@ -18,8 +18,8 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const profileImageUrl = user?.profileImagePath
-    ? `http://localhost:3001/uploads/${user.profileImagePath}`
-    : "http://localhost:3001/public/uploads/default-profile.png";
+    ? `${import.meta.env.VITE_API_URL}/uploads/${user.profileImagePath}`
+    : "${import.meta.env.VITE_API_URL}/public/uploads/default-profile.png";
 
   const handleLogout = async () => {
     try {

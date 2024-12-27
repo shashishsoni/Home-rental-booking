@@ -99,7 +99,7 @@ const WishlistPage = () => {
             missingListings.map(async (listingId: string) => {
               try {
                 const response = await fetch(
-                  `http://localhost:3001/listing/${listingId}`
+                  `${import.meta.env.VITE_API_URL}/listing/${listingId}`
                 );
                 if (!response.ok) return null;
                 const data = await response.json();
@@ -112,7 +112,7 @@ const WishlistPage = () => {
                   ListingPhotoPaths:
                     listing.listingImages?.map((path: string) => {
                       const cleanPath = cleanImagePath(path);
-                      return `http://localhost:3001/${cleanPath}`;
+                      return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
                     }) || [],
                   creator: {
                     _id: listing.Creator?._id || listing.creator?._id,
@@ -127,9 +127,9 @@ const WishlistPage = () => {
                     Email:
                       listing.Creator?.Email || listing.creator?.Email || "",
                     profileImagePath: listing.Creator?.profileImagePath
-                      ? `http://localhost:3001/uploads/${listing.Creator.profileImagePath}`
+                      ? `${import.meta.env.VITE_API_URL}/uploads/${listing.Creator.profileImagePath}`
                       : listing.creator?.profileImagePath
-                      ? `http://localhost:3001/uploads/${listing.creator.profileImagePath}`
+                      ? `${import.meta.env.VITE_API_URL}/uploads/${listing.creator.profileImagePath}`
                       : "/default-avatar.png",
                   },
                 };

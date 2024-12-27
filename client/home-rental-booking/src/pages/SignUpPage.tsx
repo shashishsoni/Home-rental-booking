@@ -86,7 +86,7 @@ const SignUpPage = () => {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
 
-      const response = await fetch('http://localhost:3001/auth/signup', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/auth/signup', {
         method: 'POST',
         body: signupForm,
       });

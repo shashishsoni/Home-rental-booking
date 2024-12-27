@@ -38,7 +38,7 @@ const TripList: React.FC = () => {
       try {
         
 
-        const response = await fetch(`http://localhost:3001/user/${userId}/trips`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${userId}/trips`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const TripList: React.FC = () => {
             sortedTrips.map(async (trip: Trip) => {
               try {
                 const listingResponse = await fetch(
-                  `http://localhost:3001/listing/${trip.listingId}`
+                  `${import.meta.env.VITE_API_URL}/listing/${trip.listingId}`
                 );
                 if (listingResponse.ok) {
                   const listingData = await listingResponse.json();
@@ -181,7 +181,7 @@ const TripList: React.FC = () => {
                       {trip.listing.images.map((image, imgIndex) => (
                         <img
                           key={imgIndex}
-                          src={`http://localhost:3001/uploads/${image.replace(/^.*[\\\/]/, '')}`}
+                          src={`${import.meta.env.VITE_API_URL}/uploads/${image.replace(/^.*[\\\/]/, '')}`}
                           alt={`${trip.listing?.title} - ${imgIndex + 1}`}
                           className="absolute inset-0 w-full h-full object-cover transform transition-all duration-1000"
                           style={{

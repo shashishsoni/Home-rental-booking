@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import { setWishlist } from "../redux/cache";
 import { selectWishlist } from "../redux/selectors";
 
+
 const ListingCard: React.FC<ListingCardProps> = ({
   listingId,
   creator,
@@ -42,7 +43,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
     // Clean the path and ensure it starts with a forward slash
     const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
-    return `http://localhost:3001/${cleanPath}`;
+    return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
   };
 
   // Auto-slide functionality
@@ -75,7 +76,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/user/${user._id}/${listingId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${user._id}/${listingId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

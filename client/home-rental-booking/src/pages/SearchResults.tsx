@@ -49,7 +49,7 @@ const SearchResults = () => {
       dispatch(setSearchLoading(true));
       dispatch(setSearchError(null));
       try {
-        const response = await fetch(`http://localhost:3001/listing/search?q=${searchQuery}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/listing/search?q=${searchQuery}`, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -157,7 +157,7 @@ const SearchResults = () => {
                         <img
                           src={image?.startsWith('http') 
                             ? image 
-                            : `http://localhost:3001/uploads/${image?.replace(/^.*[\\\/]/, '')}`
+                            : `${import.meta.env.VITE_API_URL}/uploads/${image?.replace(/^.*[\\\/]/, '')}`
                           }
                           alt={`${listing.title} - Image ${imgIndex + 1}`}
                           className="w-[405px] h-[300px] object-fill"
@@ -224,7 +224,7 @@ const SearchResults = () => {
                         <img
                           src={listing.Creator.profileImagePath.startsWith('http') 
                             ? listing.Creator.profileImagePath 
-                            : `http://localhost:3001/uploads/${listing.Creator.profileImagePath}`
+                            : `${import.meta.env.VITE_API_URL}/uploads/${listing.Creator.profileImagePath}`
                           }
                           alt={`${listing.Creator.firstname} ${listing.Creator.lastname}`}
                           className="absolute inset-0 w-10 h-10 rounded-full object-cover border-2 border-white"

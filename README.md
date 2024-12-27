@@ -120,11 +120,11 @@ home-rental-booking/
 - **Image Uploads**: Uploaded images are stored in the `public/uploads` directory of the server. Ensure that this directory exists and is writable.
 - **Accessing Images**: Images can be accessed via the following URL format:
   ```
-  http://localhost:3001/uploads/<image_filename>
+  ${import.meta.env.VITE_API_URL}/uploads/<image_filename>
   ```
   For example, if you upload an image named `listing-123.jpg`, it can be accessed at:
   ```
-  http://localhost:3001/uploads/listing-123.jpg
+  ${import.meta.env.VITE_API_URL}/uploads/listing-123.jpg
   ```
 - **Local Storage**: The application uses local storage to save user-specific data such as wishlist and properties.
 

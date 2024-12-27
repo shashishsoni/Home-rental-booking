@@ -20,7 +20,7 @@ const PropertiesPage = () => {
       if (!user?._id) return;
         
       try {
-        const response = await fetch(`http://localhost:3001/user/${user._id}/properties`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${user._id}/properties`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const PropertiesPage = () => {
             ...property,
             ListingPhotoPaths: property.listingImages?.map((path: string) => {
               const cleanPath = path.replace(/^\/?(public\/)?/, '');
-              return `http://localhost:3001/${cleanPath}`;
+              return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
             }) || [],
             creator: {
               _id: property.Creator?._id || user._id,
@@ -46,7 +46,7 @@ const PropertiesPage = () => {
               lastname: property.Creator?.lastname || user.lastname,
               Email: property.Creator?.Email || user.Email,
               profileImagePath: property.Creator?.profileImagePath
-                ? `http://localhost:3001/uploads/${property.Creator.profileImagePath}`
+                ? `${import.meta.env.VITE_API_URL}/uploads/${property.Creator.profileImagePath}`
                 : '/default-avatar.png'
             }
           }));

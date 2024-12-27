@@ -180,7 +180,7 @@ const ListingDetails: React.FC = () => {
         if (!listingId) throw new Error("Listing ID is missing");
 
         const response = await fetch(
-          `http://localhost:3001/listing/${listingId}`
+          `${import.meta.env.VITE_API_URL}/listing/${listingId}`
         );
         if (!response.ok) throw new Error("Failed to fetch listing");
 
@@ -283,7 +283,7 @@ const ListingDetails: React.FC = () => {
         totalPrice: totalPrice
       };
 
-      const response = await fetch("http://localhost:3001/bookings/create", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/bookings/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -404,7 +404,7 @@ const ListingDetails: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500" />
               <img
                 src={listing?.creator.profileImagePath ? 
-                  `http://localhost:3001/uploads/${listing.creator.profileImagePath.replace(/^.*[\\\/]/, '')}` : 
+                  `${import.meta.env.VITE_API_URL}/uploads/${listing.creator.profileImagePath.replace(/^.*[\\\/]/, '')}` : 
                   'default-profile.jpg'
                 }
                 alt={`${listing?.creator.firstname} ${listing?.creator.lastname}`}
@@ -447,7 +447,7 @@ const ListingDetails: React.FC = () => {
                     className="relative w-full h-full flex-shrink-0  transition-transform duration-700"
                   >
                     <img
-                      src={`http://localhost:3001/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
+                      src={`${import.meta.env.VITE_API_URL}/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
                       alt={`Listing photo ${index + 1}`}
                       className="w-[1050px] h-[600px] object-cover transition-transform duration-700"
                     />
