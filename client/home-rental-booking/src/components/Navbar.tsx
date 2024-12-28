@@ -4,7 +4,7 @@ import { Person, Menu } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogout } from "@/redux/cache";
-import { getPersistor} from "@/redux/storecache";
+import { persistor} from "@/redux/storecache";
 import { RootState } from "@/redux/storecache";
 import { Search } from "lucide-react";
 
@@ -23,17 +23,8 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      // Dispatch logout action
       dispatch(setLogout());
-
-      // Purge the persisted data and handle potential errors
-      if (getPersistor()) {
-        await getPersistor().purge();
-      } else {
-        console.error("getPersistoris not initialized.");
-      }
-
-      // Redirect to home after logout
+      await persistor.purge();
       navigate("/");
     } catch (error) {
       console.error("Error during logout:", error);

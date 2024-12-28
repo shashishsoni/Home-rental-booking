@@ -1,6 +1,6 @@
 // src/components/common/LoadingWrapper.tsx
 import React, { useEffect, useState } from 'react';
-import { getPersistor } from '@/redux/storecache';
+import { persistor } from '@/redux/storecache';
 
 interface LoadingWrapperProps {
   children: React.ReactNode;
@@ -10,7 +10,6 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = ({ children }) => {
   const [isRehydrated, setIsRehydrated] = useState(false);
 
   useEffect(() => {
-    const persistor = getPersistor(); 
     const handlePersistorState = () => {
       const { bootstrapped } = persistor.getState();
       if (bootstrapped) {

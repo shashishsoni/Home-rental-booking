@@ -222,7 +222,7 @@ const CreateListing = () => {
                     >
                       <div className="text-3xl mb-2">
                         {typeof item.icon === "function"
-                          ? item.icon()
+                          ? item.icon({})
                           : item.icon}
                       </div>
                       <p className="text-gray-700 text-sm">{item.label}</p>
