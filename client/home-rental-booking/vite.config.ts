@@ -1,6 +1,7 @@
 import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
+import type { UserConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
@@ -10,9 +11,7 @@ export default defineConfig({
     },
   },
   build: {
-    // Disable chunk size reporting
     reportCompressedSize: false,
-    // Minimize console output during build
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -21,20 +20,22 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html')
+      },
       output: {
-        manualChunks: {
-          'vendor': [
-            'react', 
-            'react-dom',
-            '@mui/material', 
-            '@mui/icons-material',
-            'react-router-dom',
-            '@reduxjs/toolkit'
-          ],
-        }
+        manualChunks: undefined,
+        assetFileNames: (info) => {
+          if (!info.name) return 'assets/[name].[hash][extname]';
+          
+          const extType = info.name.split('.').pop();
+          if (extType && /png|jpe?g|svg|gif|tiff|bmp|ico|webp|avif/i.test(extType)) {
+            return `assets/images/[name].[hash][extname]`;
+          }
+          return `assets/[name].[hash][extname]`;
+        },
       }
     }
   },
-  // Reduce logging to errors only
   logLevel: 'error'
-})
+} as UserConfig)
