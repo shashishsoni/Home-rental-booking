@@ -34,8 +34,18 @@ app.use(compression());
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://home-rental-booking-1.onrender.com"],
-    imgSrc: ["'self'", "data:", "https://home-rental-booking-1.onrender.com"],
+    scriptSrc: [
+      "'self'", 
+      "'unsafe-inline'", 
+      "'unsafe-eval'", 
+      "https://home-rental-booking-1.onrender.com"
+    ],
+    imgSrc: [
+      "'self'", 
+      "data:", 
+      "https://home-rental-booking-1.onrender.com"
+    ],
+    connectSrc: ["'self'", "https://home-rental-booking-1.onrender.com"],
     // Add other directives as needed
   },
 }));

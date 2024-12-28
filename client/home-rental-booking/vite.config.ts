@@ -43,5 +43,6 @@ export default defineConfig({
   optimizeDeps: {
     noDiscovery: true,  // Disable automatic dependency discovery
     include: []         // Empty array to avoid pre-bundling dependencies
-  }
+  },
+  logLevel: 'error',  // Global logging level setting
 });
