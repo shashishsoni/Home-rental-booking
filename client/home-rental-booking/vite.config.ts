@@ -13,17 +13,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'react-vendor';
-            }
-            return 'vendor';
-          }
-        },
+        manualChunks: undefined, // Allow Vite to handle chunking automatically
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: ({name}) => {
+        assetFileNames: ({ name }) => {
           if (/\.(gif|jpe?g|png|svg|webp)$/.test(name ?? '')) {
             return 'assets/images/[name]-[hash][extname]';
           }
@@ -35,11 +28,10 @@ export default defineConfig({
       },
     },
     assetsInlineLimit: 0,
-    copyPublicDir: true,
     sourcemap: true,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500, // Reduce to default for better monitoring
     minify: 'esbuild',
-    target: 'esnext'
+    target: 'es2019', // Use a stable build target
   },
   publicDir: 'public',
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
