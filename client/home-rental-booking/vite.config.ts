@@ -13,7 +13,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Simplified chunks configuration
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             if (id.includes('react')) {
@@ -25,7 +24,6 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: ({name}) => {
-          // Keep images in a separate directory
           if (/\.(gif|jpe?g|png|svg|webp)$/.test(name ?? '')) {
             return 'assets/images/[name]-[hash][extname]';
           }
