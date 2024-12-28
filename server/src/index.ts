@@ -36,14 +36,16 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: [
       "'self'", 
-      "'unsafe-inline'", 
-      "'unsafe-eval'", 
-      "https://home-rental-booking-1.onrender.com"
+      "'unsafe-inline'",  // Allow inline scripts (use with caution)
+      "'unsafe-eval'",    // Allow eval (use with caution)
+      "https://home-rental-booking-1.onrender.com",
+      "https://cdnjs.cloudflare.com", // Add any other necessary sources
     ],
     imgSrc: [
       "'self'", 
       "data:", 
-      "https://home-rental-booking-1.onrender.com"
+      "https://home-rental-booking-1.onrender.com",
+      "https://example.com" // Add any other necessary sources
     ],
     connectSrc: ["'self'", "https://home-rental-booking-1.onrender.com"],
     // Add other directives as needed
