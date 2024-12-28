@@ -15,34 +15,24 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'react-vendor'; // Separate React-related modules
-            }
-            if (id.includes('mui') || id.includes('@emotion')) {
-              return 'mui-vendor'; // Separate Material UI and Emotion
-            }
-            return 'vendor'; // Default for other node_modules
+            if (id.includes('react')) return 'react-vendor';
+            if (id.includes('mui')) return 'mui-vendor';
+            return 'vendor';
           }
         },
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: ({ name }) => {
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: ({name}) => {
           if (/\.(gif|jpe?g|png|svg|webp)$/.test(name ?? '')) {
-            return 'assets/images/[name]-[hash][extname]';
+            return 'assets/images/[name].[hash][extname]';
           }
-          return 'assets/[name]-[hash][extname]';
-        },
-      },
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-      },
+          return 'assets/[name].[hash][extname]';
+        }
+      }
     },
-    assetsInlineLimit: 0,
-    sourcemap: true,
-    chunkSizeWarningLimit: 1000, // Allow up to 1 MB per chunk
-    minify: 'esbuild',
-    target: 'es2019',
+    reportCompressedSize: false,
+    sourcemap: false,
+    minify: 'esbuild'
   },
-  publicDir: 'public',
-  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
+  logLevel: 'error'
 });
