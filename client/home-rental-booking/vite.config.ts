@@ -2,48 +2,46 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),  // Resolves @ to the src folder
+      '@': path.resolve(__dirname, 'src'),
     },
   },
   server: {
-    // Enable HMR for production-like environment
     hmr: {
       protocol: 'ws',
-      host: 'home-rental-booking-1.onrender.com',  // Correct host
+      host: 'home-rental-booking-1.onrender.com',
     },
     proxy: {
       '/api': {
-        target: 'https://home-rental-booking-1.onrender.com',  // Set your backend API URL
+        target: 'https://home-rental-booking-1.onrender.com',
         changeOrigin: true,
         secure: false,
       },
     },
   },
   build: {
-    assetsInlineLimit: 4096,  // Inline assets up to this limit
+    // Remove assetsInlineLimit to ensure proper file generation
     rollupOptions: {
       output: {
+        // Ensure proper file naming and chunking
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return id
-              .toString()
-              .split('node_modules/')[1]
-              .split('/')[0]
-              .toString();  // Split dependencies for better chunking
+            return 'vendor'; // Simplified chunking strategy
           }
         },
       },
     },
   },
-  optimizeDeps: {
-    noDiscovery: true,  // Disable automatic dependency discovery
-    include: []         // Empty array to avoid pre-bundling dependencies
-  },
-  logLevel: 'error',  // Global logging level setting
+  // Remove optimizeDeps configuration as it might interfere with proper bundling
+  // optimizeDeps: {
+  //   noDiscovery: true,
+  //   include: []
+  // },
 });
