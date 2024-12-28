@@ -119,6 +119,8 @@ app.listen(PORT, () => {
 });
 
 app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'application/javascript');
+  if (req.url.endsWith('.js')) {
+    res.setHeader('Content-Type', 'application/javascript');
+  }
   next();
 });
