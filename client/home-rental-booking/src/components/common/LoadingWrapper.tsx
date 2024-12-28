@@ -1,6 +1,6 @@
-// Removed unused imports and selectors
+// src/components/common/LoadingWrapper.tsx
 import React, { useEffect, useState } from 'react';
-import { persistor } from '@/redux/storecache';
+import { getPersistor } from '@/redux/storecache';
 
 interface LoadingWrapperProps {
   children: React.ReactNode;
@@ -10,6 +10,7 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = ({ children }) => {
   const [isRehydrated, setIsRehydrated] = useState(false);
 
   useEffect(() => {
+    const persistor = getPersistor();
     const handlePersistorState = () => {
       const { bootstrapped } = persistor.getState();
       if (bootstrapped) {
@@ -21,7 +22,7 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = ({ children }) => {
     handlePersistorState();
 
     return () => {
-      unsubscribe(); // Properly clean up
+      unsubscribe();
     };
   }, []);
 
