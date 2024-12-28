@@ -17,6 +17,14 @@ dotenv.config();
 
 const app = express();
 
+// Middleware to set Content-Type for JavaScript files
+app.use((req, res, next) => {
+  if (req.url.endsWith('.js')) {
+    res.setHeader('Content-Type', 'application/javascript');
+  }
+  next();
+});
+
 // CORS Options
 const corsOptions = {
   origin: ['http://localhost:5173', 'https://67703aa9dffd10de673aa68a--home-booking.netlify.app/'],
@@ -116,11 +124,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-app.use((req, res, next) => {
-  if (req.url.endsWith('.js')) {
-    res.setHeader('Content-Type', 'application/javascript');
-  }
-  next();
 });
