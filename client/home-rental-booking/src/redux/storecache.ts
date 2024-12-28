@@ -6,33 +6,26 @@ import { combineReducers } from '@reduxjs/toolkit';
 import userReducer from "./cache";
 import { searchReducer } from './cache';
 
-// Create root reducer
 const rootReducer = combineReducers({
   user: userReducer,
   search: searchReducer
 });
 
-// Basic persist config
 const persistConfig = {
   key: "root",
-  storage,
-  blacklist: [] // Don't persist any reducers
+  storage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Create store with basic config
-const store = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
-      serializableCheck: false,
-      immutableCheck: false
+      serializableCheck: false
     })
 });
 
-const persistor = persistStore(store);
-
-export { store, persistor };
+export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
