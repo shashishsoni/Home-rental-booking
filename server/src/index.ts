@@ -31,7 +31,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://home-rental-booking-1.onrender.com"],
+    imgSrc: ["'self'", "data:", "https://home-rental-booking-1.onrender.com"],
+    // Add other directives as needed
+  },
+}));
 
 // Serve Static Files with CORP headers
 const __dirname = dirname(fileURLToPath(import.meta.url));

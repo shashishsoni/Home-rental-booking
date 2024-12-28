@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 // CORS Options
 const corsOptions = {
-    origin: 'http://localhost:5173', // Allow the front-end URL for development (change for production)
+    origin: ['http://localhost:5173', 'https://home-rental-booking-3d5e-qg50emgqm-shashishsonis-projects.vercel.app'], // Allow the front-end URL for development (change for production)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Enable cookies and credentials
@@ -27,14 +27,21 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://home-rental-booking-1.onrender.com"],
+        imgSrc: ["'self'", "data:", "https://home-rental-booking-1.onrender.com"],
+        // Add other directives as needed
+    },
+}));
 // Serve Static Files with CORP headers
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
     setHeaders: (res) => {
         res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Allow cross-origin resource sharing
         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // Ensure proper embedder policy
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Allow the front-end URL
+        res.setHeader('Access-Control-Allow-Origin', ['http://localhost:5173', 'https://home-rental-booking-3d5e-qg50emgqm-shashishsonis-projects.vercel.app']); // Allow the front-end URL
         res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS'); // Allow only GET and OPTIONS methods
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow necessary headers
         res.setHeader('Access-Control-Allow-Credentials', 'true');
