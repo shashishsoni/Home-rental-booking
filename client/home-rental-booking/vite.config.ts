@@ -13,7 +13,17 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: undefined, // Allow Vite to handle chunking automatically
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) {
+              return 'react-vendor'; // Separate React-related modules
+            }
+            if (id.includes('mui') || id.includes('@emotion')) {
+              return 'mui-vendor'; // Separate Material UI and Emotion
+            }
+            return 'vendor'; // Default for other node_modules
+          }
+        },
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: ({ name }) => {
@@ -29,9 +39,9 @@ export default defineConfig({
     },
     assetsInlineLimit: 0,
     sourcemap: true,
-    chunkSizeWarningLimit: 500, // Reduce to default for better monitoring
+    chunkSizeWarningLimit: 1000, // Allow up to 1 MB per chunk
     minify: 'esbuild',
-    target: 'es2019', // Use a stable build target
+    target: 'es2019',
   },
   publicDir: 'public',
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp'],
