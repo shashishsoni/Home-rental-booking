@@ -1,8 +1,7 @@
-// cache.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Listing, UserState, Trip , Booking} from "../types/types"; // Import UserState from types.ts
+import { Listing, UserState, Trip, Booking } from "../types/types";
 
-
+// Initial States
 const initialState: UserState = {
   user: null,
   token: null,
@@ -13,13 +12,25 @@ const initialState: UserState = {
   reservations: [],
 };
 
+export interface SearchState {
+  searchResults: any[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialSearchState: SearchState = {
+  searchResults: [],
+  loading: false,
+  error: null,
+};
+
+// User Slice
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // Action to handle login
     setLogin: (
-      state: UserState,
+      state,
       action: PayloadAction<{
         user: {
           _id: string;
@@ -39,27 +50,28 @@ export const userSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.profileImagePath = action.payload.profileImagePath || null;
-      state.wishlist = action.payload.user.WishList || [];
 
       // Load wishlist from localStorage or use the one from the server
-      const savedWishlist = localStorage.getItem('userWishlist');
-      state.wishlist = savedWishlist ? JSON.parse(savedWishlist) : action.payload.user.WishList || [];
-      
+      const savedWishlist = localStorage.getItem("userWishlist");
+      state.wishlist = savedWishlist
+        ? JSON.parse(savedWishlist)
+        : action.payload.user.WishList || [];
+
       // Load listings from localStorage if available
-      const savedListings = localStorage.getItem('wishlistListings');
+      const savedListings = localStorage.getItem("wishlistListings");
       if (savedListings) {
         state.listings = JSON.parse(savedListings);
       }
     },
-    // Action to handle logout
     setLogout: (state) => {
-      // Clear localStorage before resetting state
-      localStorage.removeItem('wishlistListings');
-      localStorage.removeItem('userWishlist');
+      localStorage.removeItem("wishlistListings");
+      localStorage.removeItem("userWishlist");
       state.user = null;
       state.token = null;
       state.profileImagePath = null;
       state.wishlist = [];
+      state.properties = [];
+      state.reservations = [];
     },
     setListings: (state, action: PayloadAction<Listing[]>) => {
       state.listings = action.payload;
@@ -71,10 +83,7 @@ export const userSlice = createSlice({
     },
     addTrip: (state, action: PayloadAction<Trip>) => {
       if (state.user) {
-        if (!state.user.triplist) {
-          state.user.triplist = [];
-        }
-        state.user.triplist.push(action.payload);
+        state.user.triplist = [...(state.user.triplist || []), action.payload];
       }
     },
     setWishlist: (state, action: PayloadAction<string[]>) => {
@@ -82,86 +91,57 @@ export const userSlice = createSlice({
       if (state.user) {
         state.user.WishList = action.payload;
       }
-       // Save to localStorage whenever wishlist changes
-       localStorage.setItem('userWishlist', JSON.stringify(action.payload));
+      localStorage.setItem("userWishlist", JSON.stringify(action.payload));
     },
     setProperties: (state, action: PayloadAction<Listing[]>) => {
       state.properties = action.payload;
-      // Save to localStorage
-      localStorage.setItem('userProperties', JSON.stringify(action.payload));
+      localStorage.setItem("userProperties", JSON.stringify(action.payload));
     },
     setReservation: (state, action: PayloadAction<Booking[]>) => {
       state.reservations = action.payload;
-      // Save to localStorage
-      localStorage.setItem('userReservation', JSON.stringify(action.payload));
+      localStorage.setItem("userReservation", JSON.stringify(action.payload));
     },
   },
 });
 
-export const { setLogin, setLogout, setListings, setTripList, addTrip, setWishlist, setProperties, setReservation } = userSlice.actions;
-
-// Export reducer
-export default userSlice.reducer;
-
-// Add these types and actions for search
-export interface SearchState {
-  searchResults: any[];
-  loading: boolean;
-  error: string | null;
-}
-
-const initialSearchState: SearchState = {
-  searchResults: [],
-  loading: false,
-  error: null
-};
-
-// Add these action types
-export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
-export const SET_SEARCH_LOADING = 'SET_SEARCH_LOADING';
-export const SET_SEARCH_ERROR = 'SET_SEARCH_ERROR';
-
-// Add these action creators
-export const setSearchResults = (results: any[]) => ({
-  type: SET_SEARCH_RESULTS,
-  payload: results
+// Search Slice
+export const searchSlice = createSlice({
+  name: "search",
+  initialState: initialSearchState,
+  reducers: {
+    setSearchResults: (state, action: PayloadAction<any[]>) => {
+      state.searchResults = action.payload;
+      state.error = null;
+      state.loading = false;
+    },
+    setSearchLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setSearchError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+      state.searchResults = [];
+      state.loading = false;
+    },
+  },
 });
 
-export const setSearchLoading = (loading: boolean) => ({
-  type: SET_SEARCH_LOADING,
-  payload: loading
-});
+// Export actions
+export const {
+  setLogin,
+  setLogout,
+  setListings,
+  setTripList,
+  addTrip,
+  setWishlist,
+  setProperties,
+  setReservation,
+} = userSlice.actions;
 
-export const setSearchError = (error: string | null) => ({
-  type: SET_SEARCH_ERROR,
-  payload: error
-});
+export const { setSearchResults, setSearchLoading, setSearchError } =
+  searchSlice.actions;
 
-// Update your reducer
-export const searchReducer = (state = initialSearchState, action: any): SearchState => {
-  switch (action.type) {
-    case SET_SEARCH_RESULTS:
-      return {
-        ...state,
-        searchResults: action.payload,
-        error: null,
-        loading: false
-      };
-    case SET_SEARCH_LOADING:
-      return {
-        ...state,
-        loading: action.payload,
-        searchResults: state.searchResults,
-        error: state.error
-      };
-    case SET_SEARCH_ERROR:
-      return {
-        ...state,
-        error: action.payload,
-        searchResults: [],
-        loading: false
-      };
-    default:
-      return state;
-  }
-};
+// Export reducers
+export const { reducer: userReducer } = userSlice;
+export const { reducer: searchReducer } = searchSlice;
+
+export default userReducer;
