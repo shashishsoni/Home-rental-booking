@@ -98,9 +98,7 @@ const WishlistPage = () => {
           const newListings = await Promise.all(
             missingListings.map(async (listingId: string) => {
               try {
-                const response = await fetch(
-                  `${import.meta.env.VITE_API_URL}/listing/${listingId}`
-                );
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/listing/${listingId}`);
                 if (!response.ok) return null;
                 const data = await response.json();
 
