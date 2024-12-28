@@ -10,7 +10,7 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = ({ children }) => {
   const [isRehydrated, setIsRehydrated] = useState(false);
 
   useEffect(() => {
-    const persistor = getPersistor();
+    const persistor = getPersistor(); 
     const handlePersistorState = () => {
       const { bootstrapped } = persistor.getState();
       if (bootstrapped) {
