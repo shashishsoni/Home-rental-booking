@@ -2,18 +2,25 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
-import listingRoutes from './routes/listingapi.js';
-import errorHandler from './middleware/errorHandler.js';
+import authRoutes from './routes/auth';
+import listingRoutes from './routes/listingapi';
+import errorHandler from './middleware/errorHandler';
 import compression from 'compression';
 import helmet from 'helmet';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
-import bookingRoutes from './routes/Bookingapi.js';
-import userRouters from './routes/userapi.js';
+import bookingRoutes from './routes/Bookingapi';
+import userRouters from './routes/userapi';
 dotenv.config();
 const app = express();
+// Middleware to set Content-Type for JavaScript files
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+});
 // CORS Options
 const corsOptions = {
     origin: ['http://localhost:5173', 'https://67703aa9dffd10de673aa68a--home-booking.netlify.app/'],
@@ -99,10 +106,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-});
-app.use((req, res, next) => {
-    if (req.url.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
-    }
-    next();
 });

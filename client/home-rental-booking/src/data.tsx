@@ -44,100 +44,117 @@ import {
 } from "react-icons/gi";
 import { AiFillCar } from "react-icons/ai";
 
+import allImg from "@/assets/all.jpg";
+import beachImg from "@/assets/beach.jpg";
+import windmillImg from "@/assets/windmil.avif";
+import iconCityImg from "@/assets/iconcity.jpg";
+import countrysideImg from "@/assets/countryside.webp";
+import poolImg from "@/assets/pool.jpg";
+import islandImg from "@/assets/island.avif";
+import lakefrontImg from "@/assets/lakefront.jpg";
+import skiImg from "@/assets/ski_in.avif";
+import castlesImg from "@/assets/castles.jpg";
+import caveImg from "@/assets/cave.jpg";
+import campingImg from "@/assets/camping.jpg";
+import arcticImg from "@/assets/artic.webp";
+import desertImg from "@/assets/derset.avif";
+import barnImg from "@/assets/barn.webp";
+import luxuryImg from "@/assets/luxury.webp";
+
 export const categories = [
   {
-    img: "src/assets/all.jpg",
+    img: allImg,
     label: "All",
-    icon: <BiWorld />,
+    icon: BiWorld,
   },
   {
-    img: "src/assets/beach.jpg",
+    img: beachImg,
     label: "Beachfront",
-    icon: () => <TbBeach />,
+    icon: TbBeach,
     description: "This property is close to the beach!",
   },
   {
-    img: "src/assets/windmil.avif",
+    img: windmillImg,
     label: "Windmills",
-    icon: () => <GiWindmill />,
-    description: "This property is has windmills!",
+    icon: GiWindmill,
+    description: "This property has windmills!",
   },
   {
-    img: "src/assets/iconcity.jpg",
+    img: iconCityImg,
     label: "Iconic cities",
-    icon: () => <MdOutlineVilla />,
+    icon: MdOutlineVilla,
     description: "This property is modern!",
   },
   {
-    img: "src/assets/countryside.webp",
+    img: countrysideImg,
     label: "Countryside",
-    icon: () => <TbMountain />,
+    icon: TbMountain,
     description: "This property is in the countryside!",
   },
   {
-    img: "src/assets/pool.jpg",
+    img: poolImg,
     label: "Amazing Pools",
-    icon: () => <TbPool />,
-    description: "This is property has a beautiful pool!",
+    icon: TbPool,
+    description: "This property has a beautiful pool!",
   },
   {
-    img: "src/assets/island.avif",
+    img: islandImg,
     label: "Islands",
-    icon: () => <GiIsland />,
+    icon: GiIsland,
     description: "This property is on an island!",
   },
   {
-    img: "src/assets/lakefront.jpg",
+    img: lakefrontImg,
     label: "Lakefront",
-    icon: () => <GiBoatFishing />,
+    icon: GiBoatFishing,
     description: "This property is near a lake!",
   },
   {
-    img: "src/assets/ski_in.avif",
+    img: skiImg,
     label: "Ski-in/out",
-    icon: () => <FaSkiing />,
-    description: "This property has skiing activies!",
+    icon: FaSkiing,
+    description: "This property has skiing activities!",
   },
   {
-    img: "src/assets/castles.jpg",
+    img: castlesImg,
     label: "Castles",
-    icon: () => <GiCastle />,
+    icon: GiCastle,
     description: "This property is an ancient castle!",
   },
   {
-    img: "src/assets/cave.jpg",
+    img: caveImg,
     label: "Caves",
-    icon: () => <GiCaveEntrance />,
+    icon: GiCaveEntrance,
     description: "This property is in a spooky cave!",
   },
   {
-    img: "src/assets/camping.jpg",
+    img: campingImg,
     label: "Camping",
-    icon: () => <GiForestCamp />,
+    icon: GiForestCamp,
     description: "This property offers camping activities!",
   },
   {
-    img: "src/assets/artic.webp",
+    img: arcticImg,
     label: "Arctic",
-    icon: () => <BsSnow />,
-    description: "This property is in arctic environment!",
+    icon: BiWorld,
+    description: "This property is in an arctic environment!",
   },
   {
-    img: "src/assets/derset.avif",
+    img: desertImg,
     label: "Desert",
-    icon: () => <GiCactus />,
+    icon: GiCactus,
     description: "This property is in the desert!",
   },
   {
-    img: "src/assets/barn.webp",
+    img: barnImg,
     label: "Barns",
-    icon: () => <GiBarn />,
+    icon: GiBarn,
     description: "This property is in a barn!",
   },
   {
-    img: "src/assets/luxury.webp",
+    img: luxuryImg,
     label: "Luxury",
-    icon: () => <IoDiamond />,
+    icon: IoDiamond,
     description: "This property is brand new and luxurious!",
   },
 ];

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import slide1 from '../assets/slide1.jpg';
+import imagehome2 from '../assets/imagehome2.jpg';
+import slide3 from '../assets/slide3.jpg';
 
 const Carousel: React.FC = () => {
   const slides = [
-    "src/assets/slide1.jpg",
-    "src/assets/imagehome2.jpg",
-    "src/assets/slide3.jpg",
+    slide1,
+    imagehome2,
+    slide3,
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

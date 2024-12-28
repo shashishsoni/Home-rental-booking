@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { categories } from "@/data";
+import imageHome from '../assets/imagehome.webp';
+import imageHome2 from '../assets/imagehome2.jpg';
+import imageHome1 from '../assets/imagehome1.avif';
 
 const Categories = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const backgroundImages = [
-    "src/assets/imagehome.webp",
-    "src/assets/imagehome2.jpg",
-    "src/assets/imagehome1.avif",
+    imageHome,
+    imageHome1,
+    imageHome2
   ];
 
   const categoryLayout = [

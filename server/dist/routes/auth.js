@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from "bcryptjs";
 import multer from "multer";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.js";
+import { User } from "../models/user";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';

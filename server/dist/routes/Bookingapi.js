@@ -1,6 +1,6 @@
 import { Router } from 'express';
 const router = Router();
-import { Booking } from '../models/Booking.js';
+import { Booking } from '../models/Booking';
 // create booking
 router.post('/create', async (req, res) => {
     try {
