@@ -1,7 +1,7 @@
 import express from "express";
-import { Booking } from "../models/Booking";
-import { User } from "../models/user";
-import { Listing } from "../models/Listing";
+import { Booking } from "../models/Booking.js";
+import { User } from "../models/user.js";
+import { Listing } from "../models/Listing.js";
 const router = express.Router();
 // get trip list
 router.get("/:userId/trips", async (req, res) => {
