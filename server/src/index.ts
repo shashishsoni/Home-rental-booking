@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'e
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
+import authRoutes from './routes/auth.js';
 import listingRoutes from './routes/listingapi';
 import errorHandler from './middleware/errorHandler';
 import compression from 'compression';
@@ -25,21 +25,29 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS Options
+// CORS configuration
+const allowedOrigins = [
+  'https://homerentalbooking.netlify.app',
+  'https://home-rental-booking.vercel.app',
+  'http://localhost:5173',
+  'https://6771462fc3e8780008e9c414--homerentalbooking.netlify.app'
+];
+
 const corsOptions = {
-  origin: [
-    'https://homerentalbooking.netlify.app',
-    'https://home-rental-booking.vercel.app',
-    'http://localhost:5173'
-  ],
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  exposedHeaders: ['Content-Type'],
-  maxAge: 86400
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Type']
 };
 
-// Apply CORS before other middleware
+// Apply CORS before any other middleware
 app.use(cors(corsOptions));
 
 // Middleware
@@ -72,10 +80,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
   setHeaders: (res) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin');
   }
 }));
 

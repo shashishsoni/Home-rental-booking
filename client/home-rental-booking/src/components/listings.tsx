@@ -29,13 +29,13 @@ const Listings = () => {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Origin': window.location.origin
-          },
-          mode: 'cors'
+          }
         }
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const text = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
       }
 
       const data = await response.json();
