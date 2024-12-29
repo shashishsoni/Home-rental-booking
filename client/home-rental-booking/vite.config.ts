@@ -12,6 +12,9 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
@@ -30,6 +33,9 @@ export default defineConfig({
         }
       }
     },
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
     reportCompressedSize: false,
     sourcemap: false,
     minify: 'esbuild'
