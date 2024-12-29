@@ -20,18 +20,22 @@ const Listings = () => {
       const response = await fetch(
         slectedCategory !== "All"
           ? `${import.meta.env.VITE_API_URL}/listing?category=${slectedCategory}`
-          : "${import.meta.env.VITE_API_URL}/listing",
+          : `${import.meta.env.VITE_API_URL}/listing`,
         {
           method: "GET",
-          credentials: "include", // Keep this for potential session management
+          credentials: "include",
         }
       );
+
+      // Log the response for debugging
+      const text = await response.text();
+      console.log("Response text:", text); // Log the raw response text
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = JSON.parse(text); // Parse the text as JSON
 
       // Sanitize data before updating Redux store
       const sanitizedListings = data.listings.map((listing: any) => ({
@@ -55,7 +59,9 @@ const Listings = () => {
         title: listing.title || "Untitled",
         description: listing.description || "No description provided.",
         price: listing.price || 0,
-        ListingPhotoPaths: listing.listingImages || [],
+        ListingPhotoPaths: listing.listingImages?.map((img: string) => 
+          `https://home-rental-booking.onrender.com/uploads/${img.replace(/^.*[\\\/]/,"")}`
+        ) || [],
         city: listing.city || "Unknown city",
         province: listing.province || "Unknown province",
         country: listing.country || "Unknown country",
@@ -167,7 +173,7 @@ const Listings = () => {
               listings.map(({ _id, creator, ...rest }: Listing) => (
                 <div key={_id}>
                   <ListingCard
-                    listingId={_id} // Explicitly pass the `listingId`
+                    ListingPhotoPaths={[]} listingId={_id} // Explicitly pass the `listingId`
                     creator={creator} // Pass the `creator` object
                     {...rest} // Spread other properties
                   />

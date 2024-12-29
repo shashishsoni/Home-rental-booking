@@ -3,38 +3,32 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  base: '/',
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
-  },
   build: {
-    chunkSizeWarningLimit: 1000,
+    outDir: 'dist',
+    assetsDir: 'assets',
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      },
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-redux': ['react-redux', '@reduxjs/toolkit', 'redux-persist'],
-          'vendor-router': ['react-router-dom'],
-          'vendor-ui': ['framer-motion', '@mui/material', '@emotion/react'],
-        },
-        dir: 'dist',
-        entryFileNames: 'src/[name].[hash].js',
-        chunkFileNames: 'src/chunks/[name].[hash].js',
-        assetFileNames: (assetInfo: { name?: string }) => {
-          const info = assetInfo.name?.split('.') || [];
-          const ext = info[info.length - 1] || '';
-          if (assetInfo.name && /\.(png|jpe?g|gif|svg|webp|avif)$/.test(assetInfo.name)) {
-            return 'src/assets/images/[name].[hash].[ext]';
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js',
+        assetFileNames: ({name}) => {
+          if (/\.(gif|jpe?g|png|svg)$/.test(name ?? '')) {
+            return 'images/[name]-[hash][extname]'
           }
-          if (ext === 'css') {
-            return 'src/assets/css/[name].[hash].[ext]';
+          if (/\.css$/.test(name ?? '')) {
+            return 'css/[name]-[hash][extname]'
           }
-          return 'src/assets/[name].[hash].[ext]';
+          return 'assets/[name]-[hash][extname]'
         }
       }
     }
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
   }
-});
+})
