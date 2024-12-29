@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  base: '/',
+  base: 'https://home-rental-booking.vercel.app/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -31,10 +31,5 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     minify: 'esbuild'
-  },
-  server: {
-    headers: {
-      'Content-Type': 'application/javascript',
-    },
   }
 });

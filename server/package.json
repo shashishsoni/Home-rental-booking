@@ -19,8 +19,9 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "nodemon --exec tsx src/index.ts",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "build": "tsc && node dist/scripts/copy-assets.js",
+    "dev": "nodemon --exec tsx src/index.ts",
     "clean": "rimraf dist"
   },
   "keywords": [],
