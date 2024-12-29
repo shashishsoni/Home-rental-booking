@@ -71,6 +71,7 @@ const Listings = () => {
         description: listing.description || "No description provided.",
         price: listing.price || 0,
         ListingPhotoPaths: listing.listingImages?.map((img: string) => {
+          // Remove any duplicate 'uploads/' and clean the path
           const cleanPath = img
             .replace(/^uploads\/uploads\//, 'uploads/')
             .replace(/^\/+|\/+$/g, '');
