@@ -6,25 +6,28 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
       },
       output: {
-        chunkFileNames: 'js/[name]-[hash].js',
-        entryFileNames: 'js/[name]-[hash].js',
+        dir: 'dist',
+        chunkFileNames: 'src/js/[name].[hash].js',
+        entryFileNames: 'src/js/[name].[hash].js',
         assetFileNames: ({name}) => {
-          if (/\.(gif|jpe?g|png|svg)$/.test(name ?? '')) {
-            return 'images/[name]-[hash][extname]'
+          if (/\.(gif|jpe?g|png|svg|webp|avif)$/.test(name ?? '')) {
+            return 'src/assets/images/[name].[hash][extname]'
           }
           if (/\.css$/.test(name ?? '')) {
-            return 'css/[name]-[hash][extname]'
+            return 'src/assets/css/[name].[hash][extname]'
           }
-          return 'assets/[name]-[hash][extname]'
+          return 'src/[name].[hash][extname]'
         }
       }
-    }
+    },
+    assetsInlineLimit: 0,
+    sourcemap: true,
+    emptyOutDir: true
   },
   resolve: {
     alias: {
