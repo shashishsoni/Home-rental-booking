@@ -23,15 +23,20 @@ app.use((req, res, next) => {
 });
 // CORS Options
 const corsOptions = {
-    origin: ['https://homerentalbooking.netlify.app', 'https://homerentalbooking.netlify.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Type'],
+    origin: [
+        'https://homerentalbooking.netlify.app',
+        'https://home-rental-booking.vercel.app',
+        'http://localhost:5173'
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Type'],
     maxAge: 86400
 };
-// Middleware
+// Apply CORS before other middleware
 app.use(cors(corsOptions));
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
@@ -60,11 +65,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
     setHeaders: (res) => {
         res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-        res.setHeader('Access-Control-Allow-Origin', 'https://homerentalbooking.netlify.app');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        res.setHeader('Cache-Control', 'public, max-age=31536000');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 }));
 console.log('Static files served from:', path.join(__dirname, 'public', 'uploads'));
@@ -83,7 +87,7 @@ mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/home-rental'
     .catch((error) => {
     console.error('MongoDB connection error:', error);
 });
-// Enable CORS for all routes
+// Pre-flight requests
 app.options('*', cors(corsOptions));
 // Routes
 app.use('/auth', authRoutes);

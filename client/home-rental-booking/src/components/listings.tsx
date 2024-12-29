@@ -17,29 +17,28 @@ const Listings = () => {
 
   const getFeedlisting = async () => {
     try {
+      const baseUrl = import.meta.env.VITE_API_URL || 'https://home-rental-booking.onrender.com';
       const response = await fetch(
         slectedCategory !== "All"
-          ? `${import.meta.env.VITE_API_URL}/listing?category=${slectedCategory}`
-          : `${import.meta.env.VITE_API_URL}/listing`,
+          ? `${baseUrl}/listing?category=${slectedCategory}`
+          : `${baseUrl}/listing`,
         {
           method: "GET",
           credentials: "include",
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+            'Origin': window.location.origin
+          },
+          mode: 'cors'
         }
       );
-
-      // Log the response for debugging
-      const text = await response.text();
-      console.log("Response text:", text); // Log the raw response text
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = JSON.parse(text); // Parse the text as JSON
+      const data = await response.json();
 
       // Sanitize data before updating Redux store
       const sanitizedListings = data.listings.map((listing: any) => ({
@@ -177,9 +176,9 @@ const Listings = () => {
               listings.map(({ _id, creator, ...rest }: Listing) => (
                 <div key={_id}>
                   <ListingCard
-                    ListingPhotoPaths={[]} listingId={_id} // Explicitly pass the `listingId`
-                    creator={creator} // Pass the `creator` object
-                    {...rest} // Spread other properties
+                    listingId={_id}
+                    creator={creator}
+                    {...rest}
                   />
                 </div>
               ))

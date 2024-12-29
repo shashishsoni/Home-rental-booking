@@ -43,7 +43,7 @@ export interface Listing {
   title: string;
   description: string;
   price: number;
-  listingImages: string[];
+  ListingPhotoPaths: string[];
   city: string;
   province: string;
   country: string;
