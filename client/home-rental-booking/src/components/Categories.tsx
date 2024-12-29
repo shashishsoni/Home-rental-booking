@@ -53,7 +53,11 @@ const Categories = () => {
 
       const response = await fetch(url, {
         method: "GET",
-        credentials: "include"
+        credentials: "include",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
       });
 
       if (!response.ok) {
