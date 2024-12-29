@@ -30,24 +30,31 @@ const allowedOrigins = [
   'https://homerentalbooking.netlify.app',
   'https://home-rental-booking.vercel.app',
   'http://localhost:5173',
-  'https://6771462fc3e8780008e9c414--homerentalbooking.netlify.app'
 ];
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is allowed
+    if (allowedOrigins.some(allowedOrigin => origin.startsWith(allowedOrigin))) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('Blocked origin:', origin);
+      callback(null, false);
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
-  exposedHeaders: ['Content-Type']
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
-// Apply CORS before any other middleware
+// Apply CORS before any routes
 app.use(cors(corsOptions));
 
 // Middleware
@@ -78,12 +85,14 @@ app.use(helmet.contentSecurityPolicy({
 // Serve Static Files with CORP headers
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
-  setHeaders: (res) => {
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin');
+  setHeaders: (res, path, stat) => {
+    res.set({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept, Origin, X-Requested-With',
+      'Access-Control-Allow-Credentials': 'true',
+      'Cross-Origin-Resource-Policy': 'cross-origin'
+    });
   }
 }));
 
@@ -163,6 +172,17 @@ const jsonParsingErrorHandler: ErrorRequestHandler = (
 app.use(corsErrorHandler);
 app.use(errorHandler);
 app.use(jsonParsingErrorHandler); // Use the properly typed handler
+
+// Add security headers middleware
+app.use((req, res, next) => {
+  res.set({
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'X-XSS-Protection': '1; mode=block'
+  });
+  next();
+});
 
 // Root route
 app.get('/', (req: Request, res: Response) => {

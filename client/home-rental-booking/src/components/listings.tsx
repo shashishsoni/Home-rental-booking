@@ -18,23 +18,31 @@ const Listings = () => {
   const getFeedlisting = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL || 'https://home-rental-booking.onrender.com';
-      const response = await fetch(
+      const url = new URL(
         slectedCategory !== "All"
-          ? `${baseUrl}/listing?category=${slectedCategory}`
-          : `${baseUrl}/listing`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Origin': window.location.origin
-          }
+          ? `/listing?category=${slectedCategory}`
+          : '/listing',
+        baseUrl
+      ).toString();
+
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Origin': window.location.origin,
+          'X-Requested-With': 'XMLHttpRequest'
         }
-      );
+      });
 
       if (!response.ok) {
         const text = await response.text();
+        console.error('Response error:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: text
+        });
         throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
       }
 
