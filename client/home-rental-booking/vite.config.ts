@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  base: 'https://home-rental-booking.vercel.app/',
+  base: '/',
+  define: {
+    'process.env.VITE_API_URL': JSON.stringify('https://home-rental-booking.onrender.com')
+  },
   plugins: [react()],
   resolve: {
     alias: {
