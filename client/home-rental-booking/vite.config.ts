@@ -34,5 +34,9 @@ export default defineConfig({
     sourcemap: false,
     minify: 'esbuild'
   },
-  logLevel: 'error'
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript',
+    },
+  }
 });
