@@ -5,7 +5,6 @@ import imageHome2 from '../assets/imagehome2.jpg';
 import imageHome1 from '../assets/imagehome1.avif';
 import { useDispatch } from 'react-redux';
 import { setListings } from '../redux/cache';
-import { Listing } from '../types/types';
 
 const Categories = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -61,14 +60,32 @@ const Categories = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const { listings } = await response.json();
-      const formattedListings = listings.map((listing: Listing) => ({
-        ...listing,
+      const data = await response.json();
+      const listings = data.listings || [];
+
+      const formattedListings = listings.map((listing: any) => ({
+        _id: listing._id || '',
         creator: {
-          _id: listing.creator._id,
-          firstname: listing.creator.firstname || "Unknown",
-          lastname: listing.creator.lastname || ""
-        }
+          _id: listing.Creator?._id || listing._id || '',
+          firstname: listing.Creator?.firstname || "Unknown",
+          lastname: listing.Creator?.lastname || "",
+          profileImagePath: listing.Creator?.profileImagePath
+        },
+        title: listing.title || "Untitled",
+        description: listing.description || "",
+        price: listing.price || 0,
+        listingImages: listing.listingImages || [],
+        city: listing.city || "",
+        province: listing.province || "",
+        country: listing.country || "",
+        category: listing.category || "",
+        type: listing.type || "",
+        guest: listing.guest || 0,
+        bedroom: listing.bedroom || 0,
+        bathroom: listing.bathroom || 0,
+        amenities: listing.amenities || [],
+        Highlights: listing.Highlights || "",
+        Highlightdescription: listing.Highlightdescription || ""
       }));
 
       dispatch(setListings(formattedListings));
