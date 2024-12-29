@@ -16,27 +16,19 @@ export default defineConfig({
         main: path.resolve(__dirname, 'index.html'),
       },
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'react-vendor';
-            if (id.includes('mui')) return 'mui-vendor';
-            return 'vendor';
-          }
-        },
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: ({name}) => {
-          if (/\.(gif|jpe?g|png|svg|webp)$/.test(name ?? '')) {
-            return 'assets/images/[name].[hash][extname]';
-          }
-          return 'assets/[name].[hash][extname]';
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-redux', 'redux-persist'],
+          'vendor': [
+            '@reduxjs/toolkit',
+            'react-router-dom',
+            'framer-motion'
+          ]
         }
       }
     },
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-    reportCompressedSize: false,
     sourcemap: false,
     minify: 'esbuild'
   },
