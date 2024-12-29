@@ -71,8 +71,10 @@ const Listings = () => {
         description: listing.description || "No description provided.",
         price: listing.price || 0,
         ListingPhotoPaths: listing.listingImages?.map((img: string) => {
-          const cleanPath = img.replace(/^\/?(uploads\/)?/, '');
-          return `${baseUrl}/uploads/${cleanPath}`;
+          const cleanPath = img
+            .replace(/^uploads\/uploads\//, 'uploads/')
+            .replace(/^\/+|\/+$/g, '');
+          return `${baseUrl}/${cleanPath}`;
         }) || [],
         city: listing.city || "Unknown city",
         province: listing.province || "Unknown province",

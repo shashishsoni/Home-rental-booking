@@ -37,8 +37,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const formattedImagePaths = formatImagePaths(ListingPhotoPaths);
 
   const getImageUrl = (photoPath: string) => {
-    const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
-    return `${import.meta.env.VITE_API_URL}${cleanPath}`;
+    // Remove any duplicate 'uploads/' and leading/trailing slashes
+    const cleanPath = photoPath
+      .replace(/^https?:\/\/[^\/]+\//, '') // Remove base URL if present
+      .replace(/^uploads\/uploads\//, 'uploads/') // Remove duplicate uploads
+      .replace(/^\/+|\/+$/g, ''); // Remove leading/trailing slashes
+
+    return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
   };
 
   // Auto-slide functionality
