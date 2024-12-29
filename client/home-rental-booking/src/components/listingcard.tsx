@@ -61,12 +61,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
   const isOwnListing = user && creator && user._id === creator._id ? true : false;
 
-  const handleFetch = async (url: string, options = {}) => {
+  const handleFetch = async (url: string, options: RequestInit = {}) => {
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
+        ...(options.headers as Record<string, string>)
       }
     });
 

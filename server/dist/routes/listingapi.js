@@ -113,6 +113,7 @@ router.get("/", async (req, res) => {
             listings = await Listing.find()
                 .populate('Creator', '_id firstname lastname profileImagePath');
         }
+        // Transform listings with proper image paths
         const transformedListings = listings.map(listing => {
             const listingObj = listing.toJSON();
             return {
@@ -123,6 +124,7 @@ router.get("/", async (req, res) => {
                 })
             };
         });
+        // Set proper headers and send JSON response
         res.setHeader('Content-Type', 'application/json');
         res.status(200).json({
             success: true,
