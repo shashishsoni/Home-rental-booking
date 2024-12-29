@@ -2,15 +2,9 @@
     "version": 2,
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
-    "routes": [
-      { "handle": "filesystem" },
-      { "src": "/src/assets/(.*)", "dest": "/src/assets/$1" },
-      { "src": "/src/components/(.*)", "dest": "/src/components/$1" },
-      { "src": "/src/pages/(.*)", "dest": "/src/pages/$1" },
-      { "src": "/src/redux/(.*)", "dest": "/src/redux/$1" },
-      { "src": "/src/utils/(.*)", "dest": "/src/utils/$1" },
-      { "src": "/src/lib/(.*)", "dest": "/src/lib/$1" },
-      { "src": "/(.*)", "dest": "/index.html" }
+    "framework": "vite",
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
     ],
     "build": {
       "env": {
@@ -18,9 +12,6 @@
         "NPM_FLAGS": "--legacy-peer-deps --force"
       }
     },
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/index.html" }
-    ],
     "cleanUrls": true,
     "trailingSlash": false
   }

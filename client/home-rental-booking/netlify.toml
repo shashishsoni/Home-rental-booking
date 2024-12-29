@@ -20,7 +20,7 @@
 
 [build]
   command = "CI=false npm run build"
-  publish = "client/home-rental-booking/dist"
+  publish = "client/home-rental-booking/"
   base = "client/home-rental-booking"
 
 [build.environment]
