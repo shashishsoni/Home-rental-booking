@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 // CORS Options
 const corsOptions = {
-    origin: 'https://homerentalbooking.netlify.app/',
+    origin: ['https://homerentalbooking.netlify.app', 'https://homerentalbooking.netlify.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     exposedHeaders: ['Content-Type'],
@@ -60,9 +60,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
     setHeaders: (res) => {
         res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-        res.setHeader('Access-Control-Allow-Origin', 'https://homerentalbooking.netlify.app/');
+        res.setHeader('Access-Control-Allow-Origin', 'https://homerentalbooking.netlify.app');
         res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         res.setHeader('Cache-Control', 'public, max-age=31536000');
     }
 }));
