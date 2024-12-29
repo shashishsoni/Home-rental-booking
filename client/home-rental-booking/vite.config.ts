@@ -31,7 +31,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
-    }
+      '@': path.resolve(__dirname, './src'),
+      'date-fns': 'date-fns/esm'
+    },
+    dedupe: ['date-fns']
+  },
+  optimizeDeps: {
+    include: ['date-fns']
   }
 })
