@@ -22,51 +22,39 @@ export interface Trip {
 }
 
 export interface UserState {
-  user: {
-    _id: string;
-    firstname: string;
-    lastname: string;
-    Email: string;
-    profileImagePath: string;
-    triplist?: Trip[];
-    WishList: string[];
-    properties?: Listing[];
-    reservations?: Booking[];
-  } | null;
+  user: any;
   token: string | null;
   profileImagePath: string | null;
   listings: Listing[];
   wishlist: string[];
   properties: Listing[];
-  reservations: Booking[];
+  reservations: any[];
 }
 
 
 export interface Listing {
   _id: string;
-  creator: Creator;
-  parsedCreator: {
+  creator: {
+    _id: string;
     firstname: string;
     lastname: string;
-    profileImagePath: string | null;
+    profileImagePath?: string;
   };
   title: string;
   description: string;
   price: number;
-  images: string[];         
-  ListingPhotoPaths: string[]; 
-  city: string;               
-  province: string;           
-  country: string;            
-  category: string;           
-  type: string; 
-  guestCount: number;
-  bedroomCount: number;
-  bedCount: number;
-  bathroomCount: number;
+  listingImages: string[];
+  city: string;
+  province: string;
+  country: string;
+  category: string;
+  type: string;
+  guest: number;
+  bedroom: number;
+  bathroom: number;
   amenities: string[];
-  highlight: string;
-  highlightDescription: string;
+  Highlights?: string;
+  Highlightdescription?: string;
 }
 
 export interface Creator {

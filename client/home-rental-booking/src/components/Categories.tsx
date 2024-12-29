@@ -5,32 +5,7 @@ import imageHome2 from '../assets/imagehome2.jpg';
 import imageHome1 from '../assets/imagehome1.avif';
 import { useDispatch } from 'react-redux';
 import { setListings } from '../redux/cache';
-
-interface Listing {
-  _id: string;
-  Creator?: {
-    _id: string;
-    firstname: string;
-    lastname: string;
-    profileImagePath?: string;
-  };
-  title?: string;
-  description?: string;
-  price: number;
-  listingImages?: string[];
-  city?: string;
-  province?: string;
-  country?: string;
-  category?: string;
-  type?: string;
-  guest?: number;
-  bedroom?: number;
-  bed?: number;
-  bathroom?: number;
-  amenities?: string[];
-  Highlights?: string;
-  Highlightdescription?: string;
-}
+import { Listing } from '../types/types';
 
 const Categories = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -88,37 +63,12 @@ const Categories = () => {
 
       const { listings } = await response.json();
       const formattedListings = listings.map((listing: Listing) => ({
-        _id: listing._id,
+        ...listing,
         creator: {
-          _id: listing.Creator?._id || listing.Creator,
-          firstname: listing.Creator?.firstname || "Unknown",
-          lastname: listing.Creator?.lastname || ""
-        },
-        parsedCreator: listing.Creator ? {
-          firstname: listing.Creator.firstname || "Unknown",
-          lastname: listing.Creator.lastname || "",
-          profileImagePath: listing.Creator.profileImagePath || null
-        } : {
-          firstname: "Unknown",
-          lastname: "",
-          profileImagePath: null
-        },
-        title: listing.title || "Untitled",
-        description: listing.description || "No description provided.",
-        price: listing.price || 0,
-        ListingPhotoPaths: listing.listingImages || [],
-        city: listing.city || "Unknown city",
-        province: listing.province || "Unknown province",
-        country: listing.country || "Unknown country",
-        category: listing.category || "Miscellaneous",
-        type: listing.type || "N/A",
-        guestCount: listing.guest || 0,
-        bedroomCount: listing.bedroom || 0,
-        bedCount: listing.bed || 0,
-        bathroomCount: listing.bathroom || 0,
-        amenities: listing.amenities || [],
-        highlight: listing.Highlights || "No highlights provided.",
-        highlightDescription: listing.Highlightdescription || "No highlight description provided."
+          _id: listing.creator._id,
+          firstname: listing.creator.firstname || "Unknown",
+          lastname: listing.creator.lastname || ""
+        }
       }));
 
       dispatch(setListings(formattedListings));
