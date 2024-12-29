@@ -4,9 +4,6 @@ import path from 'path';
 
 export default defineConfig({
   base: '/',
-  define: {
-    'process.env.VITE_API_URL': JSON.stringify('https://home-rental-booking.onrender.com')
-  },
   plugins: [react()],
   resolve: {
     alias: {
@@ -14,25 +11,30 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-      },
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-redux', 'redux-persist'],
-          'vendor': [
-            '@reduxjs/toolkit',
-            'react-router-dom',
-            'framer-motion'
-          ]
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-redux': ['react-redux', '@reduxjs/toolkit', 'redux-persist'],
+          'vendor-router': ['react-router-dom'],
+          'vendor-ui': ['framer-motion', '@mui/material', '@emotion/react'],
+        },
+        dir: 'dist',
+        entryFileNames: 'src/[name].[hash].js',
+        chunkFileNames: 'src/chunks/[name].[hash].js',
+        assetFileNames: (assetInfo: { name?: string }) => {
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1] || '';
+          if (assetInfo.name && /\.(png|jpe?g|gif|svg|webp|avif)$/.test(assetInfo.name)) {
+            return 'src/assets/images/[name].[hash].[ext]';
+          }
+          if (ext === 'css') {
+            return 'src/assets/css/[name].[hash].[ext]';
+          }
+          return 'src/assets/[name].[hash].[ext]';
         }
       }
-    },
-    outDir: 'dist',
-    assetsDir: 'assets',
-    emptyOutDir: true,
-    sourcemap: false,
-    minify: 'esbuild'
+    }
   }
 });
