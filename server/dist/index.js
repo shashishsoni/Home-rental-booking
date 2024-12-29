@@ -102,6 +102,20 @@ const corsErrorHandler = (err, req, res, next) => {
 app.use(corsErrorHandler);
 // General Error Handler
 app.use(errorHandler);
+// Add this route near your other routes
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Home Rental Booking API is running',
+        status: 'active',
+        version: '1.0.0',
+        endpoints: {
+            auth: '/auth',
+            listings: '/listing',
+            bookings: '/bookings',
+            user: '/user'
+        }
+    });
+});
 // Server setup
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
