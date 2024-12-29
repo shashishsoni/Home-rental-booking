@@ -76,7 +76,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
-        }
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
