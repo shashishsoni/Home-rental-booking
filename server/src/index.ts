@@ -27,11 +27,11 @@ app.use((req, res, next) => {
 
 // CORS Options
 const corsOptions = {
-  origin: ['https://home-rental-booking.vercel.app', 'http://localhost:5173'],
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  maxAge: 600
+  maxAge: 86400
 };
 
 // Middleware
@@ -65,10 +65,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
   setHeaders: (res) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    res.setHeader('Access-Control-Allow-Origin', 'https://home-rental-booking.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
   }
 }));
 

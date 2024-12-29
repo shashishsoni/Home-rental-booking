@@ -154,14 +154,21 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         .populate('Creator', '_id firstname lastname profileImagePath');
     }
 
+    const transformedListings = listings.map(listing => {
+      const listingObj = listing.toJSON();
+      return {
+        ...listingObj,
+        listingImages: listingObj.listingImages.map(img => {
+          const cleanPath = img.replace(/^\/?(public\/)?/, '');
+          return `/uploads/${cleanPath}`;
+        })
+      };
+    });
+
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({ 
       success: true,
-      listings: listings.map(listing => ({
-        ...listing.toJSON(),
-        listingImages: listing.listingImages.map(img => 
-          `${process.env.VITE_API_URL}/uploads/${img.replace(/^.*[\\\/]/, '')}`)
-      }))
+      listings: transformedListings
     });
   } catch (err) {
     console.error("Error fetching listings:", err);

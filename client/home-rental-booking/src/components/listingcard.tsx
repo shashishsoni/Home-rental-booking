@@ -37,13 +37,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const formattedImagePaths = formatImagePaths(ListingPhotoPaths);
 
   const getImageUrl = (photoPath: string) => {
-    // If the path is already a full URL, return it as is
-    if (photoPath.startsWith('http')) {
-        return photoPath;
-    }
-    // Clean the path and ensure it starts with a forward slash
     const cleanPath = photoPath.replace(/^\/?(public\/)?/, '');
-    return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
+    return `${import.meta.env.VITE_API_URL}${cleanPath}`;
   };
 
   // Auto-slide functionality
