@@ -61,6 +61,27 @@ const ListingCard: React.FC<ListingCardProps> = ({
 
   const isOwnListing = user && creator && user._id === creator._id ? true : false;
 
+  const handleFetch = async (url: string, options = {}) => {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error(`Invalid content type: ${contentType}`);
+    }
+
+    return response.json();
+  };
+
   const handleWishlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -71,20 +92,14 @@ const ListingCard: React.FC<ListingCardProps> = ({
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/${user._id}/${listingId}`, {
+      const data = await handleFetch(`${import.meta.env.VITE_API_URL}/user/${user._id}/${listingId}`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         credentials: 'include'
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update wishlist');
-      }
-
-      const data = await response.json();
       dispatch(setWishlist(data.wishlist));
     } catch (error) {
       console.error("Error updating wishlist:", error);

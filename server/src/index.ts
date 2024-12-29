@@ -30,6 +30,7 @@ const corsOptions = {
   origin: 'https://home-rental-booking.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type'],
   credentials: true,
   maxAge: 86400
 };
@@ -118,24 +119,36 @@ const corsErrorHandler: ErrorRequestHandler = (err: CustomError, req: Request, r
 // General Error Handler
 app.use(errorHandler);
 
-// Update the error handler with proper typing
-const jsonParseErrorHandler: ErrorRequestHandler = (
-  err: CustomError,
-  req: Request,
-  res: Response,
+// Add global middleware to set JSON content type
+app.use((req, res, next) => {
+  if (!res.getHeader('Content-Type')) {
+    res.setHeader('Content-Type', 'application/json');
+  }
+  next();
+});
+
+// Update error handler type
+const jsonParsingErrorHandler: ErrorRequestHandler = (
+  err: Error & { body?: unknown }, 
+  _req: Request, 
+  res: Response, 
   next: NextFunction
 ): void => {
   if (err instanceof SyntaxError && 'body' in err) {
-    res.status(400).json({ error: 'Invalid JSON' });
+    res.status(400).json({ 
+      success: false,
+      error: 'Invalid JSON',
+      message: err.message 
+    });
     return;
   }
   next(err);
 };
 
-// Place error handlers after routes but before server setup
+// Place error handlers in correct order
 app.use(corsErrorHandler);
 app.use(errorHandler);
-app.use(jsonParseErrorHandler);
+app.use(jsonParsingErrorHandler); // Use the properly typed handler
 
 // Root route
 app.get('/', (req: Request, res: Response) => {

@@ -154,6 +154,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         .populate('Creator', '_id firstname lastname profileImagePath');
     }
 
+    // Transform listings with proper image paths
     const transformedListings = listings.map(listing => {
       const listingObj = listing.toJSON();
       return {
@@ -165,11 +166,13 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       };
     });
 
+    // Set proper headers and send JSON response
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({ 
       success: true,
       listings: transformedListings
     });
+
   } catch (err) {
     console.error("Error fetching listings:", err);
     res.status(500).json({
