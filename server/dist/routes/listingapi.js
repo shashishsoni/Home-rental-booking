@@ -102,48 +102,32 @@ router.post("/create", upload.array("listingImages"), async (req, res) => {
 });
 // Get Listings Endpoint
 router.get("/", async (req, res) => {
-    const qCategory = req.query.category;
     try {
+        const qCategory = req.query.category;
         let listings;
         if (qCategory) {
-            listings = await Listing.find({ category: qCategory }).populate("Creator", "_id firstname lastname profileImagePath");
+            listings = await Listing.find({ category: qCategory })
+                .populate('Creator', '_id firstname lastname profileImagePath');
         }
         else {
-            listings = await Listing.find().populate("Creator", "_id firstname lastname profileImagePath");
+            listings = await Listing.find()
+                .populate('Creator', '_id firstname lastname profileImagePath');
         }
-        const transformedListings = listings.map((listing) => {
-            const listingObj = listing.toJSON();
-            const creator = listing.Creator;
-            // Handle case where Creator is just an ID (old data)
-            if (typeof creator === "string") {
-                return {
-                    ...listingObj,
-                    creator: {
-                        _id: creator,
-                        firstname: "Unknown",
-                        lastname: "",
-                        profileImagePath: "/uploads/default-profile.png",
-                    },
-                };
-            }
-            // Handle populated Creator object (new data)
-            return {
-                ...listingObj,
-                creator: {
-                    _id: creator._id,
-                    firstname: creator.firstname || "Unknown",
-                    lastname: creator.lastname || "",
-                    profileImagePath: creator.profileImagePath || "/uploads/default-profile.png",
-                },
-            };
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json({
+            success: true,
+            listings: listings.map(listing => ({
+                ...listing.toJSON(),
+                listingImages: listing.listingImages.map(img => `${process.env.VITE_API_URL}/uploads/${img.replace(/^.*[\\\/]/, '')}`)
+            }))
         });
-        res.status(200).json({ listings: transformedListings });
     }
     catch (err) {
         console.error("Error fetching listings:", err);
         res.status(500).json({
+            success: false,
             message: "Failed to fetch listings",
-            error: err.message,
+            error: err instanceof Error ? err.message : 'Unknown error'
         });
     }
 });

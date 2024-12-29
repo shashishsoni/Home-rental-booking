@@ -27,10 +27,11 @@ app.use((req, res, next) => {
 
 // CORS Options
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://67703aa9dffd10de673aa68a--home-booking.netlify.app/'],
+  origin: ['https://home-rental-booking.vercel.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+  maxAge: 600
 };
 
 // Middleware
@@ -63,11 +64,10 @@ app.use(helmet.contentSecurityPolicy({
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads'), {
   setHeaders: (res) => {
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');  // Allow cross-origin resource sharing
-    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');  // Ensure proper embedder policy
-    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:5173','https://67703aa9dffd10de673aa68a--home-booking.netlify.app/']);  // Allow the front-end URL
-    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');  // Allow only GET and OPTIONS methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');  // Allow necessary headers
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Access-Control-Allow-Origin', 'https://home-rental-booking.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
 }));
@@ -101,6 +101,7 @@ app.use('/user', userRouters);
 // CORS Error Handler
 interface CustomError extends Error {
   name: string;
+  body?: unknown;
 }
 
 const corsErrorHandler: ErrorRequestHandler = (err: CustomError, req: Request, res: Response, next: NextFunction): void => {
@@ -114,13 +115,29 @@ const corsErrorHandler: ErrorRequestHandler = (err: CustomError, req: Request, r
   next(err); // Pass error to next handler if it's not CORS-related
 };
 
-// Apply CORS error handler middleware
-app.use(corsErrorHandler);
-
 // General Error Handler
 app.use(errorHandler);
 
-// Add this route near your other routes
+// Update the error handler with proper typing
+const jsonParseErrorHandler: ErrorRequestHandler = (
+  err: CustomError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({ error: 'Invalid JSON' });
+    return;
+  }
+  next(err);
+};
+
+// Place error handlers after routes but before server setup
+app.use(corsErrorHandler);
+app.use(errorHandler);
+app.use(jsonParseErrorHandler);
+
+// Root route
 app.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'Home Rental Booking API is running',
