@@ -1,18 +1,3 @@
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Type = "text/html; charset=utf-8"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Content-Type = "text/css; charset=utf-8"
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -20,23 +5,9 @@
 
 [build]
   command = "CI=false npm run build"
-  publish = "client/home-rental-booking/"
+  publish = "dist"
   base = "client/home-rental-booking"
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps --force"
-
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.images]
-  compress = true 
+  NPM_FLAGS = "--legacy-peer-deps --force" 
