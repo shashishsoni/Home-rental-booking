@@ -27,16 +27,18 @@ export default defineConfig({
     },
     assetsInlineLimit: 0,
     sourcemap: true,
-    emptyOutDir: true
+    emptyOutDir: true,
+    commonjsOptions: {
+      include: [/date-fns/, /node_modules/],
+      transformMixedEsModules: true
+    }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      'date-fns': 'date-fns/esm'
-    },
-    dedupe: ['date-fns']
+      '@': path.resolve(__dirname, './src')
+    }
   },
   optimizeDeps: {
-    include: ['date-fns']
+    include: ['date-fns', 'react-date-range']
   }
 })
