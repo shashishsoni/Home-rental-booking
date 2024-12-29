@@ -3,14 +3,9 @@ import { categories } from "@/data";
 import imageHome from '../assets/imagehome.webp';
 import imageHome2 from '../assets/imagehome2.jpg';
 import imageHome1 from '../assets/imagehome1.avif';
-import { useDispatch } from 'react-redux';
-import { setListings } from '../redux/cache';
 
 const Categories = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("All");
-  const dispatch = useDispatch();
   const backgroundImages = [
     imageHome,
     imageHome1,
@@ -30,73 +25,12 @@ const Categories = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    fetchListings();
-  }, [category]);
-
   const getSizeClass = (size: string) => {
     switch (size) {
       case "large": return "w-60 h-60";
       case "medium": return "w-32 h-32";
       case "small": return "w-28 h-28";
       default: return "w-32 h-32";
-    }
-  };
-
-  const fetchListings = async () => {
-    try {
-      setLoading(true);
-      const baseUrl = import.meta.env.VITE_API_URL || 'https://home-rental-booking.onrender.com';
-      const url = category !== "All" 
-        ? `${baseUrl}/listing?category=${category}`
-        : `${baseUrl}/listing`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const listings = data.listings || [];
-
-      const formattedListings = listings.map((listing: any) => ({
-        _id: listing._id || '',
-        creator: {
-          _id: listing.Creator?._id || listing._id || '',
-          firstname: listing.Creator?.firstname || "Unknown",
-          lastname: listing.Creator?.lastname || "",
-          profileImagePath: listing.Creator?.profileImagePath
-        },
-        title: listing.title || "Untitled",
-        description: listing.description || "",
-        price: listing.price || 0,
-        listingImages: listing.listingImages || [],
-        city: listing.city || "",
-        province: listing.province || "",
-        country: listing.country || "",
-        category: listing.category || "",
-        type: listing.type || "",
-        guest: listing.guest || 0,
-        bedroom: listing.bedroom || 0,
-        bathroom: listing.bathroom || 0,
-        amenities: listing.amenities || [],
-        Highlights: listing.Highlights || "",
-        Highlightdescription: listing.Highlightdescription || ""
-      }));
-
-      dispatch(setListings(formattedListings));
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch listings:", error);
-      setLoading(false);
     }
   };
 
@@ -123,42 +57,33 @@ const Categories = () => {
           For example, "Beachfront" properties offer coastal getaways, while "Countryside" listings promise serene, natural escapes. Adventurous users can opt for "Ski-in/out" or "Caves", while those seeking luxury can explore "Luxury" or "Iconic Cities". Each category includes a high-quality image and a unique description, such as "This property is near a lake!" for "Lakefront", ensuring clarity and engagement.
         </p>
 
-        {loading ? (
-          <div className="text-white text-center">Loading...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categoryLayout.map((row, rowIndex) => (
-              <div key={rowIndex} className="flex justify-center gap-8 mb-8">
-                {row.map((item, colIndex) => {
-                  const categoryIndex = rowIndex * 5 + colIndex;
-                  if (categoryIndex < categories.length) {
-                    const category = categories[categoryIndex + 1];
-                    return (
-                      <div key={colIndex} className="flex flex-col items-center">
-                        <div 
-                          onClick={() => setCategory(category.label)}
-                          className={`relative ${getSizeClass(item.size)} rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-lg hover:shadow-xl cursor-pointer`}
-                        >
-                          <img
-                            src={category.img}
-                            alt={category.label}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full scale-100 hover:scale-90 transition-all duration-300 ease-in-out">
-                            <p className="text-white text-center text-lg font-medium">
-                              {category.label}
-                            </p>
-                          </div>
-                        </div>
+        {categoryLayout.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-8 mb-8">
+            {row.map((item, colIndex) => {
+              const categoryIndex = rowIndex * 5 + colIndex;
+              if (categoryIndex < categories.length) {
+                const category = categories[categoryIndex + 1];
+                return (
+                  <div key={colIndex} className="flex flex-col items-center">
+                    <div className={`relative ${getSizeClass(item.size)} rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-lg hover:shadow-xl cursor-pointer`}>
+                      <img
+                        src={category.img}
+                        alt={category.label}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full scale-100 hover:scale-90 transition-all duration-300 ease-in-out">
+                        <p className="text-white text-center text-lg font-medium">
+                          {category.label}
+                        </p>
                       </div>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            ))}
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
