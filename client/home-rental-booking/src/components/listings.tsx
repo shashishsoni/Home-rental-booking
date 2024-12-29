@@ -70,9 +70,10 @@ const Listings = () => {
         title: listing.title || "Untitled",
         description: listing.description || "No description provided.",
         price: listing.price || 0,
-        ListingPhotoPaths: listing.listingImages?.map((img: string) => 
-          `https://home-rental-booking.onrender.com/uploads/${img.replace(/^.*[\\\/]/,"")}`
-        ) || [],
+        ListingPhotoPaths: listing.listingImages?.map((img: string) => {
+          const cleanPath = img.replace(/^\/?(uploads\/)?/, '');
+          return `${baseUrl}/uploads/${cleanPath}`;
+        }) || [],
         city: listing.city || "Unknown city",
         province: listing.province || "Unknown province",
         country: listing.country || "Unknown country",

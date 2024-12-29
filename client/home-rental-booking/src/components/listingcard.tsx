@@ -161,7 +161,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                 {!imageLoadError[index] ? (
                   <img
                     src={getImageUrl(photo)}
-                    alt={`Property ${index + 1}`}
+                    alt={`${city} property ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={() => handleImageError(index)}
                   />
