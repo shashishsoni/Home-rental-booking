@@ -131,7 +131,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
   };
 
   return (
-    <div className="flex flex-col mt-8 w-[400px] h-full bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-200 relative">
+    <div className="flex flex-col mt-4 md:mt-6 min-[1556px]:mt-8 
+      w-[280px] md:w-[320px] lg:w-[405px] min-[1556px]:w-[370px] 
+      h-[550px] md:h-[600px] lg:h-[600px] min-[1556px]:h-[500px] 
+      bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden 
+      transition-all duration-300 hover:shadow-xl hover:border-gray-200 relative">
       {/* Heart Button */}
       <button
         onClick={handleWishlist}
@@ -151,8 +155,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
         />
       </button>
 
-      {/* Image Slider with Error Handling */}
-      <div className="relative h-[300px] group">
+      {/* Image Slider with adjusted height */}
+      <div className="relative h-[200px] md:h-[240px] lg:h-[280px] min-[1556px]:h-[300px] group">
         {getAvailableImagesCount() > 0 ? (
           <div
             className="absolute inset-0 flex transition-transform duration-500 ease-in-out"
@@ -176,17 +180,17 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </div>
         ) : (
           <div className="absolute inset-0 bg-gray-200 flex justify-center items-center">
-            <p className="text-gray-500 text-lg">No Images Available</p>
+            <p className="text-gray-500 text-sm md:text-base min-[1556px]:text-lg">No Images Available</p>
           </div>
         )}
 
-
-        {/* Absolute Positioning for Price */}
-        <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-2 rounded-full shadow-lg flex flex-col items-center text-white">
-          <span className="text-lg font-extrabold tracking-wide">
+        {/* Price tag with responsive sizing */}
+        <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-green-600 
+          px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-lg flex flex-col items-center text-white">
+          <span className="text-base md:text-lg min-[1556px]:text-xl font-extrabold tracking-wide">
             ₹{price.toLocaleString()}/-
           </span>
-          <span className="text-xs uppercase font-medium tracking-wider opacity-90">
+          <span className="text-[10px] md:text-xs min-[1556px]:text-sm uppercase font-medium tracking-wider opacity-90">
             Per Night
           </span>
         </div>
@@ -209,33 +213,33 @@ const ListingCard: React.FC<ListingCardProps> = ({
         )}
       </div>
 
-      {/* Content Section */}
-      <div className="p-5 space-y-4 flex-grow">
+      {/* Content Section with responsive spacing */}
+      <div className="p-3 md:p-4 min-[1556px]:p-5 space-y-2 md:space-y-3 min-[1556px]:space-y-4 flex-grow">
         <div className="flex justify-between items-start">
-          <div className="space-y-2">
+          <div className="space-y-1 md:space-y-2">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <span className="text-[10px] md:text-xs min-[1556px]:text-sm font-medium text-gray-500 uppercase tracking-wider">
                 Category
               </span>
-              <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded">
+              <span className="bg-emerald-50 text-emerald-700 text-[10px] md:text-xs min-[1556px]:text-sm font-semibold px-2 py-0.5 rounded">
                 {category || "Miscellaneous"}
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <span className="text-[10px] md:text-xs min-[1556px]:text-sm font-medium text-gray-500 uppercase tracking-wider">
                 Type
               </span>
-              <span className="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded">
+              <span className="bg-indigo-50 text-indigo-700 text-[10px] md:text-xs min-[1556px]:text-sm font-semibold px-2 py-0.5 rounded">
                 {type || "N/A"}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 md:space-x-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-400"
+            className="h-4 w-4 md:h-5 md:w-5 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -253,32 +257,32 @@ const ListingCard: React.FC<ListingCardProps> = ({
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs md:text-sm min-[1556px]:text-base text-gray-600">
             {city}, {province}, {country}
           </p>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-gray-100 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">
+      {/* Footer with responsive sizing */}
+      <div className="px-3 md:px-4 min-[1556px]:px-5 py-3 md:py-4 border-t border-gray-100 flex justify-between items-center">
+        <div className="flex items-center space-x-2 md:space-x-3">
+          <div className="w-7 h-7 md:w-8 md:h-8 min-[1556px]:w-9 min-[1556px]:h-9 bg-gray-100 rounded-full flex items-center justify-center">
+            <span className="text-xs md:text-sm min-[1556px]:text-base font-medium text-gray-700">
               {creator.firstname.charAt(0).toUpperCase()}
             </span>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs md:text-sm min-[1556px]:text-base text-gray-600">
             By {creator.firstname} {creator.lastname}
           </p>
         </div>
         <a
           href={`/listing/${listingId}`}
-          className="text-emerald-600 hover:text-emerald-800 font-medium text-sm flex items-center group"
+          className="text-emerald-600 hover:text-emerald-800 font-medium text-xs md:text-sm min-[1556px]:text-base flex items-center group"
         >
           Details
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform"
+            className="h-3 w-3 md:h-4 md:w-4 ml-1 group-hover:translate-x-1 transition-transform"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

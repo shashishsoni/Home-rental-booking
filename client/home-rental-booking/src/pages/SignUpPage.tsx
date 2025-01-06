@@ -1,4 +1,4 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import imagehome2 from '../assets/imagehome2.jpg';
 import 'url-polyfill';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,7 @@ const SignUpPage = () => {
   const [error, setError] = useState<string>('');
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -63,69 +64,63 @@ const SignUpPage = () => {
     return true;
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
+    setLoading(true);
 
     try {
-      const signupForm = new FormData();
-      signupForm.append('firstname', formData.firstname.trim());
-      signupForm.append('lastname', formData.lastname.trim());
-      signupForm.append('Email', formData.Email.trim().toLowerCase());
-      signupForm.append('password', formData.password);
-      signupForm.append('confirmPassword', formData.confirmPassword);
+      const formDataToSend = new FormData();
+      formDataToSend.append("firstname", formData.firstname.trim());
+      formDataToSend.append("lastname", formData.lastname.trim());
+      formDataToSend.append("Email", formData.Email.trim().toLowerCase());
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("confirmPassword", formData.confirmPassword);
+      
       if (formData.profileImage) {
-        signupForm.append('profileImage', formData.profileImage);
+        formDataToSend.append("profileImage", formData.profileImage);
       }
 
-      // Debugging: Log the form data
-      for (const pair of signupForm.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
-      const response = await fetch('${import.meta.env.VITE_API_URL}/auth/signup', {
-        method: 'POST',
-        body: signupForm,
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+        method: "POST",
+        body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (!response.ok) {
-        throw new Error(data.message || 'SignUp failed');
+        throw new Error(data.message || 'Failed to sign up');
       }
 
-      setFormData({
-        firstname: '',
-        lastname: '',
-        Email: '',
-        password: '',
-        confirmPassword: '',
-        profileImage: null,
-      });
-
-      navigate('/login');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Registration failed';
-      setError(errorMessage);
-      console.error('Failed to sign up:', errorMessage);
+      if (response.status === 201) {
+        navigate("/login");
+        return;
+      }
+    } catch (error) {
+      console.error("Failed to sign up:", error);
+      setError(error instanceof Error ? error.message : 'Failed to sign up');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="w-screen h-screen flex">
       {/* Left Section */}
-      <div className="w-3/4 relative">
+      <div className="hidden lg:block lg:w-3/4 relative">
         <img src={imagehome2} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
       </div>
 
       {/* Center Form */}
       <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="bg-white p-3 rounded-xl shadow-lg w-3/5 h-[700px] flex">
+        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[90%] max-h-screen flex flex-col lg:flex-row">
           {/* Left Part of the form (Transparent) */}
-          <div className="w-1/2 relative bg-gray-100 overflow-hidden">
+          <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
             <img
               src={imagehome2}
               alt="Background"
@@ -135,9 +130,9 @@ const SignUpPage = () => {
           </div>
 
           {/* Right Part of the form (Form Content) */}
-          <div className="w-1/2 p-6">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">SignUp Page</h1>
-            <p className="text-gray-600 mb-6 text-center">
+          <div className="w-full lg:w-1/2 p-4 lg:p-4 m-auto">
+            <h1 className="text-2xl font-bold text-gray-800 mb-3 text-center">SignUp Page</h1>
+            <p className="text-gray-600 mb-4 text-center">
               Find your perfect home, where comfort meets convenience. Sign up to explore endless possibilities
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -147,14 +142,14 @@ const SignUpPage = () => {
                 value={formData.firstname}
                 placeholder="First Name"
                 name="firstname"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
                 value={formData.lastname}
                 placeholder="Last Name"
                 name="lastname"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -162,7 +157,7 @@ const SignUpPage = () => {
                 name="Email"
                 value={formData.Email}
                 placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -170,7 +165,7 @@ const SignUpPage = () => {
                 name="password"
                 value={formData.password}
                 placeholder="Set password"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
                 onChange={handleChange}
@@ -178,7 +173,7 @@ const SignUpPage = () => {
                 placeholder="Confirm Password"
                 name="confirmPassword"
                 type="password"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               {!passwordMatch && <p style={{ color: 'red' }}>Passwords do not match!</p>}
               <input
@@ -201,11 +196,11 @@ const SignUpPage = () => {
                 />
               )}
               <button
-                disabled={!passwordMatch || Boolean(error)}
+                disabled={!passwordMatch || Boolean(error) || loading}
                 type="submit"
                 className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 mt-6"
               >
-                Sign up free
+                {loading ? 'Signing up...' : 'Sign up free'}
               </button>
             </form>
             <p className="text-sm text-gray-400 mt-4 text-center">
@@ -227,8 +222,9 @@ const SignUpPage = () => {
           </div>
         </div>
       </div>
+
       {/* Right Section */}
-      <div className="w-2/5 relative bg-[#62371B]">
+      <div className="hidden lg:block lg:w-2/5 relative bg-[#62371B]">
         <div className="absolute inset-0 flex items-center justify-center">
           {/* Right content goes here if needed */}
         </div>

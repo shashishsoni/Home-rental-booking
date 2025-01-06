@@ -64,7 +64,7 @@ function LoginPage() {
   return (
     <div className="w-screen h-screen flex">
       {/* Left Section */}
-      <div className="w-3/4 relative">
+      <div className="hidden lg:block lg:w-3/4 relative">
         <img
           src={home3}
           alt="Background"
@@ -73,12 +73,12 @@ function LoginPage() {
       </div>
 
       {/* Center Form */}
-      <div className="absolute inset-0 flex items-center justify-center z-20 ">
-        <div className="bg-white p-3 rounded-xl shadow-lg w-3/5 h-[700px] flex">
+      <div className="absolute inset-0 flex items-center justify-center z-20">
+        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[90%] max-h-screen flex flex-col lg:flex-row">
           {/* Left Part of the form (Transparent) */}
-          <div className="w-1/2 relative bg-gray-100 overflow-hidden">
+          <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
             <img
-              src={home3} // Your background image
+              src={home3}
               alt="Background"
               className="absolute inset-0 w-full h-full object-cover transform scale-[140%] hover:scale-130 transition-transform translate-x-[-60px] translate-y-[0px]"
             />
@@ -86,7 +86,7 @@ function LoginPage() {
           </div>
 
           {/* Right Part of the form (Form Content) */}
-          <div className="w-1/2 p-6 m-auto">
+          <div className="w-full lg:w-1/2 p-4 lg:p-6 m-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
               LogIn Page
             </h1>
@@ -142,7 +142,7 @@ function LoginPage() {
       </div>
 
       {/* Right Section */}
-      <div className="w-2/5 relative bg-[#3E6BA6]">
+      <div className="hidden lg:block lg:w-2/5 relative bg-[#3E6BA6]">
         <div className="absolute inset-0 flex items-center justify-center">
           {/* Right content goes here if needed */}
         </div>

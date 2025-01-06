@@ -124,6 +124,16 @@ const ListingDetails: React.FC = () => {
       border-radius: 1rem;
       font-size: 1rem;
     }
+
+    .rdrCalendar {
+      width: 100%;
+      max-width: 100%;
+    }
+    .rdrCalendarWrapper {
+      width: 100%;
+      max-width: 100%;
+    }
+
     .rdrDateDisplayWrapper {
       background-color: transparent;
     }
@@ -433,32 +443,34 @@ const ListingDetails: React.FC = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-12">
             {/* Image Gallery */}
-            <div className="relative rounded-3xl overflow-hidden w-[1050px] h-[600px] shadow-[0_15px_10px_rgba(255,255,255,0.6)] group">
-              <div 
-                className="flex transition-transform duration-700 ease-out h-full"
+            <div className="relative rounded-3xl overflow-hidden 
+              w-full 
+              h-[300px] min-[700px]:h-[450px] min-[1556px]:h-[600px]
+              max-w-[350px] min-[700px]:max-w-[700px] min-[1556px]:max-w-[1050px]
+              mx-auto shadow-[0_15px_10px_rgba(255,255,255,0.6)] group">
+              <div className="flex transition-transform duration-700 ease-out h-full"
                 style={{ 
                   transform: `translateX(-${currentImageIndex * 100}%)`,
                   width: `${listing?.images.length || 1}00%`
-                }}
-              >
+                }}>
                 {listing?.images.map((photo, index) => (
-                  <div
-                    key={index}
-                    className="relative w-full h-full flex-shrink-0  transition-transform duration-700"
-                  >
+                  <div key={index} 
+                    className="relative w-full h-full flex-shrink-0 transition-transform duration-700">
                     <img
                       src={`${import.meta.env.VITE_API_URL}/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
                       alt={`Listing photo ${index + 1}`}
-                      className="w-[1050px] h-[600px] object-cover transition-transform duration-700"
+                      className="w-[20%] h-[600px] object-cover overflow-hidden"
                     />
-                    {/* Enhanced Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 ))}
               </div>
-              
-              {/* Enhanced Navigation Controls */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/90 backdrop-blur-md rounded-full px-8 py-4 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+
+              {/* Navigation Controls */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center 
+                gap-2 min-[700px]:gap-3 min-[1556px]:gap-4 
+                bg-white/90 backdrop-blur-md rounded-full 
+                px-4 py-2 min-[700px]:px-6 min-[700px]:py-3 min-[1556px]:px-8 min-[1556px]:py-4 
+                shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => handleImageNavigation("prev")}
                   className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
@@ -475,35 +487,6 @@ const ListingDetails: React.FC = () => {
                   <ChevronRight className="w-6 h-6 text-gray-700" />
                 </button>
               </div>
-
-              {/* Image Navigation Dots */}
-              <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {listing?.images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                      index === currentImageIndex
-                        ? 'bg-white scale-125'
-                        : 'bg-white/50 hover:bg-white/75'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Side Navigation Arrows */}
-              <button
-                onClick={() => handleImageNavigation("prev")}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-              <button
-                onClick={() => handleImageNavigation("next")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
-              >
-                <ChevronRight className="w-6 h-6 text-white" />
-              </button>
             </div>
 
             {/* Quick Stats */}
