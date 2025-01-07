@@ -117,7 +117,7 @@ const Listings = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 p-6 w-full max-w-6xl flex flex-col items-center m-10">
+      <div className="relative z-10 p-6 w-full max-w-full flex flex-col items-center m-10">
         <h3 className="text-white font-serif text-2xl m-4 underline decoration-blue-500 decoration-2">
           Filter Your Choice
         </h3>
@@ -174,31 +174,28 @@ const Listings = () => {
         )}
 
         {/* Listings */}
-        <h1 className="text-2xl text-white font-bold mt-28">Listings</h1>
-        {loading ? (
-          <Loader />
-        ) : (
-          <div
-            className="mb-12 grid gap-4"
-            style={{
-              gridTemplateColumns: "repeat(4, 1fr)",
-            }}
-          >
-            {listings && listings.length > 0 ? (
-              listings.map(({ _id, creator, ...rest }: Listing) => (
-                <div key={_id}>
-                  <ListingCard
-                    listingId={_id}
-                    creator={creator}
-                    {...rest}
-                  />
-                </div>
-              ))
-            ) : (
-              <p className="text-white col-span-4">No listings available.</p>
-            )}
-          </div>
-        )}
+        <div className="mb-12 w-[95%] mx-auto">
+          <h1 className="text-2xl text-white text-center font-bold mt-28 mb-8">Listings</h1>
+          {loading ? (
+            <Loader />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {listings && listings.length > 0 ? (
+                listings.map(({ _id, creator, ...rest }: Listing) => (
+                  <div key={_id} className="flex justify-center">
+                    <ListingCard
+                      listingId={_id}
+                      creator={creator}
+                      {...rest}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p className="text-white col-span-4">No listings available.</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

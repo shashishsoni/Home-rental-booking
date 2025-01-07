@@ -131,9 +131,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
   };
 
   return (
-    <div className="flex flex-col mt-4 md:mt-6 min-[1556px]:mt-8 
-      w-[280px] md:w-[320px] lg:w-[405px] min-[1556px]:w-[370px] 
-      h-[550px] md:h-[600px] lg:h-[600px] min-[1556px]:h-[500px] 
+    <div className="flex flex-col mt-4 md:mt-6 
+      w-full max-w-full sm:max-w-full lg:max-w-full xl:max-w-full
+      h-[400px] md:h-[500px] lg:h-[500px] xl:h-[500px] 
       bg-white border-2 border-gray-100 rounded-xl shadow-lg overflow-hidden 
       transition-all duration-300 hover:shadow-xl hover:border-gray-200 relative">
       {/* Heart Button */}
