@@ -74,7 +74,7 @@ function LoginPage() {
 
       {/* Center Form */}
       <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[90%] max-h-screen flex flex-col lg:flex-row">
+        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[80%] max-h-screen flex flex-col lg:flex-row">
           {/* Left Part of the form (Transparent) */}
           <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
             <img
@@ -100,14 +100,14 @@ function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <input
               value={password}
               onChange={(e) => setpassword(e.target.value)}
                 type="password"
                 placeholder="password"
-                className="w-full px-4 py-2 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               {error && (
                 <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">

@@ -118,13 +118,13 @@ const SignUpPage = () => {
 
       {/* Center Form */}
       <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[90%] max-h-screen flex flex-col lg:flex-row">
+        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[80%] max-h-screen flex flex-col lg:flex-row">
           {/* Left Part of the form (Transparent) */}
           <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
             <img
               src={imagehome2}
               alt="Background"
-              className="absolute inset-0 w-full h-full object-cover transform scale-[140%] hover:scale-130 transition-transform translate-x-[-60px] translate-y-[0px]"
+              className="absolute inset-0 w-full h-full object-cover transform scale-[130%] hover:scale-130 transition-transform translate-x-[-60px] translate-y-[0px]"
             />
             <div className="absolute inset-0 bg-white opacity-50 mix-blend-multiply z-10"></div>
           </div>
