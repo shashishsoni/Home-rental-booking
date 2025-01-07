@@ -3,9 +3,6 @@ import home3 from "../assets/home3.jpg"
 import { setLogin } from "@/redux/cache"
 import { useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
-import { Link } from "react-router-dom"
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
 
 
 
@@ -50,7 +47,7 @@ function LoginPage() {
       const data = await response.json();
       if (data.token && data.user) {
         localStorage.setItem('user', JSON.stringify(data.user)); // Add this line
-  
+
         dispatch(setLogin({ user: data.user, token: data.token }));
         navigate("/");
       } else {
@@ -65,53 +62,84 @@ function LoginPage() {
 };
 
   return (
-    <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
-      <Navbar />
-      <div className="flex-grow flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/20">
-            <h2 className="text-3xl font-bold text-white mb-6 text-center">
-              Welcome Back
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-screen h-screen flex">
+      {/* Left Section */}
+      <div className="hidden lg:block lg:w-3/4 relative">
+        <img
+          src={home3}
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Center Form */}
+      <div className="absolute inset-0 flex items-center justify-center z-20">
+        <div className="bg-white p-3 rounded-xl shadow-lg w-[95%] md:w-4/5 lg:w-3/5 h-[80%] max-h-screen flex flex-col lg:flex-row">
+          {/* Left Part of the form (Transparent) */}
+          <div className="hidden lg:block lg:w-1/2 relative bg-gray-100 overflow-hidden">
+            <img
+              src={home3}
+              alt="Background"
+              className="absolute inset-0 w-full h-full object-cover transform scale-[130%] hover:scale-130 transition-transform translate-x-[-60px] translate-y-[0px]"
+            />
+            <div className="absolute inset-0 bg-white opacity-50 mix-blend-multiply z-10"></div>
+          </div>
+
+          {/* Right Part of the form (Form Content) */}
+          <div className="w-full lg:w-1/2 p-4 lg:p-4 m-auto">
+            <h1 className="text-2xl font-bold text-gray-800 mb-3 text-center">Login Page</h1>
+            <p className="text-gray-600 mb-4 text-center">
+              Welcome back! Login to access your account and explore properties
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && <div className="error-message text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
               <input
-                value={Email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
+                value={Email}
                 placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <input
                 value={password}
                 onChange={(e) => setpassword(e.target.value)}
                 type="password"
-                placeholder="password"
-                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Password"
+                className="w-full px-4 py-2 border rounded-md text-black focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
-              {error && (
-                <p className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
-                  {error}
-                </p>
-              )}
               <button
                 type="submit"
-                className="w-full bg-[#A7CDE0] text-white py-2 rounded-md hover:bg-[#3E6BA6] mt-6"
+                className="w-full bg-cyan-400 text-white py-2 rounded-md hover:bg-cyan-500 mt-6"
+                disabled={Logging}
               >
                 {Logging ? "Logging in..." : "Login"}
               </button>
             </form>
-            <div className="mt-6 text-center">
-              <p className="text-gray-400">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-purple-400 hover:text-purple-300">
-                  Sign up
-                </Link>
-              </p>
-            </div>
+            <p className="text-sm text-gray-400 mt-4 text-center">
+              By signing up I agree to the{" "}
+              <a href="#" className="text-purple-600 underline">
+                terms & conditions
+              </a>{" "}
+              and{" "}
+              <a href="#" className="text-purple-600 underline">
+                privacy policy
+              </a>
+            </p>
+            <p className="mt-6 text-gray-500 text-center">
+              Don't Have an Account?{" "}
+              <a href="/SignUp" className="text-purple-600 underline">
+                Sign Up
+              </a>
+            </p>
           </div>
         </div>
       </div>
-      <Footer />
+
+      {/* Right Section */}
+      <div className="hidden lg:block lg:w-2/5 relative bg-cyan-400">
+        <div className="absolute inset-0 flex items-center justify-center">
+        </div>
+      </div>
     </div>
   )
 }
