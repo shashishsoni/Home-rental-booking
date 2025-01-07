@@ -297,7 +297,7 @@ const WishlistPage = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div>
+    <div>
                       <h3 className="text-xl font-semibold text-white">
                         {selectedListing.creator?.firstname}{" "}
                         {selectedListing.creator?.lastname}
@@ -339,7 +339,7 @@ const WishlistPage = () => {
             )}
           </AnimatePresence>
         </div>
-      </div>
+    </div>
       <Footer />
     </>
   );

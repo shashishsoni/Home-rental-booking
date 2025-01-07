@@ -444,47 +444,50 @@ const ListingDetails: React.FC = () => {
           <div className="lg:col-span-2 space-y-12">
             {/* Image Gallery */}
             <div className="relative rounded-3xl overflow-hidden 
-              w-full 
-              h-[300px] min-[700px]:h-[450px] min-[1556px]:h-[600px]
-              max-w-[350px] min-[700px]:max-w-[700px] min-[1556px]:max-w-[1050px]
+              w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-[2/1]
+              max-w-[1200px]
               mx-auto shadow-[0_15px_10px_rgba(255,255,255,0.6)] group">
-              <div className="flex transition-transform duration-700 ease-out h-full"
+              <div className="flex h-full relative"
                 style={{ 
                   transform: `translateX(-${currentImageIndex * 100}%)`,
-                  width: `${listing?.images.length || 1}00%`
+                  transition: 'transform 700ms ease-out'
                 }}>
                 {listing?.images.map((photo, index) => (
                   <div key={index} 
-                    className="relative w-full h-full flex-shrink-0 transition-transform duration-700">
+                    className="w-full h-full flex-shrink-0">
                     <img
                       src={`${import.meta.env.VITE_API_URL}/uploads/${photo.replace(/^.*[\\\/]/, '')}`}
                       alt={`Listing photo ${index + 1}`}
-                      className="w-[20%] h-[600px] object-cover overflow-hidden"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder-image.jpg';
+                      }}
                     />
                   </div>
                 ))}
               </div>
 
-              {/* Navigation Controls */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center 
-                gap-2 min-[700px]:gap-3 min-[1556px]:gap-4 
+              {/* Navigation Controls - Updated for better mobile experience */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center 
+                gap-2 sm:gap-3 
                 bg-white/90 backdrop-blur-md rounded-full 
-                px-4 py-2 min-[700px]:px-6 min-[700px]:py-3 min-[1556px]:px-8 min-[1556px]:py-4 
+                px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 md:py-3
                 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => handleImageNavigation("prev")}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
+                  className="p-1 sm:p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
                 >
-                  <ChevronLeft className="w-6 h-6 text-gray-700" />
+                  <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-gray-700" />
                 </button>
-                <span className="font-semibold px-4 text-gray-800">
+                <span className="font-semibold px-2 sm:px-4 text-sm sm:text-base text-gray-800">
                   {currentImageIndex + 1} / {listing?.images.length}
                 </span>
                 <button
                   onClick={() => handleImageNavigation("next")}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
+                  className="p-1 sm:p-2 hover:bg-gray-100 rounded-full transition-all duration-300 hover:scale-110"
                 >
-                  <ChevronRight className="w-6 h-6 text-gray-700" />
+                  <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-gray-700" />
                 </button>
               </div>
             </div>
@@ -610,18 +613,36 @@ const ListingDetails: React.FC = () => {
 
           {/* Right Column - Booking Card */}
           <div className="lg:col-span-1">
-            <div className="sticky top-28 bg-white rounded-2xl border border-gray-200 shadow-2xl p-8 space-y-6">
+            <div className="sticky top-28 bg-white rounded-2xl border border-gray-200 shadow-2xl p-4 sm:p-6 lg:p-8 space-y-6">
               {/* Price Section */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-extrabold text-gray-900">
+              <div className="flex flex-col 2xl:flex-row 2xl:items-center 2xl:justify-start 2xl:gap-14
+                mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2
+                p-2 sm:p-2.5 md:p-3 lg:p-3.5 xl:p-4 2xl:p-4
+                max-w-full">
+                <div className="flex items-baseline gap-1 sm:gap-1.5 md:gap-2 lg:gap-2.5 xl:gap-3">
+                  <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-5xl 
+                    font-extrabold text-gray-900 whitespace-nowrap">
                     ₹{listing?.price}
                   </span>
-                  <span className="text-gray-500 text-lg">/ night</span>
+                  <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-xl 
+                    text-gray-500 whitespace-nowrap">
+                    / night
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300">
-                  <Star className="w-5 h-5 text-yellow-400" />
-                  <span className="font-semibold text-blue-900">4.9</span>
+
+                {/* Rating - Moves to right at 2xl breakpoint with increased gap */}
+                <div className="flex items-center 
+                  gap-1 sm:gap-1.5 md:gap-2 lg:gap-2 xl:gap-2.5
+                  px-2 sm:px-2.5 md:px-3 lg:px-3.5 xl:px-4 
+                  py-1 sm:py-1.5 md:py-2 lg:py-2 xl:py-2
+                  rounded-full bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300
+                  w-fit 2xl:mt-0">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6 
+                    text-yellow-400" />
+                  <span className="font-semibold text-blue-900 
+                    text-xs sm:text-sm md:text-base lg:text-lg xl:text-lg 2xl:text-lg">
+                    4.9
+                  </span>
                 </div>
               </div>
 
@@ -633,7 +654,19 @@ const ListingDetails: React.FC = () => {
                   showDateDisplay={false}
                   minDate={new Date()}
                   rangeColors={["#3b82f6"]}
-                  className="border border-gray-300 rounded-xl overflow-hidden shadow-lg"
+                  className="border border-gray-300 rounded-xl overflow-hidden shadow-lg
+                    [&_.rdrCalendarWrapper]:!w-full [&_.rdrCalendarWrapper]:!max-w-full
+                    [&_.rdrMonth]:!w-full [&_.rdrMonth]:!max-w-full
+                    [&_.rdrMonthAndYearWrapper]:!w-full [&_.rdrMonthAndYearWrapper]:!max-w-full
+                    [&_.rdrMonthAndYearWrapper]:!px-2 [&_.rdrMonthAndYearWrapper]:!py-1
+                    [&_.rdrWeekDays]:!grid [&_.rdrWeekDays]:!grid-cols-7 [&_.rdrWeekDays]:!gap-0 [&_.rdrWeekDays]:!px-2
+                    [&_.rdrDays]:!grid [&_.rdrDays]:!grid-cols-7 [&_.rdrDays]:!gap-0 [&_.rdrDays]:!p-2
+                    [&_.rdrWeekDay]:!w-full [&_.rdrWeekDay]:!text-center
+                    [&_.rdrDay]:!w-full [&_.rdrDay]:!aspect-square
+                    [&_.rdrDayNumber]:!w-full [&_.rdrDayNumber]:!h-full [&_.rdrDayNumber]:!p-1
+                    [&_.rdrDayNumber]:[&>span]:!w-full [&_.rdrDayNumber]:[&>span]:!h-full
+                    [&_.rdrDayNumber]:[&>span]:!flex [&_.rdrDayNumber]:[&>span]:!items-center [&_.rdrDayNumber]:[&>span]:!justify-center
+                    [&_span]:!text-sm"
                 />
               </div>
 
