@@ -186,8 +186,8 @@ const CreateListing = () => {
   return (
     <>
       <Navbar />
-      <div className="w-screen h-full flex flex-col">
-        <div className="w-[80%] flex flex-col p-6 md:px-10 mt-28 mb-12 rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px] m-auto">
+      <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
+        <div className="w-full max-w-[1400px] flex flex-col p-6 md:px-10 mt-28 mb-12 rounded-md shadow-lg hover:shadow-xl transition-shadow border-white border-[3px] mx-auto">
           <h1 className="text-2xl md:text-4xl font-bold text-center text-white py-8 pt-0">
             Publish Your Place
           </h1>

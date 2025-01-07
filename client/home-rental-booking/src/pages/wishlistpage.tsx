@@ -173,8 +173,6 @@ const WishlistPage = () => {
     return allListings.filter((listing: any) => wishlist.includes(listing._id));
   }, [allListings, wishlist]);
 
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-
   const cleanImagePath = (path: string) => {
     return path.replace(/^\/?(public\/)?/, "");
   };
@@ -194,9 +192,9 @@ const WishlistPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+      <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
         <Navbar />
-        <div className="mb-12 max-w-full w-screen mx-auto px-4 py-32">
+        <div className="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold mb-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
@@ -204,143 +202,31 @@ const WishlistPage = () => {
               </span>
             </h1>
             <p className="text-gray-400 text-lg">
-              {wishlistListings.length}{" "}
-              {wishlistListings.length === 1 ? "property" : "properties"} saved
+              {wishlistListings.length} {wishlistListings.length === 1 ? "property" : "properties"} saved
             </p>
           </div>
 
-          {!wishlistListings.length ? (
-            <div className="text-center py-16 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10">
-              <h2 className="text-2xl font-semibold text-white mb-4">
-                Your wishlist is empty
-              </h2>
-              <p className="text-gray-400">
-                Start saving your favorite properties!
-              </p>
-            </div>
-          ) : (
-            <div className="max-w-7xl items-center justify-center mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {wishlistListings.map((listing: any) => {
-                if (!listing || !listing._id) return null;
-
-                return (
-                  <ListingCard
-                    key={listing._id}
-                    listingId={listing._id}
-                    creator={listing.creator}
-                    ListingPhotoPaths={listing.ListingPhotoPaths}
-                    city={listing.city}
-                    province={listing.province}
-                    country={listing.country}
-                    category={listing.category}
-                    type={listing.type}
-                    price={listing.price}
-                  />
-                );
-              })}
-            </div>
-          )}
-
-          {/* Sliding info panel */}
-          <AnimatePresence>
-            {selectedListing && (
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 20 }}
-                className="fixed right-0 top-0 h-full w-96 bg-black/90 backdrop-blur-lg border-l border-white/10 overflow-y-auto"
-              >
-                {/* Image Carousel */}
-                <div className="relative h-64 w-full">
-                  {selectedListing?.ListingPhotoPaths &&
-                  selectedListing.ListingPhotoPaths.length > 0 ? (
-                    <img
-                      src={selectedListing.ListingPhotoPaths[0]}
-                      alt="Property"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                      <span className="text-gray-400">No image available</span>
-                    </div>
-                  )}
-                  {/* Close button */}
-                  <button
-                    onClick={() => setSelectedListing(null)}
-                    className="absolute top-4 right-4 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Host Info */}
-                <div className="p-6">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/10">
-                      <img
-                        src={selectedListing.creator?.profileImagePath || "/default-avatar.png"}
-                        alt="Host"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-    <div>
-                      <h3 className="text-xl font-semibold text-white">
-                        {selectedListing.creator?.firstname}{" "}
-                        {selectedListing.creator?.lastname}
-                      </h3>
-                      <p className="text-gray-400">Host</p>
-                    </div>
-                  </div>
-
-                  {/* Property Details */}
-                  <div className="space-y-4">
-                    <div className="p-4 bg-white/5 rounded-lg">
-                      <h4 className="text-lg font-semibold text-white mb-2">
-                        Property Details
-                      </h4>
-                      <div className="space-y-2 text-gray-300">
-                        <p className="flex items-center">
-                          <span className="font-medium">Type:</span>
-                          <span className="ml-2">{selectedListing.type}</span>
-                        </p>
-                        <p className="flex items-center">
-                          <span className="font-medium">Category:</span>
-                          <span className="ml-2">{selectedListing.category}</span>
-                        </p>
-                        <p className="flex items-center">
-                          <span className="font-medium">Location:</span>
-                          <span className="ml-2">
-                            {selectedListing.city}, {selectedListing.country}
-                          </span>
-                        </p>
-                        <p className="flex items-center">
-                          <span className="font-medium">Price:</span>
-                          <span className="ml-2">₹{selectedListing.price}/night</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Grid Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {wishlistListings.map((listing: any) => (
+              <div key={listing._id} className="flex justify-center">
+                <ListingCard
+                  listingId={listing._id}
+                  creator={listing.creator}
+                  ListingPhotoPaths={listing.ListingPhotoPaths}
+                  city={listing.city}
+                  province={listing.province}
+                  country={listing.country}
+                  category={listing.category}
+                  type={listing.type}
+                  price={listing.price}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-    </div>
-      <Footer />
+        <Footer />
+      </div>
     </>
   );
 };

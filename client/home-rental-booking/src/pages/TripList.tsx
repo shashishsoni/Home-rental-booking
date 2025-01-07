@@ -141,12 +141,12 @@ const TripList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
+    <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
       <Navbar />
-      <div className="mb-12 w-screen p-4 sm:p-8">
+      <div className="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         {/* Enhanced Hero Section */}
-        <div className="text-center mt-24 mb-16 relative">
-          <h1 className="text-7xl font-bold mb-4 relative z-10">
+        <div className="text-center mt-12 mb-16 relative">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4 relative z-10">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-text">
               Your Journeys
             </span>
@@ -157,7 +157,7 @@ const TripList: React.FC = () => {
           <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-purple-500/20 via-transparent to-pink-500/20 animate-pulse" />
         </div>
 
-        <div className="w-full space-y-12">
+        <div className="space-y-8 sm:space-y-12">
           {tripsWithDetails.map((trip, index) => (
             <motion.div
               key={trip._id}
@@ -171,11 +171,9 @@ const TripList: React.FC = () => {
                 transition-all duration-500 border border-white/10
                 cursor-pointer"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="flex flex-col md:flex-row w-full h-full relative">
-                {/* Enhanced Image Section with Slideshow */}
-                <div className="md:w-1/2 h-96 md:h-[600px] relative overflow-hidden">
+              <div className="flex flex-col md:flex-row w-full">
+                {/* Image Section */}
+                <div className="w-full md:w-1/2 h-64 sm:h-80 md:h-[400px] relative overflow-hidden">
                   {trip.listing?.images && trip.listing.images.length > 0 ? (
                     <div className="relative w-full h-full">
                       {trip.listing.images.map((image, imgIndex) => (
@@ -235,8 +233,8 @@ const TripList: React.FC = () => {
                   )}
                 </div>
 
-                {/* Enhanced Content Section */}
-                <div className="md:w-1/2 p-8 flex flex-col justify-between">
+                {/* Trip Details Section */}
+                <div className="w-full md:w-1/2 p-6 sm:p-8">
                   <div>
                     {/* Title and Location */}
                     <div className="mb-8">

@@ -353,9 +353,9 @@ const ListingDetails: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
+    <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed">
       <Navbar />
-      <div className="mb-12 w-screen max-w-full mx-auto px-4 mt-32 pl-12 pr-12">
+      <div className="mb-12 w-full max-w-full mx-auto px-4 sm:px-6 lg:px-8 mt-32">
         {/* Main Header */}
         <div className="mb-6 space-y-8">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
@@ -369,7 +369,7 @@ const ListingDetails: React.FC = () => {
                   {listing.type}
                 </span>
               </div>
-            </div>{" "}
+            </div>
             <div className="flex gap-4 mt-[-35px] md:mb-0">
               <button className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white border border-gray-200 shadow-[0_15px_10px_rgba(255,255,255,0.6)] transition-all duration-200">
                 <Share2 className="w-4 h-4" />

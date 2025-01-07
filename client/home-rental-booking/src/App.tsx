@@ -19,7 +19,6 @@ const App = () => {
   return (
     <LoadingWrapper>
       <BrowserRouter>
-        <div className="min-h-screen bg-black">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -32,7 +31,6 @@ const App = () => {
             <Route path="/:userId/reservations" element={<ReservationPage />} />
             <Route path="/search" element={<SearchResults />} />
           </Routes>
-        </div>
       </BrowserRouter>
     </LoadingWrapper>
   );

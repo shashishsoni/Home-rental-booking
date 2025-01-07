@@ -66,7 +66,7 @@ const PropertiesPage = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
+      <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 py-32 text-center">
           <h1 className="text-4xl font-bold text-white mb-6">
@@ -79,46 +79,47 @@ const PropertiesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] flex flex-col">
+    <div className="min-h-screen flex flex-col bg-black bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))] bg-fixed overflow-x-hidden">
       <Navbar />
-      <div className="mb-12 w-screen max-w-full container mx-auto px-4 py-32 flex flex-col items-center">
-        <div className="text-center mb-16 w-full">
-          <h1 className="text-5xl font-bold mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-              Your Properties
-            </span>
-          </h1>
-          <p className="text-gray-400 text-lg">
-            {properties.length} {properties.length === 1 ? 'property' : 'properties'} listed
-          </p>
-        </div>
-
-        {!properties.length ? (
-          <div className="text-center py-16 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 w-full max-w-2xl mx-auto">
-            <h2 className="text-2xl font-semibold text-white mb-4">You haven't listed any properties yet</h2>
-            <p className="text-gray-400">Start hosting by creating your first listing!</p>
+      <main className="flex-grow flex items-center justify-center w-full py-16 sm:py-24 lg:py-32 px-4">
+        <div className="w-full max-w-[1400px] mx-auto">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+                Your Properties
+              </span>
+            </h1>
+            <p className="text-gray-400 text-base sm:text-lg">
+              {properties.length} {properties.length === 1 ? 'property' : 'properties'} listed
+            </p>
           </div>
-        ) : (
-          <div className="flex items-center justify-center w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center place-items-center">
+
+          {!properties.length ? (
+            <div className="text-center py-12 sm:py-16 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 max-w-2xl mx-auto">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4">You haven't listed any properties yet</h2>
+              <p className="text-gray-400">Start hosting by creating your first listing!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {properties.map((listing: Listing) => (
-                <ListingCard
-                  key={listing._id}
-                  listingId={listing._id}
-                  creator={listing.creator}
-                  ListingPhotoPaths={listing.ListingPhotoPaths}
-                  city={listing.city}
-                  province={listing.province}
-                  country={listing.country}
-                  category={listing.category}
-                  type={listing.type}
-                  price={listing.price}
-                />
+                <div key={listing._id} className="flex justify-center">
+                  <ListingCard
+                    listingId={listing._id}
+                    creator={listing.creator}
+                    ListingPhotoPaths={listing.ListingPhotoPaths}
+                    city={listing.city}
+                    province={listing.province}
+                    country={listing.country}
+                    category={listing.category}
+                    type={listing.type}
+                    price={listing.price}
+                  />
+                </div>
               ))}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </main>
       <Footer />
     </div>
   );
